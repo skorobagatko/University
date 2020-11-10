@@ -2,6 +2,8 @@ package com.skorobahatko.university.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -18,32 +20,35 @@ class TimetableTest {
 	void setUp() throws Exception {
 		timetable = getTestTimetable();
 	}
-
+	
 	@Test
-	void testGetStartDate() {
-		LocalDate expected = LocalDate.of(2020, 11, 5);
-		LocalDate actual = timetable.getStartDate();
+	void testGetDayTimetable() throws Exception {
+		List<Course> courses = getTestCourses();
+		LocalDate startDate = LocalDate.of(2020, 11, 5);
+		LocalDate endDate = LocalDate.of(2020, 11, 5);
+		
+		Constructor<Timetable> constructor = Timetable.class.getDeclaredConstructor(List.class, LocalDate.class, LocalDate.class);
+		constructor.setAccessible(true);
+		Timetable expected = constructor.newInstance(courses, startDate, endDate);
+		
+		Participant participant = getTestParticipant();
+		Timetable actual = Timetable.getDayTimetable(participant, startDate);
 		
 		assertEquals(expected, actual);
 	}
 
 	@Test
-	void testGetEndDate() {
-		LocalDate expected = LocalDate.of(2020, 11, 7);
-		LocalDate actual = timetable.getEndDate();
+	void testGetMonthTimetable() throws Exception {
+		List<Course> courses = getTestCourses();
+		LocalDate startDate = LocalDate.of(2020, 11, 5);
+		LocalDate endDate = startDate.plusMonths(1);
 		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetRecords() {
-		List<TimetableRecord> expected = getTestCourses()
-				.stream()
-				.flatMap(course -> course.getLectures().stream())
-				.map(TimetableRecord::of)
-				.collect(Collectors.toList());
+		Constructor<Timetable> constructor = Timetable.class.getDeclaredConstructor(List.class, LocalDate.class, LocalDate.class);
+		constructor.setAccessible(true);
+		Timetable expected = constructor.newInstance(courses, startDate, endDate);
 		
-		List<TimetableRecord> actual = timetable.getRecords();
+		Participant participant = getTestParticipant();
+		Timetable actual = Timetable.getMonthTimetable(participant, startDate);
 		
 		assertEquals(expected, actual);
 	}
@@ -125,35 +130,12 @@ class TimetableTest {
 		assertTrue(!timetable.equals(other));
 	}
 	
-	@Test
-	void testHashcodeMethodReturnsSameHashcodeForEqualTimetable() {
-		Timetable other = getTestTimetable();
-		
-		assertEquals(timetable.hashCode(), other.hashCode());
-	}
-	
-	@Test
-	void testHashcodeMethodReturnsDifferentHashcodeForNonEqualTimetable() {
-		List<Course> testCourses = getTestCourses();
-		LocalDate startDate = LocalDate.of(2021, 12, 6);
-		LocalDate endDate = LocalDate.of(2021, 12, 8);
-		Timetable other = new Timetable(testCourses, startDate, endDate);
-		
-		assertNotEquals(timetable.hashCode(), other.hashCode());
-	}
-	
-	@Test
-	void testToString() {
-		String expected = "Timetable [startDate=2020-11-05, endDate=2020-11-07, "
-				+ "records=[TimetableRecord [date=2020-11-05, lectureName=Test lecture 1, "
-				+ "startTime=07:30, endTime=09:00, roomNumber=101], "
-				+ "TimetableRecord [date=2020-11-06, lectureName=Test lecture 2, "
-				+ "startTime=10:30, endTime=12:00, roomNumber=201], TimetableRecord [date=2020-11-07, "
-				+ "lectureName=Test lecture 3, startTime=14:30, endTime=16:00, roomNumber=301]]]";
-		
-		String actual = timetable.toString();
-		
-		assertEquals(expected, actual);
+	private Participant getTestParticipant() {
+		long studentId = 123;
+		String studentFirstName = "Test";
+		String studentLastName = "Test";
+		List<Course> studentCourses = getTestCourses();
+		return new Student(studentId, studentFirstName, studentLastName, studentCourses);
 	}
 	
 	private Timetable getTestTimetable() {
