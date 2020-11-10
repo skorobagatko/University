@@ -20,80 +20,6 @@ class StudentTest {
 	}
 
 	@Test
-	void testGetDayTimetable() {
-		List<Course> courses = getTestCourses();
-		LocalDate startDate = LocalDate.of(2020, 11, 5);
-		LocalDate endDate = startDate;
-		Timetable expected = new Timetable(courses, startDate, endDate);
-		
-		Timetable actual = student.getDayTimetable(startDate);
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetMonthTimetable() {
-		List<Course> courses = getTestCourses();
-		LocalDate startDate = LocalDate.of(2020, 11, 1);
-		LocalDate endDate = LocalDate.of(2020, 12, 1);
-		Timetable expected = new Timetable(courses, startDate, endDate);
-		
-		Timetable actual = student.getMonthTimetable(startDate);
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetId() {
-		long expected = 1;
-		long actual = student.getId();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetFirstName() {
-		String expected = "John";
-		
-		String actual = student.getFirstName();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetLastName() {
-		String expected = "Johnson";
-		
-		String actual = student.getLastName();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetCourses() {
-		long id = 1;
-		String firstName = "Test";
-		String lastName = "Test";
-		student = new Student(id, firstName, lastName);
-		
-		Course course = new Course("TST-101", "Test course 1");
-		String lectureName = "Test lecture 1";
-		LocalDate lectureDate = LocalDate.of(2020, 11, 5);
-		LocalTime lectureStartTime = LocalTime.of(7, 30);
-		LocalTime lectureEndTime = LocalTime.of(9, 0);
-		int lectureRoomNumber = 101;
-		Lecture lecture = new Lecture(lectureName, course, lectureDate, lectureStartTime, lectureEndTime, lectureRoomNumber);
-		course.addLecture(lecture);
-		student.addCourse(course);
-		
-		List<Course> expected = List.of(course);
-		
-		List<Course> actual = student.getCourses();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
 	void testAddCourse() {
 		Course course = new Course("QWERTY123", "Test course 123");
 		
@@ -133,37 +59,24 @@ class StudentTest {
 	}
 	
 	@Test
-	void testHashcodeMethodReturnsSameHashcodeForEqualTeachers() {
-		Student other = getTestStudent();
+	void testEqualsMethodReturnsTrueForSameStudents() {
+		Student other = student;
 		
-		assertEquals(student.hashCode(), other.hashCode());
+		assertTrue(student.equals(other));
 	}
 	
 	@Test
-	void testHashcodeMethodReturnsDifferentHashcodeForNonEqualTeachers() {
-		long id = 123456789;
-		String firstName = "Test";
-		String lastName = "Test";
-		List<Course> courses = getTestCourses();
-		Student other = new Student(id, firstName, lastName, courses);
+	void testEqualsMethodReturnsFalseForNullArgument() {
+		Student other = null;
 		
-		assertNotEquals(student.hashCode(), other.hashCode());
+		assertTrue(!student.equals(other));
 	}
 	
 	@Test
-	void testToString() {
-		String expected = "Student [id=1, firstName=John, lastName=Johnson, "
-				+ "courses=[Course [id=TST-101, name=Test course 1, lectures=["
-				+ "Lecture [courseId=TST-101, name=Test lecture 1, date=2020-11-05, "
-				+ "startTime=07:30, endTime=09:00, roomNumber=101], "
-				+ "Lecture [courseId=TST-101, name=Test lecture 2, date=2020-11-06, "
-				+ "startTime=10:30, endTime=12:00, roomNumber=201], "
-				+ "Lecture [courseId=TST-101, name=Test lecture 3, date=2020-11-07, "
-				+ "startTime=14:30, endTime=16:00, roomNumber=301]]]]]";
+	void testEqualsMethodReturnsFalseWithObjectArgument() {
+		Object other = new Object();
 		
-		String actual = student.toString();
-		
-		assertEquals(expected, actual);
+		assertTrue(!student.equals(other));
 	}
 	
 	private List<Course> getTestCourses() {
