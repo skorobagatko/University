@@ -18,55 +18,6 @@ class LectureTest {
 	}
 
 	@Test
-	void testGetName() {
-		String expected = "Test lecture";
-		String actual = lecture.getName();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetCourseId() {
-		Course course = new Course("TST-201", "Test course");
-		String expected = course.getId();
-		String actual = lecture.getCourseId();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetDate() {
-		LocalDate expected = LocalDate.of(2020, 11, 5);
-		LocalDate actual = lecture.getDate();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetStartTime() {
-		LocalTime expected = LocalTime.of(7, 30);
-		LocalTime actual = lecture.getStartTime();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetEndTime() {
-		LocalTime expected = LocalTime.of(9, 0);
-		LocalTime actual = lecture.getEndTime();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetRoomNumber() {
-		int expected = 201;
-		int actual = lecture.getRoomNumber();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
 	void testSetDate() {
 		LocalDate expected = LocalDate.of(2000, 1, 1);
 		
@@ -127,33 +78,24 @@ class LectureTest {
 	}
 	
 	@Test
-	void testHashcodeMethodReturnsSameHashcodeForEqualLectures() {
-		Lecture other = getTestLecture();
+	void testEqualsMethodReturnsTrueForSameLectures() {
+		Lecture other = lecture;
 		
-		assertEquals(lecture.hashCode(), other.hashCode());
+		assertTrue(lecture.equals(other));
 	}
 	
 	@Test
-	void testHashcodeMethodReturnsDifferentHashcodesForNonEqualLectures() {
-		Course course = new Course("QWERTY-123", "Test course 123");
-		String name = "Test lecture";
-		LocalDate date = LocalDate.of(2020, 12, 1);
-		LocalTime startTime = LocalTime.of(9, 30);
-		LocalTime endTime = LocalTime.of(11, 0);
-		int roomNumber = 201;
-		Lecture other = new Lecture(name, course, date, startTime, endTime, roomNumber);
+	void testEqualsMethodReturnsFalseForNullArgument() {
+		Lecture other = null;
 		
-		assertNotEquals(lecture.hashCode(), other.hashCode());
+		assertTrue(!lecture.equals(other));
 	}
 	
 	@Test
-	void testToString() {
-		String expected = "Lecture [courseId=TST-201, name=Test lecture, "
-				+ "date=2020-11-05, startTime=07:30, endTime=09:00, roomNumber=201]";
+	void testEqualsMethodReturnsFalseWithObjectArgument() {
+		Object other = new Object();
 		
-		String actual = lecture.toString();
-		
-		assertEquals(expected, actual);
+		assertTrue(!lecture.equals(other));
 	}
 	
 	private Lecture getTestLecture() {
