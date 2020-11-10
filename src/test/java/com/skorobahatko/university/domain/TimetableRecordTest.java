@@ -16,46 +16,6 @@ class TimetableRecordTest {
 	void setUp() throws Exception {
 		record = getTestTimetableRecord();
 	}
-
-	@Test
-	void testGetDate() {
-		LocalDate expected = LocalDate.of(2020, 11, 5);
-		LocalDate actual = record.getDate();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetLectureName() {
-		String expected = "Test lecture";
-		String actual = record.getLectureName();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetStartTime() {
-		LocalTime expected = LocalTime.of(7, 30);
-		LocalTime actual = record.getStartTime();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetEndTime() {
-		LocalTime expected = LocalTime.of(9, 0);
-		LocalTime actual = record.getEndTime();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetRoomNumber() {
-		int expected = 201;
-		int actual = record.getRoomNumber();
-		
-		assertEquals(expected, actual);
-	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForEqualTimetableRecords() {
@@ -81,39 +41,25 @@ class TimetableRecordTest {
 	}
 	
 	@Test
-	void testHashcodeMethodReturnsSameHashcodeForEqualTimetableRecords() {
-		record = getTestTimetableRecord();
-		TimetableRecord other = getTestTimetableRecord();
+	void testEqualsMethodReturnsTrueForSameTimetableRecords() {
+		TimetableRecord other = record;
 		
-		assertEquals(record.hashCode(), other.hashCode());
+		assertTrue(record.equals(other));
 	}
 	
 	@Test
-	void testHashcodeMethodReturnsDifferentHashcodeForNonEqualTimetableRecords() {
-		record = getTestTimetableRecord();
+	void testEqualsMethodReturnsFalseForNullArgument() {
+		TimetableRecord other = null;
 		
-		Course course = new Course("QWERTY-100", "Qwerty course");
-		String lectureName = "Qwerty lecture";
-		LocalDate lectureDate = LocalDate.of(2021, 12, 1);
-		LocalTime lectureStartTime = LocalTime.of(9, 30);
-		LocalTime lectureEndTime = LocalTime.of(11, 0);
-		int roomNumber = 201;
-		Lecture lecture = new Lecture(lectureName, course, lectureDate, lectureStartTime, lectureEndTime, roomNumber);
-		TimetableRecord other = TimetableRecord.of(lecture);
-		
-		assertNotEquals(course.hashCode(), other.hashCode());
+		assertTrue(!record.equals(other));
 	}
 	
 	@Test
-	void testToString() {
-		String expected = "TimetableRecord [date=2020-11-05, lectureName=Test lecture, "
-				+ "startTime=07:30, endTime=09:00, roomNumber=201]";
+	void testEqualsMethodReturnsFalseWithObjectArgument() {
+		Object other = new Object();
 		
-		String actual = record.toString();
-		
-		assertEquals(expected, actual);
+		assertTrue(!record.equals(other));
 	}
-	
 	
 	private TimetableRecord getTestTimetableRecord() {
 		Course course = new Course("TST-100", "Test course");
