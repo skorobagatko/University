@@ -16,46 +16,6 @@ class LectureTest {
 	void setUp() throws Exception {
 		lecture = getTestLecture();
 	}
-
-	@Test
-	void testSetDate() {
-		LocalDate expected = LocalDate.of(2000, 1, 1);
-		
-		lecture.setDate(expected);
-		LocalDate actual = lecture.getDate();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testSetStartTime() {
-		LocalTime expected = LocalTime.of(8, 30);
-		
-		lecture.setStartTime(expected);
-		LocalTime actual = lecture.getStartTime();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testSetEndTime() {
-		LocalTime expected = LocalTime.of(10, 10);
-		
-		lecture.setEndTime(expected);
-		LocalTime actual = lecture.getEndTime();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testSetRoomNumber() {
-		int expected = 99;
-		
-		lecture.setRoomNumber(expected);
-		int actual = lecture.getRoomNumber();
-		
-		assertEquals(expected, actual);
-	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForEqualLectures() {
