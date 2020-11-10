@@ -22,14 +22,6 @@ public class Teacher implements Participant {
 		this.lastName = lastName;
 		this.courses = courses;
 	}
-	
-	public Timetable getDayTimetable(LocalDate date) {
-		return new Timetable(courses, date, date);
-	}
-	
-	public Timetable getMonthTimetable(LocalDate date) {
-		return new Timetable(courses, date, date.plusMonths(1));
-	}
 
 	public long getId() {
 		return id;

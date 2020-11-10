@@ -1,6 +1,5 @@
 package com.skorobahatko.university.domain;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,14 +44,6 @@ public class Student implements Participant {
 	
 	public void removeCourse(Course course) {
 		courses.remove(course);
-	}
-	
-	public Timetable getDayTimetable(LocalDate date) {
-		return new Timetable(courses, date, date);
-	}
-	
-	public Timetable getMonthTimetable(LocalDate date) {
-		return new Timetable(courses, date, date.plusMonths(1));
 	}
 	
 	@Override

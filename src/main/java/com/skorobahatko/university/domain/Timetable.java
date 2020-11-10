@@ -11,7 +11,19 @@ public class Timetable {
 	private LocalDate endDate;
 	private List<TimetableRecord> records;
 	
-	public Timetable(List<Course> courses, LocalDate startDate, LocalDate endDate) {
+	public static Timetable getDayTimetable(Participant participant, LocalDate date) {
+		return getTimetable(participant, date, date);
+	}
+	
+	public static Timetable getMonthTimetable(Participant participant, LocalDate date) {
+		return getTimetable(participant, date, date.plusMonths(1));
+	}
+	
+	private static Timetable getTimetable(Participant participant, LocalDate startDate, LocalDate endDate) {
+		return new Timetable(participant.getCourses(), startDate, endDate);
+	}
+	
+	private Timetable(List<Course> courses, LocalDate startDate, LocalDate endDate) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.records = getRecordsFromCoursesList(courses);
