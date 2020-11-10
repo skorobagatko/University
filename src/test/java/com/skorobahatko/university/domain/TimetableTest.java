@@ -36,7 +36,7 @@ class TimetableTest {
 		
 		assertEquals(expected, actual);
 	}
-
+	
 	@Test
 	void testGetMonthTimetable() throws Exception {
 		List<Course> courses = getTestCourses();
@@ -52,7 +52,7 @@ class TimetableTest {
 		
 		assertEquals(expected, actual);
 	}
-
+	
 	@Test
 	void testAddRecord() {
 		int recordsNumber = timetable.getRecords().size();
@@ -101,10 +101,14 @@ class TimetableTest {
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNonEqualTimetables() {
-		List<Course> testCourses = getTestCourses();
+		long studentId = 123;
+		String studentFirstName = "Test";
+		String studentLastName = "Test";
+		List<Course> studentCourses = getTestCourses();
+		Participant participant = new Student(studentId, studentFirstName, studentLastName, studentCourses);
+
 		LocalDate startDate = LocalDate.of(2021, 12, 6);
-		LocalDate endDate = LocalDate.of(2021, 12, 8);
-		Timetable other = new Timetable(testCourses, startDate, endDate);
+		Timetable other = Timetable.getDayTimetable(participant, startDate);
 		
 		assertTrue(!timetable.equals(other));
 	}
@@ -139,10 +143,14 @@ class TimetableTest {
 	}
 	
 	private Timetable getTestTimetable() {
-		List<Course> testCourses = getTestCourses();
+		long studentId = 123;
+		String studentFirstName = "Test";
+		String studentLastName = "Test";
+		List<Course> studentCourses = getTestCourses();
+		Participant participant = new Student(studentId, studentFirstName, studentLastName, studentCourses);
+		
 		LocalDate startDate = LocalDate.of(2020, 11, 5);
-		LocalDate endDate = LocalDate.of(2020, 11, 7);
-		return new Timetable(testCourses, startDate, endDate);
+		return Timetable.getDayTimetable(participant, startDate);
 	}
 	
 	private List<Course> getTestCourses() {
