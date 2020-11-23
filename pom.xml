@@ -15,10 +15,10 @@
 		<maven.compiler.version>3.8.1</maven.compiler.version>
 		<maven.surefire.version>2.22.2</maven.surefire.version>
 		<maven.failsafe.version>2.22.2</maven.failsafe.version>
-		<spring.context.version>5.2.9.RELEASE</spring.context.version>
-		<spring.test.version>5.2.9.RELEASE</spring.test.version>
+		<spring.version>5.2.9.RELEASE</spring.version>
 		<mockito.version>3.5.10</mockito.version>
 		<jacoco.version>0.8.6</jacoco.version>
+		<postgresql.version>42.2.16</postgresql.version>
 	</properties>
 
 	<dependencies>
@@ -50,17 +50,29 @@
 			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.context.version}</version>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-jdbc</artifactId>
+	        <version>${spring.version}</version>
+    	</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring.test.version}</version>
+			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -69,6 +81,12 @@
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
 		</dependency>
 
 	</dependencies>
