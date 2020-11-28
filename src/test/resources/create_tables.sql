@@ -1,11 +1,9 @@
-DROP TABLE IF EXISTS courses CASCADE;
 CREATE TABLE courses
 (
 	course_id SERIAL PRIMARY KEY,
 	course_name CHARACTER VARYING(100) NOT NULL
 );
 
-DROP TABLE IF EXISTS lectures CASCADE;
 CREATE TABLE lectures
 (
 	lecture_id SERIAL PRIMARY KEY,
@@ -19,14 +17,12 @@ CREATE TABLE lectures
     	REFERENCES courses (course_id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS participant_roles CASCADE;
 CREATE TABLE participant_roles
 (
 	role_id SERiAL PRIMARY KEY,
 	role_name CHARACTER VARYING(100) NOT NULL
 );
 
-DROP TABLE IF EXISTS participants CASCADE;
 CREATE TABLE participants
 (
 	participant_id SERiAL PRIMARY KEY,
@@ -37,7 +33,6 @@ CREATE TABLE participants
 		REFERENCES participant_roles (role_id) ON DELETE SET DEFAULT
 );
 
-DROP TABLE IF EXISTS participants_courses CASCADE;
 CREATE TABLE participants_courses
 (
   	participant_id INTEGER REFERENCES participants (participant_id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -45,7 +40,6 @@ CREATE TABLE participants_courses
   	PRIMARY KEY (participant_id, course_id)
 );
 
-DROP TABLE IF EXISTS timetables CASCADE;
 CREATE TABLE timetables
 (
 	timetable_id SERIAL PRIMARY KEY,
