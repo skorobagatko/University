@@ -55,11 +55,3 @@ CREATE TABLE timetables
 	FOREIGN KEY (participant_id)
 		REFERENCES participants (participant_id) ON DELETE CASCADE
 );
-
---DROP TABLE IF EXISTS timetables_lectures CASCADE;
---CREATE TABLE timetables_lectures
---(
---	timetable_id INTEGER REFERENCES timetables (timetable_id) ON UPDATE CASCADE ON DELETE CASCADE,
---	lecture_id INTEGER REFERENCES lectures (lecture_id) ON UPDATE CASCADE ON DELETE CASCADE,
---	PRIMARY KEY (timetable_id, lecture_id)
---);
