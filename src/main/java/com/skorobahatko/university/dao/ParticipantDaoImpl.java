@@ -46,10 +46,6 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	private CourseDao courseDao;
 	private LectureDao lectureDao;
 
-	public ParticipantDaoImpl() {
-		// NOP
-	}
-
 	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
