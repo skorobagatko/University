@@ -29,10 +29,6 @@ public class TimetableDaoImpl implements TimetableDao {
 	private JdbcTemplate jdbcTemplate;
 	private ParticipantDao participantDao;
 	
-	public TimetableDaoImpl() {
-		// NOP
-	}
-	
 	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
