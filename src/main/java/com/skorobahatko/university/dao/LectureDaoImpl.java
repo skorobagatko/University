@@ -33,10 +33,6 @@ public class LectureDaoImpl implements LectureDao {
 
 	private JdbcTemplate jdbcTemplate;
 
-	public LectureDaoImpl() {
-		// NOP
-	}
-
 	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
