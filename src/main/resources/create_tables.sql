@@ -40,8 +40,8 @@ CREATE TABLE participants
 DROP TABLE IF EXISTS participants_courses CASCADE;
 CREATE TABLE participants_courses
 (
-  	participant_id INTEGER REFERENCES participants (participant_id) ON UPDATE CASCADE ON DELETE CASCADE,
-	course_id INTEGER REFERENCES courses (course_id) ON UPDATE CASCADE ON DELETE CASCADE,
+  	participant_id INTEGER REFERENCES participants (participant_id) ON DELETE CASCADE,
+	course_id INTEGER REFERENCES courses (course_id) ON DELETE CASCADE,
   	PRIMARY KEY (participant_id, course_id)
 );
 
