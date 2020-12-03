@@ -34,7 +34,7 @@
        	<property name="lectureDao"  ref="lectureDao" />
     </bean>
     
-    <bean id="TimetableDao" class="com.skorobahatko.university.dao.TimetableDaoImpl">
+    <bean id="timetableDao" class="com.skorobahatko.university.dao.TimetableDaoImpl">
        	<property name="jdbcTemplate"  ref="jdbcTemplate" />
        	<property name="participantDao"  ref="participantDao" />
     </bean>
