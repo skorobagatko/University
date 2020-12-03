@@ -19,6 +19,7 @@
        	<property name="dataSource"  ref="dataSource" />
     </bean>
     
+    <!-- DAOs -->
     <bean id="lectureDao" class="com.skorobahatko.university.dao.LectureDaoImpl">
        	<property name="jdbcTemplate"  ref="jdbcTemplate" />
     </bean>
@@ -37,6 +38,23 @@
     <bean id="timetableDao" class="com.skorobahatko.university.dao.TimetableDaoImpl">
        	<property name="jdbcTemplate"  ref="jdbcTemplate" />
        	<property name="participantDao"  ref="participantDao" />
+    </bean>
+    
+    <!-- Services -->
+    <bean id="courseService" class="com.skorobahatko.university.service.CourseServiceImpl">
+       	<property name="courseDao"  ref="courseDao" />
+    </bean>
+    
+    <bean id="lectureService" class="com.skorobahatko.university.service.LectureServiceImpl">
+       	<property name="lectureDao"  ref="lectureDao" />
+    </bean>
+    
+    <bean id="participantService" class="com.skorobahatko.university.service.ParticipantServiceImpl">
+       	<property name="participantDao"  ref="participantDao" />
+    </bean>
+    
+    <bean id="timetableService" class="com.skorobahatko.university.service.TimetableServiceImpl">
+       	<property name="timetableDao"  ref="timetableDao" />
     </bean>
 
 </beans>
