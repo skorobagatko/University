@@ -1,6 +1,6 @@
 package com.skorobahatko.university.dao;
 
-import static com.skorobahatko.university.dao.util.DaoTestUtils.*;
+import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -34,13 +35,13 @@ import com.skorobahatko.university.domain.Lecture;
 @ContextConfiguration("/applicationContext.xml")
 class LectureDaoImplIT {
 
-	@Inject
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	@Inject
+	@Autowired
 	private LectureDao lectureDao;
 
-	@Inject
+	@Autowired
 	private CourseDao courseDao;
 
 	@Test
@@ -93,7 +94,7 @@ class LectureDaoImplIT {
 
 		Course course = getTestCourse();
 		courseDao.add(course);
-		List<Lecture> lectures = getTestLecturesWith(course.getId());
+		List<Lecture> lectures = getTestLecturesWithCourseId(course.getId());
 
 		lectureDao.addAll(lectures);
 

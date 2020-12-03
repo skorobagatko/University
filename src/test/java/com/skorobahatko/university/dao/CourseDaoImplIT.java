@@ -1,7 +1,7 @@
 package com.skorobahatko.university.dao;
 
+import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static com.skorobahatko.university.dao.util.DaoTestUtils.*;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -32,13 +33,13 @@ import com.skorobahatko.university.domain.Participant;
 @ContextConfiguration("/applicationContext.xml")
 class CourseDaoImplIT {
 	
-	@Inject
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	@Inject
+	@Autowired
 	private CourseDao courseDao;
 	
-	@Inject
+	@Autowired
 	private ParticipantDao participantDao;
 
 	@Test

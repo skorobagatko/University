@@ -1,15 +1,14 @@
 package com.skorobahatko.university.dao;
 
-import static com.skorobahatko.university.dao.util.DaoTestUtils.*;
+import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -33,10 +32,13 @@ import com.skorobahatko.university.domain.Timetable;
 @ContextConfiguration("/applicationContext.xml")
 class TimetableDaoImplIT {
 	
-	@Inject
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	@Inject	
+	@Autowired
+	private ParticipantDao participantDao;
+	
+	@Autowired
 	private TimetableDaoImpl timetableDao;
 
 	@Test
@@ -50,7 +52,8 @@ class TimetableDaoImplIT {
 	@Test
 	void testGetById() throws SQLException {
 		Participant participant = getTestParticipant();
-		Timetable timetable = getTestTimetableFor(participant);
+		participantDao.add(participant);
+		Timetable timetable = getTestTimetableForParticipant(participant);
 		timetableDao.add(timetable);
 		
 		int expected = timetable.getId();
@@ -64,7 +67,9 @@ class TimetableDaoImplIT {
 		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "timetables");
 		
 		Participant participant = getTestParticipant();
-		Timetable timetable = getTestTimetableFor(participant);
+		participantDao.add(participant);
+		Timetable timetable = getTestTimetableForParticipant(participant);
+		
 		timetableDao.add(timetable);
 		
 		int expected = rowsCount + 1;
@@ -76,7 +81,8 @@ class TimetableDaoImplIT {
 	@Test
 	void testRemoveById() throws SQLException {
 		Participant participant = getTestParticipant();
-		Timetable timetable = getTestTimetableFor(participant);
+		participantDao.add(participant);
+		Timetable timetable = getTestTimetableForParticipant(participant);
 		timetableDao.add(timetable);
 		int timetableId = timetable.getId();
 		

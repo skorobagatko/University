@@ -1,15 +1,14 @@
 package com.skorobahatko.university.dao;
 
-import static com.skorobahatko.university.dao.util.DaoTestUtils.*;
+import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -30,10 +29,10 @@ import com.skorobahatko.university.domain.Participant;
 @ContextConfiguration("/applicationContext.xml")
 class ParticipantDaoImplIT {
 	
-	@Inject
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	@Inject
+	@Autowired
 	ParticipantDaoImpl participantDao;
 
 	@Test
@@ -48,16 +47,16 @@ class ParticipantDaoImplIT {
 	void testGetById() throws SQLException {
 		Participant participant = getTestParticipant();
 		participantDao.add(participant);
-		int expected = participant.getId();
-		int actual = participantDao.getById(expected).get().getId();
 		
-		assertEquals(expected, actual);
+		int expectedId = participant.getId();
+		int actualId = participantDao.getById(expectedId).get().getId();
+		
+		assertEquals(expectedId, actualId);
 	}
 	
 	@Test
 	void testAdd() throws SQLException {
 		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "participants");
-		
 		Participant participant = getTestParticipant();
 		
 		participantDao.add(participant);
