@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ class CourseTest {
 
 	@Test
 	void testAddLecture() {
-		String courseId = "TST-100";
+		int courseId = 1;
 		String courseName = "Test course";
 		course = new Course(courseId, courseName);
 		Lecture lecture = getTestLecture();
@@ -48,7 +47,7 @@ class CourseTest {
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNonEqualCourses() {
-		String courseId = "QWERTY-999";
+		int courseId = 1234567;
 		String courseName = "Qwerty course";
 		Course other = new Course(courseId, courseName);
 		
@@ -77,7 +76,7 @@ class CourseTest {
 	}
 	
 	private Course getTestCourse() {
-		String courseId = "TST-100";
+		int courseId = 1;
 		String courseName = "Test course";
 		course = new Course(courseId, courseName);
 		
@@ -88,12 +87,13 @@ class CourseTest {
 	}
 	
 	private Lecture getTestLecture() {
-		String lectureName = "Recursive Algorithms";
+		int id = 1;
+		String lectureName = "Test lecture";
 		LocalDate lectureDate = LocalDate.of(2020, 11, 5);
 		LocalTime lectureStartTime = LocalTime.of(7, 30);
 		LocalTime lectureEndTime = LocalTime.of(9, 0);
 		int roomNumber = 201;
-		Lecture lecture = new Lecture(lectureName, course, lectureDate, lectureStartTime, lectureEndTime, roomNumber);
+		Lecture lecture = new Lecture(id, lectureName, course.getId(), lectureDate, lectureStartTime, lectureEndTime, roomNumber);
 		
 		return lecture;
 	}
