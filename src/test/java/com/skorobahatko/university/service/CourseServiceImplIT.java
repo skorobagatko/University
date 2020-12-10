@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +20,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import com.skorobahatko.university.dao.ParticipantDao;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Participant;
+import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.ValidationException;
 
 @SqlGroup({ 
 	@Sql("/delete_tables.sql"), 
@@ -71,19 +72,23 @@ class CourseServiceImplIT {
 		courseService.add(course);
 		
 		int expected = course.getId();
-		int actual = courseService.getById(expected).get().getId();
+		int actual = courseService.getById(expected).getId();
 
 		assertEquals(expected, actual);
 	}
 	
 	@Test
-	void testGetByIdForNonExistCourse() throws SQLException {
-		int courseId = Integer.MIN_VALUE;
-		
-		Optional<Course> expected = Optional.empty();
-		Optional<Course> actual = courseService.getById(courseId);
+	void testGetByIdThrowsExceptionForNonExistCourse() {
+		int courseId = Integer.MAX_VALUE;
 
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundServiceException.class, () -> courseService.getById(courseId));
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonValidCourseId() {
+		int courseId = -1;
+
+		assertThrows(ValidationException.class, () -> courseService.getById(courseId));
 	}
 
 	@Test
@@ -98,6 +103,13 @@ class CourseServiceImplIT {
 		
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	void testAddThrowsExceptionForNullCourseArgument() {
+		Course course = null;
+		
+		assertThrows(ValidationException.class, () -> courseService.add(course));
+	}
 
 	@Test
 	void testRemoveById() throws SQLException {
@@ -107,10 +119,7 @@ class CourseServiceImplIT {
 		
 		courseService.removeById(courseId);
 		
-		Optional<Course> expected = Optional.empty();
-		Optional<Course> actual = courseService.getById(courseId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundServiceException.class, () -> courseService.getById(courseId));
 	}
 
 }

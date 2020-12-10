@@ -2,14 +2,21 @@ package com.skorobahatko.university.dao;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.skorobahatko.university.dao.exception.DaoException;
+import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Timetable;
 
 public class TimetableDaoImpl implements TimetableDao {
+	
+	private static final Logger logger = LoggerFactory.getLogger(TimetableDaoImpl.class);
 	
 	private static final String TIMETABLE_ID = "timetable_id";
 	private static final String PARTICIPANT_ID = "participant_id";
@@ -39,59 +46,92 @@ public class TimetableDaoImpl implements TimetableDao {
 	
 	@Override
 	public List<Timetable> getAll() {
-		return jdbcTemplate.query(GET_ALL_SQL, (rs, rowNum) -> {
-			int timetableId = rs.getInt(TIMETABLE_ID);
-			int participantId = rs.getInt(PARTICIPANT_ID);
-			LocalDate startDate = rs.getDate(TIMETABLE_START_DATE).toLocalDate();
-			LocalDate endDate = rs.getDate(TIMETABLE_END_DATE).toLocalDate();
+		logger.debug("Retrieving Timetables list");
+		
+		try {
+			List<Timetable> result = jdbcTemplate.query(GET_ALL_SQL, (rs, rowNum) -> {
+				int timetableId = rs.getInt(TIMETABLE_ID);
+				int participantId = rs.getInt(PARTICIPANT_ID);
+				LocalDate startDate = rs.getDate(TIMETABLE_START_DATE).toLocalDate();
+				LocalDate endDate = rs.getDate(TIMETABLE_END_DATE).toLocalDate();
+				
+				Participant participant = participantDao.getById(participantId);
+				
+				return new Timetable(timetableId, participant, startDate, endDate);
+			});
 			
-			Optional<Participant> participantOptional = participantDao.getById(participantId);
-			if (participantOptional.isEmpty()) {
-				throw new DaoException("Can't find the participant with id = " + participantId);
-			}
-			Participant participant = participantOptional.get();
+			logger.debug("Retrieved {} Timetables", result.size());
 			
-			return new Timetable(timetableId, participant, startDate, endDate);
-		});
+			return result;
+		} catch (DataAccessException e) {
+			throw new DaoException("Unable to get timetables", e);
+		}
 	}
 	
 	@Override
-	public Optional<Timetable> getById(int id) {
-		return jdbcTemplate.query(GET_BY_ID_SQL, 
-				ps -> ps.setInt(1, id),
-				rs -> {
-					if (rs.next()) {
-						int timetableId = rs.getInt(TIMETABLE_ID);
-						int participantId = rs.getInt(PARTICIPANT_ID);
-						LocalDate startDate = rs.getDate(TIMETABLE_START_DATE).toLocalDate();
-						LocalDate endDate = rs.getDate(TIMETABLE_END_DATE).toLocalDate();
-						
-						Optional<Participant> participantOptional = participantDao.getById(participantId);
-						if (participantOptional.isEmpty()) {
-							throw new DaoException("Can't find the participant with id = " + participantId);
-						}
-						Participant participant = participantOptional.get();
-						
-						return Optional.of(new Timetable(timetableId, participant, startDate, endDate));
-					} else {
-						return Optional.empty();
-					}
-				}
-		);
+	public Timetable getById(int id) {
+		logger.debug("Retrieving Timetable with id = {}", id);
+		
+		try {
+			Timetable result = jdbcTemplate.queryForObject(GET_BY_ID_SQL, new Object[] {id}, (rs, rowNum) -> {
+				int timetableId = rs.getInt(TIMETABLE_ID);
+				int participantId = rs.getInt(PARTICIPANT_ID);
+				LocalDate startDate = rs.getDate(TIMETABLE_START_DATE).toLocalDate();
+				LocalDate endDate = rs.getDate(TIMETABLE_END_DATE).toLocalDate();
+				Participant participant = participantDao.getById(participantId);
+				
+				return new Timetable(timetableId, participant, startDate, endDate);
+			});
+			
+			logger.debug("Timetable with id = {} successfully retrieved", id);
+			
+			return result;
+		} catch (EmptyResultDataAccessException e) {
+			String message = String.format("Timetable with id = %d not found", id);
+			throw new EntityNotFoundDaoException(message, e);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to get Timetable with id = %d", id);
+			throw new DaoException(message, e);
+		}
 	}
 	
 	@Override
 	public void add(Timetable timetable) {
+		logger.debug("Adding Timetable: {}", timetable);
+		
 		checkForNull(timetable);
 		
-		int timetableId = insertTimetable(timetable);
+		try {
+			int timetableId = insertTimetable(timetable);
+			
+			timetable.setId(timetableId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to add Timetable: %s", timetable);
+			throw new DaoException(message, e);
+		}
 		
-		timetable.setId(timetableId);
+		logger.debug("Successfully added Timetable {}", timetable);
 	}
 	
 	@Override
 	public void removeById(int id) {
-		jdbcTemplate.update(REMOVE_BY_ID_SQL, id);
+		logger.debug("Removing Timetable with id = {}", id);
+		
+		int affectedRows = 0;
+		
+		try {
+			affectedRows = jdbcTemplate.update(REMOVE_BY_ID_SQL, id);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to remove Timetable with id = %d", id);
+			throw new DaoException(message, e);
+		}
+		
+		if (affectedRows == 0) {
+			String message = String.format("Timetable with id = %d not found", id);
+			throw new EntityNotFoundDaoException(message);
+		}
+		
+		logger.debug("Timetable with id = {} successfully removed", id);
 	}
 	
 	private int insertTimetable(Timetable timetable) {

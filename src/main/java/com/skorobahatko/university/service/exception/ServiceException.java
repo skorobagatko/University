@@ -1,5 +1,6 @@
-package com.skorobahatko.university.service;
+package com.skorobahatko.university.service.exception;
 
+@SuppressWarnings("serial")
 public class ServiceException extends RuntimeException {
 
 	public ServiceException() {

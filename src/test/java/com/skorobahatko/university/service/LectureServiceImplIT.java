@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +19,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import com.skorobahatko.university.dao.CourseDao;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
+import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.ValidationException;
 
 @SqlGroup({ 
 	@Sql("/delete_tables.sql"), 
@@ -57,17 +58,23 @@ class LectureServiceImplIT {
 		lectureService.add(lecture);
 		
 		int expectedId = lecture.getId();
-		int actualId = lectureService.getById(expectedId).get().getId();
+		int actualId = lectureService.getById(expectedId).getId();
 
 		assertEquals(expectedId, actualId);
 	}
 	
 	@Test
-	void testGetByIdForNonExistLectureId() throws SQLException {
-		Optional<Lecture> expected = Optional.empty();
-		Optional<Lecture> actual = lectureService.getById(Integer.MIN_VALUE);
+	void testGetByIdThrowsExceptionForNonExistLecture() throws SQLException {
+		int lectureId = Integer.MAX_VALUE;
 
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundServiceException.class, () -> lectureService.getById(lectureId));
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonValidLectureId() {
+		int lectureId = -1;
+
+		assertThrows(ValidationException.class, () -> lectureService.getById(lectureId));
 	}
 
 	@Test
@@ -84,7 +91,7 @@ class LectureServiceImplIT {
 	@Test
 	void testGetByCourseIdForNonExistCourseId() throws SQLException {
 		List<Lecture> expected = List.of();
-		List<Lecture> actual = lectureService.getByCourseId(Integer.MIN_VALUE);
+		List<Lecture> actual = lectureService.getByCourseId(Integer.MAX_VALUE);
 
 		assertEquals(expected, actual);
 	}
@@ -120,6 +127,13 @@ class LectureServiceImplIT {
 		
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	void testAddThrowsExceptionForNullLectureArgument() {
+		Lecture lecture = null;
+		
+		assertThrows(ValidationException.class, () -> lectureService.add(lecture));
+	}
 
 	@Test
 	void testRemoveById() throws SQLException {
@@ -131,10 +145,7 @@ class LectureServiceImplIT {
 		
 		lectureService.removeById(lectureId);
 		
-		Optional<Lecture> expected = Optional.empty();
-		Optional<Lecture> actual = lectureService.getById(lectureId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundServiceException.class, () -> lectureService.getById(lectureId));
 	}
 
 }

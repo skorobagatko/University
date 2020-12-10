@@ -4,8 +4,6 @@ import static com.skorobahatko.university.util.TestUtils.getTestParticipant;
 import static com.skorobahatko.university.util.TestUtils.getTestTimetableForParticipant;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Timetable;
+import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.ValidationException;
 
 @SqlGroup({ 
 	@Sql("/delete_tables.sql"), 
@@ -57,9 +57,23 @@ class TimetableServiceImplIT {
 		timetableService.add(timetable);
 		
 		int expectedId = timetable.getId();
-		int actualId = timetableService.getById(expectedId).get().getId();
+		int actualId = timetableService.getById(expectedId).getId();
 		
 		assertEquals(expectedId, actualId);
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonExistTimetable() {
+		int timetableId = Integer.MAX_VALUE;
+		
+		assertThrows(EntityNotFoundServiceException.class, () -> timetableService.getById(timetableId));
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonValidTimetableId() {
+		int timetableId = -1;
+
+		assertThrows(ValidationException.class, () -> timetableService.getById(timetableId));
 	}
 
 	@Test
@@ -77,6 +91,13 @@ class TimetableServiceImplIT {
 		
 		assertEquals(expectedRowsCount, actualRowsCount);
 	}
+	
+	@Test
+	void testAddThrowsExceptionForNullTimetableArgument() {
+		Timetable timetable = null;
+		
+		assertThrows(ValidationException.class, () -> timetableService.add(timetable));
+	}
 
 	@Test
 	void testRemoveById() {
@@ -88,10 +109,7 @@ class TimetableServiceImplIT {
 		
 		timetableService.removeById(timetableId);
 		
-		Optional<Timetable> expected = Optional.empty();
-		Optional<Timetable> actual = timetableService.getById(timetableId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundServiceException.class, () -> timetableService.getById(timetableId));
 	}
 
 }

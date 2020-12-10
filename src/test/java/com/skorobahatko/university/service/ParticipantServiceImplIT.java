@@ -3,8 +3,6 @@ package com.skorobahatko.university.service;
 import static com.skorobahatko.university.util.TestUtils.getTestParticipant;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import com.skorobahatko.university.domain.Participant;
+import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.ValidationException;
 
 @SqlGroup({ 
 	@Sql("/delete_tables.sql"), 
@@ -48,9 +48,23 @@ class ParticipantServiceImplIT {
 		participantService.add(participant);
 		
 		int expectedId = participant.getId();
-		int actualId = participantService.getById(expectedId).get().getId();
+		int actualId = participantService.getById(expectedId).getId();
 		
 		assertEquals(expectedId, actualId);
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonExistParticipant() {
+		int participantId = Integer.MAX_VALUE;
+		
+		assertThrows(EntityNotFoundServiceException.class, () -> participantService.getById(participantId));
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonValidParticipantId() {
+		int participantId = -1;
+
+		assertThrows(ValidationException.class, () -> participantService.getById(participantId));
 	}
 
 	@Test
@@ -65,6 +79,13 @@ class ParticipantServiceImplIT {
 		
 		assertEquals(expectedRowsCount, actualRowsCount);
 	}
+	
+	@Test
+	void testAddThrowsExceptionForNullParticipantArgument() {
+		Participant participant = null;
+		
+		assertThrows(ValidationException.class, () -> participantService.add(participant));
+	}
 
 	@Test
 	void testRemoveById() {
@@ -74,10 +95,7 @@ class ParticipantServiceImplIT {
 		
 		participantService.removeById(participantId);
 		
-		Optional<Participant> expected = Optional.empty();
-		Optional<Participant> actual = participantService.getById(participantId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundServiceException.class, () -> participantService.getById(participantId));
 	}
 
 }

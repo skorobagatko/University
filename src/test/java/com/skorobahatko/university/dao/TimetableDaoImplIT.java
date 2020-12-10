@@ -4,7 +4,6 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +15,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
+import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Timetable;
 
@@ -57,7 +57,7 @@ class TimetableDaoImplIT {
 		timetableDao.add(timetable);
 		
 		int expected = timetable.getId();
-		int actual = timetableDao.getById(expected).get().getId();
+		int actual = timetableDao.getById(expected).getId();
 		
 		assertEquals(expected, actual);
 	}
@@ -88,10 +88,7 @@ class TimetableDaoImplIT {
 		
 		timetableDao.removeById(timetableId);
 		
-		Optional<Timetable> expected = Optional.empty();
-		Optional<Timetable> actual = timetableDao.getById(timetableId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundDaoException.class, () -> timetableDao.getById(timetableId));
 	}
 
 }

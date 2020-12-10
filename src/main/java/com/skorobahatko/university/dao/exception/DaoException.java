@@ -1,9 +1,9 @@
-package com.skorobahatko.university.dao;
+package com.skorobahatko.university.dao.exception;
 
+@SuppressWarnings("serial")
 public class DaoException extends RuntimeException {
 
 	public DaoException() {
-
 	}
 
 	public DaoException(String message) {

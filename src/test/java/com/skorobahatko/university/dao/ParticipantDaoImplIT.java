@@ -4,7 +4,6 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +15,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
+import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Participant;
 
 @SqlGroup({ 
@@ -49,7 +49,7 @@ class ParticipantDaoImplIT {
 		participantDao.add(participant);
 		
 		int expectedId = participant.getId();
-		int actualId = participantDao.getById(expectedId).get().getId();
+		int actualId = participantDao.getById(expectedId).getId();
 		
 		assertEquals(expectedId, actualId);
 	}
@@ -75,10 +75,7 @@ class ParticipantDaoImplIT {
 		
 		participantDao.removeById(participantId);
 		
-		Optional<Participant> expected = Optional.empty();
-		Optional<Participant> actual = participantDao.getById(participantId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundDaoException.class, () -> participantDao.getById(participantId));
 	}
 
 }

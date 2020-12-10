@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +16,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
+import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Participant;
 
@@ -71,19 +69,16 @@ class CourseDaoImplIT {
 		courseDao.add(course);
 		
 		int expected = course.getId();
-		int actual = courseDao.getById(expected).get().getId();
+		int actual = courseDao.getById(expected).getId();
 
 		assertEquals(expected, actual);
 	}
 	
 	@Test
-	void testGetByIdForNonExistCourse() throws SQLException {
+	void testGetByIdThrowsExceptionForNonExistCourse() throws SQLException {
 		int courseId = Integer.MIN_VALUE;
-		
-		Optional<Course> expected = Optional.empty();
-		Optional<Course> actual = courseDao.getById(courseId);
 
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundDaoException.class, () -> courseDao.getById(courseId));
 	}
 
 	@Test
@@ -108,10 +103,7 @@ class CourseDaoImplIT {
 		
 		courseDao.removeById(courseId);
 		
-		Optional<Course> expected = Optional.empty();
-		Optional<Course> actual = courseDao.getById(courseId);
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundDaoException.class, () -> courseDao.getById(courseId));
 	}
 
 }
