@@ -4,7 +4,6 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,8 @@ import org.mockito.Mockito;
 
 import com.skorobahatko.university.dao.ParticipantDao;
 import com.skorobahatko.university.domain.Participant;
+import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.ValidationException;
 
 class ParticipantServiceImplTest {
 	
@@ -39,17 +40,34 @@ class ParticipantServiceImplTest {
 	@Test
 	void testGetById() {
 		int participantId = 1;
-		Participant participant = getTestParticipant();
-		participant.setId(participantId);
-		Optional<Participant> expected = Optional.of(participant);
+		Participant expected = getTestParticipant();
+		expected.setId(participantId);
 		
 		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
 		Mockito.when(participantDao.getById(participantId)).thenReturn(expected);
 		participantService.setParticipantDao(participantDao);
 		
-		Optional<Participant> actual = participantService.getById(participantId);
+		Participant actual = participantService.getById(participantId);
 		
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonExistParticipant() {
+		int participantId = Integer.MAX_VALUE;
+		
+		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
+		Mockito.when(participantDao.getById(participantId)).thenThrow(EntityNotFoundServiceException.class);
+		participantService.setParticipantDao(participantDao);
+		
+		assertThrows(EntityNotFoundServiceException.class, () -> participantService.getById(participantId));
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonValidParticipantId() {
+		int participantId = -1;
+
+		assertThrows(ValidationException.class, () -> participantService.getById(participantId));
 	}
 
 	@Test
@@ -62,6 +80,13 @@ class ParticipantServiceImplTest {
 		participantService.add(participant);
 		
 		Mockito.verify(participantDao).add(participant);
+	}
+	
+	@Test
+	void testAddThrowsExceptionForNullParticipantArgument() {
+		Participant participant = null;
+		
+		assertThrows(ValidationException.class, () -> participantService.add(participant));
 	}
 
 	@Test

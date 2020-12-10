@@ -7,9 +7,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +18,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
+import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
 
@@ -63,7 +61,7 @@ class LectureDaoImplIT {
 		
 		int expected = lecture.getId();
 
-		int actual = lectureDao.getById(expected).get().getId();
+		int actual = lectureDao.getById(expected).getId();
 
 		assertEquals(expected, actual);
 	}
@@ -130,14 +128,11 @@ class LectureDaoImplIT {
 		Lecture lecture = new Lecture("Test Lecture", course.getId(), LocalDate.of(2020, 12, 1), 
 				LocalTime.of(7, 30), LocalTime.of(9, 00), 100);
 		lectureDao.add(lecture);
+		int lectureId = lecture.getId();
 		
-		lectureDao.removeById(lecture.getId());
+		lectureDao.removeById(lectureId);
 		
-		Optional<Lecture> expected = Optional.empty();
-		
-		Optional<Lecture> actual = lectureDao.getById(lecture.getId());
-		
-		assertEquals(expected, actual);
+		assertThrows(EntityNotFoundDaoException.class, () -> lectureDao.getById(lectureId));
 	}
 
 }

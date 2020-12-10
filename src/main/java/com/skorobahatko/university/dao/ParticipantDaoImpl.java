@@ -1,10 +1,15 @@
 package com.skorobahatko.university.dao;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.skorobahatko.university.dao.exception.DaoException;
+import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.domain.Participant;
@@ -12,6 +17,8 @@ import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.domain.Teacher;
 
 public class ParticipantDaoImpl implements ParticipantDao {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ParticipantDaoImpl.class);
 
 	private static final String PARTICIPANT_ID = "participant_id";
 	private static final String FIRST_NAME = "first_name";
@@ -60,27 +67,39 @@ public class ParticipantDaoImpl implements ParticipantDao {
 
 	@Override
 	public List<Participant> getAll() {
-		return jdbcTemplate.query(GET_ALL_SQL, (rs, rowNum) -> {
-			int id = rs.getInt(PARTICIPANT_ID);
-			String firstName = rs.getString(FIRST_NAME);
-			String lastName = rs.getString(LAST_NAME);
-			String roleName = rs.getString(ROLE_NAME);
-			List<Course> courses = getParticipantCoursesByParticipantId(id);
+		logger.debug("Retrieving the participants list");
+		
+		try {
+			List<Participant> result = jdbcTemplate.query(GET_ALL_SQL, (rs, rowNum) -> {
+				int id = rs.getInt(PARTICIPANT_ID);
+				String firstName = rs.getString(FIRST_NAME);
+				String lastName = rs.getString(LAST_NAME);
+				String roleName = rs.getString(ROLE_NAME);
+				List<Course> courses = getParticipantCoursesByParticipantId(id);
 
-			Participant participant = getParticipantByRoleName(roleName);
-			participant.setId(id);
-			participant.setFirstName(firstName);
-			participant.setLastName(lastName);
-			participant.setCourses(courses);
+				Participant participant = getParticipantByRoleName(roleName);
+				participant.setId(id);
+				participant.setFirstName(firstName);
+				participant.setLastName(lastName);
+				participant.setCourses(courses);
 
-			return participant;
-		});
+				return participant;
+			});
+			
+			logger.debug("Retrieved {} participants", result.size());
+			
+			return result;
+		} catch (DataAccessException e) {
+			throw new DaoException("Unable to get participants", e);
+		}
 	}
 
 	@Override
-	public Optional<Participant> getById(int id) {
-		return jdbcTemplate.query(GET_BY_ID_SQL, ps -> ps.setInt(1, id), rs -> {
-			if (rs.next()) {
+	public Participant getById(int id) {
+		logger.debug("Retrieving Participant with id = {}", id);
+		
+		try {
+			Participant result = jdbcTemplate.queryForObject(GET_BY_ID_SQL, new Object[] {id}, (rs, rowNum) -> {
 				String firstName = rs.getString(FIRST_NAME);
 				String lastName = rs.getString(LAST_NAME);
 				String roleName = rs.getString(ROLE_NAME);
@@ -91,28 +110,61 @@ public class ParticipantDaoImpl implements ParticipantDao {
 				participant.setFirstName(firstName);
 				participant.setLastName(lastName);
 				participant.setCourses(courses);
-
-				return Optional.of(participant);
-			} else {
-				return Optional.empty();
-			}
-		});
+				
+				return participant;
+			});
+			
+			logger.debug("Participant with id = {} successfully retrieved", id);
+			
+			return result;
+		} catch (EmptyResultDataAccessException e) {
+			String message = String.format("Participant with id = %d not found", id);
+			throw new EntityNotFoundDaoException(message, e);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to get Participant with id = %d", id);
+			throw new DaoException(message, e);
+		}
 	}
 
 	@Override
 	public void add(Participant participant) {
+		logger.debug("Adding Participant: {}", participant);
+		
 		checkForNull(participant);
 
-		int participantId = insertParticipant(participant);
-		
-		participant.setId(participantId);
+		try {
+			int participantId = insertParticipant(participant);
+			
+			participant.setId(participantId);
 
-		insertParticipantCoursePairs(participant);
+			insertParticipantCoursePairs(participant);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to add Participant: %s", participant);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Successfully added Participant {}", participant);
 	}
 
 	@Override
 	public void removeById(int id) {
-		jdbcTemplate.update(REMOVE_BY_ID_SQL, id);
+		logger.debug("Removing Participant with id = {}", id);
+		
+		int affectedRows = 0;
+		
+		try {
+			affectedRows = jdbcTemplate.update(REMOVE_BY_ID_SQL, id);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to remove Participant with id = %d", id);
+			throw new DaoException(message, e);
+		}
+		
+		if (affectedRows == 0) {
+			String message = String.format("Participant with id = %d not found", id);
+			throw new EntityNotFoundDaoException(message);
+		}
+		
+		logger.debug("Participant with id = {} successfully removed", id);
 	}
 
 	private int insertParticipant(Participant participant) {
@@ -156,7 +208,7 @@ public class ParticipantDaoImpl implements ParticipantDao {
 		} else if (roleName.equalsIgnoreCase("Student")) {
 			return new Student();
 		} else {
-			throw new DaoException("Can't find participant role with name '" + roleName + "'");
+			throw new DaoException("Unable to get Participant role with name '" + roleName + "'");
 		}
 	}
 

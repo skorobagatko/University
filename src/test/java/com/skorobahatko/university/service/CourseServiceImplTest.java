@@ -4,7 +4,6 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,8 @@ import org.mockito.Mockito;
 
 import com.skorobahatko.university.dao.CourseDao;
 import com.skorobahatko.university.domain.Course;
+import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.ValidationException;
 
 class CourseServiceImplTest {
 	
@@ -52,17 +53,35 @@ class CourseServiceImplTest {
 
 	@Test
 	void testGetById() {
-		Course course = getTestCourse();
-		course.setId(1);
-		Optional<Course> expected = Optional.of(course);
+		Course expected = getTestCourse();
+		int courseId = 1;
+		expected.setId(courseId);
 		
 		CourseDao courseDao = Mockito.mock(CourseDao.class);
-		Mockito.when(courseDao.getById(1)).thenReturn(expected);
+		Mockito.when(courseDao.getById(courseId)).thenReturn(expected);
 		courseService.setCourseDao(courseDao);
 		
-		Optional<Course> actual = courseService.getById(1);
+		Course actual = courseService.getById(courseId);
 		
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonExistCourse() {
+		int courseId = Integer.MAX_VALUE;
+		
+		CourseDao courseDao = Mockito.mock(CourseDao.class);
+		Mockito.when(courseDao.getById(courseId)).thenThrow(EntityNotFoundServiceException.class);
+		courseService.setCourseDao(courseDao);
+		
+		assertThrows(EntityNotFoundServiceException.class, () -> courseService.getById(courseId));
+	}
+	
+	@Test
+	void testGetByIdThrowsExceptionForNonValidCourseId() {
+		int courseId = -1;
+
+		assertThrows(ValidationException.class, () -> courseService.getById(courseId));
 	}
 
 	@Test
@@ -75,6 +94,13 @@ class CourseServiceImplTest {
 		courseService.add(course);
 		
 		Mockito.verify(courseDao).add(course);
+	}
+	
+	@Test
+	void testAddThrowsExceptionForNullCourseArgument() {
+		Course course = null;
+		
+		assertThrows(ValidationException.class, () -> courseService.add(course));
 	}
 
 	@Test
