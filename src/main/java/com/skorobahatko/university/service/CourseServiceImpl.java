@@ -61,9 +61,21 @@ public class CourseServiceImpl implements CourseService {
 		try {
 			courseDao.add(course);
 		} catch (DaoException e) {
-			String message = String.format("Unable to add the Course: %s", course);
+			String message = String.format("Unable to add Course: %s", course);
 			throw new ServiceException(message, e);
 		}
+	}
+	
+	@Override
+	public void update(Course course) {
+		validateCourse(course);
+		
+		try {
+			courseDao.update(course);
+		} catch (DaoException e) {
+			String message = String.format("Unable to update Course: %s", course);
+			throw new ServiceException(message, e);
+		}		
 	}
 
 	@Override

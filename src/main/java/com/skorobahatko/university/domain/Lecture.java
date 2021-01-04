@@ -14,6 +14,8 @@ public class Lecture {
 	private LocalTime endTime;
 	private int roomNumber;
 	
+	public Lecture() {}
+	
 	public Lecture(String name, LocalDate date, LocalTime startTime, LocalTime endTime, int roomNumber) {
 		this(0, name, 0, date, startTime, endTime, roomNumber);
 	}

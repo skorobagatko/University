@@ -132,12 +132,12 @@ public class Timetable {
 				.flatMap(course -> course.getLectures().stream())
 				.filter(lecture -> {
 					LocalDate lectureDate = lecture.getDate();
-					return  (lectureDate.isAfter(startDate) && lectureDate.isBefore(endDate)) || 
-							(lectureDate.equals(startDate) || lectureDate.equals(endDate));
+					
+					return  lectureDate.isEqual(startDate) || 
+							lectureDate.isEqual(endDate) || 
+							(lectureDate.isAfter(startDate) && lectureDate.isBefore(endDate));
 				})
 				.collect(Collectors.toList());
-				
-				
 	}
 	
 }

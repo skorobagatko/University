@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Timetable</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">University</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/}">Home</a> <a
+					class="nav-item nav-link" th:href="@{/courses}">Courses</a> <a
+					class="nav-item nav-link" th:href="@{/students}">Students</a> <a
+					class="nav-item nav-link" th:href="@{/teachers}">Teachers</a> <a
+					class="nav-item nav-link active" th:href="@{/timetables}">Timetables</a>
+			</div>
+		</div>
+	</nav>
+
+	<br />
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th scope="col">Lecture Name</th>
+				<th scope="col">Lecture Date</th>
+				<th scope="col">Lecture Start Time</th>
+				<th scope="col">Lecture End Time</th>
+				<th scope="col">Lecture Room Number</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="lecture : ${timetable.getLectures()}">
+				<!-- <th scope="row">1</th> -->
+				<td th:text="${lecture.getName()}">Lecture Name</td>
+				<td th:text="${lecture.getDate()}">Lecture Date</td>
+				<td th:text="${lecture.getStartTime()}">Lecture Start Time</td>
+				<td th:text="${lecture.getEndTime()}">Lecture End Time</td>
+				<td th:text="${lecture.getRoomNumber()}">Lecture Room Number</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

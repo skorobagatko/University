@@ -43,6 +43,21 @@ public class TimetableServiceImpl implements TimetableService {
 			throw new ServiceException(message, e);
 		}
 	}
+	
+	@Override
+	public Timetable getByParticipantId(int participantId) {
+		validateId(participantId);
+		
+		try {
+			return timetableDao.getByParticipantId(participantId);
+		} catch (EntityNotFoundDaoException e) {
+			String message = String.format("Timetable for Participant with id = %d not found", participantId);
+			throw new EntityNotFoundServiceException(message);
+		} catch (DaoException e) {
+			String message = String.format("Unable to get Timetable for Participant with id = %d", participantId);
+			throw new ServiceException(message, e);
+		}
+	}
 
 	@Override
 	public void add(Timetable timetable) {
@@ -52,6 +67,18 @@ public class TimetableServiceImpl implements TimetableService {
 			timetableDao.add(timetable);
 		} catch (DaoException e) {
 			String message = String.format("Unable to add the Timetable: %s", timetable);
+			throw new ServiceException(message, e);
+		}
+	}
+	
+	@Override
+	public void update(Timetable timetable) {
+		validateLecture(timetable);
+		
+		try {
+			timetableDao.update(timetable);
+		} catch (DaoException e) {
+			String message = String.format("Unable to update Timetable: %s", timetable);
 			throw new ServiceException(message, e);
 		}
 	}

@@ -27,9 +27,14 @@ public class TimetableDaoImpl implements TimetableDao {
 	
 	private static final String GET_BY_ID_SQL = "SELECT * FROM timetables WHERE timetable_id = ?;";
 	
+	private static final String GET_BY_PARTICIPANT_ID_SQL = "SELECT * FROM timetables WHERE participant_id = ?;";
+	
 	private static final String ADD_SQL = "INSERT INTO timetables "
 			+ "(participant_id, timetable_start_date, timetable_end_date) "
 			+ "VALUES (?, ?, ?) RETURNING timetable_id;";
+	
+	private static final String UPDATE_SQL = "UPDATE timetables SET timetable_start_date = ?, "
+			+ "timetable_end_date = ? WHERE timetable_id = ?;";
 	
 	private static final String REMOVE_BY_ID_SQL = "DELETE FROM timetables WHERE timetable_id = ?;";
 	
@@ -96,6 +101,32 @@ public class TimetableDaoImpl implements TimetableDao {
 	}
 	
 	@Override
+	public Timetable getByParticipantId(int participantId) {
+		logger.debug("Retrieving Timetable for Participant with id = {}", participantId);
+		
+		try {
+			Timetable result = jdbcTemplate.queryForObject(GET_BY_PARTICIPANT_ID_SQL, new Object[] {participantId}, (rs, rowNum) -> {
+				int timetableId = rs.getInt(TIMETABLE_ID);
+				LocalDate startDate = rs.getDate(TIMETABLE_START_DATE).toLocalDate();
+				LocalDate endDate = rs.getDate(TIMETABLE_END_DATE).toLocalDate();
+				Participant participant = participantDao.getById(participantId);
+				
+				return new Timetable(timetableId, participant, startDate, endDate);
+			});
+			
+			logger.debug("Timetable for Participant with id = {} successfully retrieved", participantId);
+			
+			return result;
+		} catch (EmptyResultDataAccessException e) {
+			String message = String.format("Timetable for Participant with id = %d not found", participantId);
+			throw new EntityNotFoundDaoException(message, e);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to get Timetable for Participant  with id = %d", participantId);
+			throw new DaoException(message, e);
+		}
+	}
+	
+	@Override
 	public void add(Timetable timetable) {
 		logger.debug("Adding Timetable: {}", timetable);
 		
@@ -111,6 +142,22 @@ public class TimetableDaoImpl implements TimetableDao {
 		}
 		
 		logger.debug("Successfully added Timetable {}", timetable);
+	}
+	
+	@Override
+	public void update(Timetable timetable) {
+		logger.debug("Updating Timetable: {}", timetable);
+		
+		checkForNull(timetable);
+		
+		try {
+			jdbcTemplate.update(UPDATE_SQL, timetable.getStartDate(), timetable.getEndDate(), timetable.getId());
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to update Timetable: %s", timetable);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Successfully updated Timetable {}", timetable);
 	}
 	
 	@Override

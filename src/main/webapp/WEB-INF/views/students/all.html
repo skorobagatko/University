@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>All Students</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">University</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/}">Home</a> 
+				<a class="nav-item nav-link" th:href="@{/courses}">Courses</a> 
+				<a class="nav-item nav-link active" th:href="@{/students}">Students</a>
+				<a class="nav-item nav-link" th:href="@{/teachers}">Teachers</a>
+				<a class="nav-item nav-link" th:href="@{/timetables}">Timetables</a>
+			</div>
+		</div>
+	</nav>
+
+	<br/>
+	
+	<!-- <div class="row justify-content-md-center">
+		<a th:href="@{/students/new}" class="btn btn-success">Add Student</a>
+	</div> -->
+	
+	<!-- Add student modal button trigger  -->
+	<div class="row justify-content-md-center">
+		<button type="button" class="btn btn-primary" data-toggle="modal"
+			data-target="#addStudentModal">Add Student</button>
+	</div>
+	
+	<!-- Add student Modal -->
+	<div class="modal fade" id="addStudentModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Add Student</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="addNewStudentForm" method="POST" th:action="@{/students/new}">
+					
+						<div class="form-group row">
+							<label for="firstName" class="col-sm-4 col-form-label">First Name*</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" name="firstName"
+									id="firstName" placeholder="First Name" required>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label for="lastName" class="col-sm-4 col-form-label">Last Name*</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" name="lastName"
+									id="lastName" placeholder="Last Name" required>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label for="courseId" class="col-sm-4 col-form-label">Course</label>
+							<div class="col-sm-8">
+								<select class="form-control" id="courseId" name="courseId">
+									<option th:each="course : ${@courseService.getAll()}" 
+										th:value="${course.getId()}" th:text="${course.getName()}"></option>
+								</select>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-8 text-left">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+							<div class="col-sm-4 text-right">
+								<button type="submit" class="btn btn-primary">Add Student</button>
+							</div>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<br/>
+	
+	<div th:each="student : ${students}" class="text-center">
+		<div class="container text-center w-50 p-2">
+			<div class="card">
+				<div class="card-header" th:id="'cardHeader' + ${student.getId()}">
+					<div class="row">
+						<div class="col text-left">
+							<button class="btn btn-link text-secondary" type="button"
+								data-toggle="collapse"
+								th:attr="data-target='#collapse' + ${student.getId()},aria-controls='collapse' + ${student.getId()}"
+								aria-expanded="true" th:text="${student.getFirstName()} + ' ' + ${student.getLastName()}">
+								Student Name
+							</button>
+						</div>
+						<div class="col-sm text-right">
+						
+							<!-- Delete student Form -->
+							<form th:id="'deleteStudent' + ${student.getId()}"
+								th:method="DELETE"
+								th:action="@{/students/{id}(id=${student.getId()})}"></form>
+						
+							<a class="btn btn-secondary" 
+								th:href="@{/students/{id}/edit(id=${student.getId()})}" 
+								role="button"> Edit </a> 
+								
+							<!-- Button for delete student Form -->
+							<button type="submit"
+								th:form="'deleteStudent' + ${student.getId()}"
+								class="btn btn-danger">Delete</button>
+								
+						</div>
+					</div>
+				</div>
+				<div th:id="'collapse' + ${student.getId()}" class="collapse show"
+					th:attr="aria-labelledby='cardHeader' + ${student.getId()}">
+					<div class="card-body">
+						<h6 class="text-center">Courses</h6>
+						<table class="table table-sm">
+							<tbody>
+								<tr th:each="course : ${student.getCourses()}">
+									<td class="font-weight-light text-left" th:text="${course.getName()}">Course name</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -10,6 +10,8 @@ public class Course {
 	private String name;
 	private List<Lecture> lectures;
 	
+	public Course() {}
+	
 	public Course(String name) {
 		this(0, name);
 	}

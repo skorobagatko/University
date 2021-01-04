@@ -15,6 +15,10 @@ public class Teacher extends Participant {
 		super(id, firstName, lastName, new ArrayList<>());
 	}
 	
+	public Teacher(String firstName, String lastName, List<Course> courses) {
+		super(0, firstName, lastName, courses);
+	}
+	
 	public Teacher(int id, String firstName, String lastName, List<Course> courses) {
 		super(id, firstName, lastName, courses);
 	}
