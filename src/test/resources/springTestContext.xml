@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans.xsd
+    	http://www.springframework.org/schema/context
+    	http://www.springframework.org/schema/context/spring-context.xsd
+    	http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        
+    <context:component-scan base-package="com.skorobahatko.university"/>
+
+	<bean id="courseService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.skorobahatko.university.service.CourseService"/>
+    </bean>
+    
+    <bean id="lectureService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.skorobahatko.university.service.LectureService"/>
+    </bean>
+    
+    <bean id="participantService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.skorobahatko.university.service.ParticipantService"/>
+    </bean>
+    
+    <bean id="timetableService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.skorobahatko.university.service.TimetableService"/>
+    </bean>
+
+</beans>

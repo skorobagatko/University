@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>All Teachers</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">University</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/}">Home</a> 
+				<a class="nav-item nav-link" th:href="@{/courses}">Courses</a> 
+				<a class="nav-item nav-link" th:href="@{/students}">Students</a>
+				<a class="nav-item nav-link active" th:href="@{/teachers}">Teachers</a>
+				<a class="nav-item nav-link" th:href="@{/timetables}">Timetables</a>
+			</div>
+		</div>
+	</nav>
+
+	<br/>
+	
+	<!-- Add teacher modal button trigger  -->
+	<div class="row justify-content-md-center">
+		<button type="button" class="btn btn-primary" data-toggle="modal"
+			data-target="#addTeacherModal">Add Teacher</button>
+	</div>
+	
+	<!-- Add Teacher Modal -->
+	<div class="modal fade" id="addTeacherModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Add Teacher</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="addNewTeacherForm" method="POST" th:action="@{/teachers/new}">
+					
+						<div class="form-group row">
+							<label for="firstName" class="col-sm-4 col-form-label">First Name*</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" name="firstName"
+									id="firstName" placeholder="First Name" required>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label for="lastName" class="col-sm-4 col-form-label">Last Name*</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" name="lastName"
+									id="lastName" placeholder="Last Name" required>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label for="courseId" class="col-sm-4 col-form-label">Course</label>
+							<div class="col-sm-8">
+								<select class="form-control" id="courseId" name="courseId">
+									<option th:each="course : ${@courseService.getAll()}" 
+										th:value="${course.getId()}" th:text="${course.getName()}"></option>
+								</select>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-8 text-left">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+							<div class="col-sm-4 text-right">
+								<button type="submit" class="btn btn-primary">Add Teacher</button>
+							</div>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<br/>
+	
+	<div th:each="teacher : ${teachers}" class="text-center">
+		<div class="container text-center w-50 p-2">
+			<div class="card">
+				<div class="card-header" th:id="'cardHeader' + ${teacher.getId()}">
+					<div class="row">
+						<div class="col text-left">
+							<button class="btn btn-link text-secondary" type="button"
+								data-toggle="collapse"
+								th:attr="data-target='#collapse' + ${teacher.getId()},aria-controls='collapse' + ${teacher.getId()}"
+								aria-expanded="true" th:text="${teacher.getFirstName()} + ' ' + ${teacher.getLastName()}">
+								Teacher Name
+							</button>
+						</div>
+						<div class="col-sm text-right">
+						
+							<!-- Delete teacher Form -->
+							<form th:id="'deleteTeacher' + ${teacher.getId()}"
+								th:method="DELETE"
+								th:action="@{/teachers/{id}(id=${teacher.getId()})}"></form>
+						
+							<a class="btn btn-secondary" 
+								th:href="@{/teachers/{id}/edit(id=${teacher.getId()})}" 
+								role="button"> Edit </a> 
+								
+							<!-- Form Button for delete teacher -->
+							<button type="submit"
+								th:form="'deleteTeacher' + ${teacher.getId()}"
+								class="btn btn-danger">Delete</button>
+								
+						</div>
+					</div>
+				</div>
+				<div th:id="'collapse' + ${teacher.getId()}" class="collapse show"
+					th:attr="aria-labelledby='cardHeader' + ${teacher.getId()}">
+					<div class="card-body">
+						<h6 class="text-center">Courses</h6>
+						<table class="table table-sm">
+							<tbody>
+								<tr th:each="course : ${teacher.getCourses()}">
+									<td class="font-weight-light text-left" th:text="${course.getName()}">Course name</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

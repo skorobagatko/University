@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Course</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">University</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/}">Home</a> <a
+					class="nav-item nav-link active" th:href="@{/courses}">Courses</a>
+				<a class="nav-item nav-link" th:href="@{/students}">Students</a> <a
+					class="nav-item nav-link" th:href="@{/teachers}">Teachers</a> <a
+					class="nav-item nav-link" th:href="@{/timetables}">Timetables</a>
+			</div>
+		</div>
+	</nav>
+
+	<br>
+
+	<div class="container text-center w-50 p-2">
+		<div class="card">
+			<div class="card-header" th:id="'cardHeader' + ${course.getId()}">
+				<div class="row">
+					<div class="col text-left">
+						<button class="btn btn-link text-secondary" type="button"
+							data-toggle="collapse"
+							th:attr="data-target='#collapse' + ${course.getId()},aria-controls='collapse' + ${course.getId()}"
+							aria-expanded="true" th:text="${course.getName()}">Course
+							Name</button>
+					</div>
+					<div class="col-sm text-right">
+
+						<!-- Delete course button Form -->
+						<form th:id="'deleteCourse' + ${course.getId()}"
+							th:method="DELETE"
+							th:action="@{/courses/{id}(id=${course.getId()})}"></form>
+
+						<a class="btn btn-secondary"
+							th:href="@{/courses/{id}/edit(id=${course.getId()})}"
+							role="button"> Edit </a>
+						<button type="submit" th:form="'deleteCourse' + ${course.getId()}"
+							class="btn btn-danger">Delete</button>
+
+					</div>
+				</div>
+			</div>
+			<div th:id="'collapse' + ${course.getId()}" class="collapse show"
+				th:attr="aria-labelledby='cardHeader' + ${course.getId()}">
+				<div class="card-body">
+					<h6 class="text-center">Lectures</h6>
+
+					<table class="table table-sm">
+						<tbody>
+							<tr th:each="lecture : ${course.getLectures()}">
+								<td class="font-weight-light text-left"
+									th:text="${lecture.getName()}">Lecture name</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

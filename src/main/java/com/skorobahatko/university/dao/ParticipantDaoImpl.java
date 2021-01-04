@@ -29,16 +29,31 @@ public class ParticipantDaoImpl implements ParticipantDao {
 
 	private static final String GET_ALL_SQL = "SELECT participant_id, first_name, last_name, participants.role_id, role_name "
 			+ "FROM participants INNER JOIN participant_roles ON participant_roles.role_id = participants.role_id;";
+	
+	private static final String GET_ALL_STUDENTS_SQL = "SELECT participant_id, first_name, last_name "
+			+ "FROM participants INNER JOIN participant_roles ON participant_roles.role_id = participants.role_id "
+			+ "WHERE participant_roles.role_name = 'Student';";
+	
+	private static final String GET_ALL_TEACHERS_SQL = "SELECT participant_id, first_name, last_name "
+			+ "FROM participants INNER JOIN participant_roles ON participant_roles.role_id = participants.role_id "
+			+ "WHERE participant_roles.role_name = 'Teacher';";
 
-	private static final String GET_BY_ID_SQL = "SELECT participants.first_name, participants.last_name, participant_roles.role_name FROM participants "
+	private static final String GET_BY_ID_SQL = "SELECT participants.first_name, participants.last_name, "
+			+ "participant_roles.role_name FROM participants "
 			+ "INNER JOIN participant_roles ON participant_roles.role_id = participants.role_id "
 			+ "WHERE participants.participant_id = ?;";
 
 	private static final String ADD_SQL = "INSERT INTO participants (first_name, last_name, role_id) "
 			+ "VALUES (?, ?, ?) RETURNING participant_id;";
+	
+	private static final String UPDATE_SQL = "UPDATE participants SET first_name = ?, "
+			+ "last_name = ? WHERE participant_id = ?;";
 
 	private static final String ADD_PARTICIPANT_COURSE_PAIR_SQL = "INSERT INTO participants_courses "
 			+ "(participant_id, course_id) VALUES (?, ?);";
+	
+	private static final String DELETE_PARTICIPANT_COURSE_PAIR_SQL = "DELETE FROM participants_courses "
+			+ "WHERE participant_id = ? AND course_id = ?;";
 
 	private static final String REMOVE_BY_ID_SQL = "DELETE FROM participants WHERE participant_id = ?;";
 
@@ -48,6 +63,8 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	private static final String GET_COURSES_BY_PARTICIPANT_ID_SQL = "SELECT courses.course_id, courses.course_name FROM courses "
 			+ "INNER JOIN participants_courses ON participants_courses.course_id = courses.course_id "
 			+ "WHERE participants_courses.participant_id = ?;";
+
+	
 
 	private JdbcTemplate jdbcTemplate;
 	private CourseDao courseDao;
@@ -91,6 +108,50 @@ public class ParticipantDaoImpl implements ParticipantDao {
 			return result;
 		} catch (DataAccessException e) {
 			throw new DaoException("Unable to get participants", e);
+		}
+	}
+	
+	@Override
+	public List<Student> getAllStudents() {
+		logger.debug("Retrieving the Student list");
+		
+		try {
+			List<Student> result = jdbcTemplate.query(GET_ALL_STUDENTS_SQL, (rs, rowNum) -> {
+				int id = rs.getInt(PARTICIPANT_ID);
+				String firstName = rs.getString(FIRST_NAME);
+				String lastName = rs.getString(LAST_NAME);
+				List<Course> courses = getParticipantCoursesByParticipantId(id);
+
+				return new Student(id, firstName, lastName, courses);
+			});
+			
+			logger.debug("Retrieved {} students", result.size());
+			
+			return result;
+		} catch (DataAccessException e) {
+			throw new DaoException("Unable to get Student list", e);
+		}
+	}
+	
+	@Override
+	public List<Teacher> getAllTeachers() {
+		logger.debug("Retrieving the Teacher list");
+		
+		try {
+			List<Teacher> result = jdbcTemplate.query(GET_ALL_TEACHERS_SQL, (rs, rowNum) -> {
+				int id = rs.getInt(PARTICIPANT_ID);
+				String firstName = rs.getString(FIRST_NAME);
+				String lastName = rs.getString(LAST_NAME);
+				List<Course> courses = getParticipantCoursesByParticipantId(id);
+
+				return new Teacher(id, firstName, lastName, courses);
+			});
+			
+			logger.debug("Retrieved {} teachers", result.size());
+			
+			return result;
+		} catch (DataAccessException e) {
+			throw new DaoException("Unable to get Teacher list", e);
 		}
 	}
 
@@ -145,6 +206,23 @@ public class ParticipantDaoImpl implements ParticipantDao {
 		
 		logger.debug("Successfully added Participant {}", participant);
 	}
+	
+	@Override
+	public void update(Participant participant) {
+		logger.debug("Updating Participant: {}", participant);
+		
+		checkForNull(participant);
+		
+		try {
+			jdbcTemplate.update(UPDATE_SQL, participant.getFirstName(), participant.getLastName(), 
+					participant.getId());
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to update Participant: %s", participant);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Successfully updated Participant {}", participant);
+	}
 
 	@Override
 	public void removeById(int id) {
@@ -166,6 +244,36 @@ public class ParticipantDaoImpl implements ParticipantDao {
 		
 		logger.debug("Participant with id = {} successfully removed", id);
 	}
+	
+	@Override
+	public void addParticipantCourseById(int participantId, int courseId) {
+		logger.debug("Adding Course with id = {} to Participant with id = {}", courseId, participantId);
+		
+		try {
+			insertParticipantCoursePair(participantId, courseId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to add Course with id = %d to Participant with id = %d", 
+					courseId, participantId);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Course with id = {} successfully added to Participant with id = {}", courseId, participantId);
+	}
+
+	@Override
+	public void removeParticipantCourseById(int participantId, int courseId) {
+		logger.debug("Removing Course with id = {} for Participant with id = {}", courseId, participantId);
+		
+		try {
+			deleteParticipantCoursePair(participantId, courseId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to remove Course with id = %d for Participant with id = %d", 
+					courseId, participantId);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Course with id = {} for Participant with id = {} successfully removed", courseId, participantId);
+	}
 
 	private int insertParticipant(Participant participant) {
 		int roleId = getParticipantRoleId(participant);
@@ -177,8 +285,16 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	private void insertParticipantCoursePairs(Participant participant) {
 		List<Course> courses = participant.getCourses();
 		for (Course course : courses) {
-			jdbcTemplate.update(ADD_PARTICIPANT_COURSE_PAIR_SQL, participant.getId(), course.getId());
+			insertParticipantCoursePair(participant.getId(), course.getId());
 		}
+	}
+	
+	private void insertParticipantCoursePair(int participantId, int courseId) {
+		jdbcTemplate.update(ADD_PARTICIPANT_COURSE_PAIR_SQL, participantId, courseId);
+	}
+	
+	private void deleteParticipantCoursePair(int participantId, int courseId) {
+		jdbcTemplate.update(DELETE_PARTICIPANT_COURSE_PAIR_SQL, participantId, courseId);
 	}
 
 	private void checkForNull(Participant participant) {

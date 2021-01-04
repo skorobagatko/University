@@ -30,6 +30,8 @@ public class CourseDaoImpl implements CourseDao {
 			+ "WHERE participants_courses.participant_id = ?;";
 
 	private static final String ADD_SQL = "INSERT INTO courses (course_name) VALUES (?) RETURNING course_id;";
+	
+	private static final String UPDATE_SQL = "UPDATE courses SET course_name = ? WHERE course_id = ?;";
 
 	private static final String REMOVE_BY_ID_SQL = "DELETE FROM courses WHERE course_id = ?;";
 
@@ -46,21 +48,21 @@ public class CourseDaoImpl implements CourseDao {
 
 	@Override
 	public List<Course> getAll() {
-		logger.debug("Retrieving the courses list from the database");
+		logger.debug("Retrieving courses list");
 		
 		try {
 			List<Course> result = jdbcTemplate.query(GET_ALL_SQL, (rs, rowNum) -> {
 				int courseId = rs.getInt(COURSE_ID);
 				String courseName = rs.getString(COURSE_NAME);
-				List<Lecture> courseLectures = lectureDao.getByCourseId(courseId);
-				return new Course(courseId, courseName, courseLectures);
+				List<Lecture> lectures = lectureDao.getByCourseId(courseId);
+				return new Course(courseId, courseName, lectures);
 			});
 			
-			logger.debug("Courses list successfully retrieved from the database. Retrieved {} records", result.size());
+			logger.debug("Courses list successfully retrieved. Retrieved {} records", result.size());
 			
 			return result;
 		} catch (DataAccessException e) {
-			throw new DaoException("Unable to get courses from the database", e);
+			throw new DaoException("Unable to get courses", e);
 		}
 	}
 
@@ -73,8 +75,8 @@ public class CourseDaoImpl implements CourseDao {
 					(rs, rowNum) -> {
 						int courseId = rs.getInt(COURSE_ID);
 						String courseName = rs.getString(COURSE_NAME);
-						List<Lecture> courseLectures = lectureDao.getByCourseId(courseId);
-						return new Course(courseId, courseName, courseLectures);
+						List<Lecture> lectures = lectureDao.getByCourseId(courseId);
+						return new Course(courseId, courseName, lectures);
 					});
 			
 			logger.debug("Courses list for participant with id = {} successfully retrieved from the database", participantId);
@@ -94,9 +96,9 @@ public class CourseDaoImpl implements CourseDao {
 			Course result = jdbcTemplate.queryForObject(GET_BY_ID_SQL, new Object[] {id}, (rs, rowNum) -> {
 				int courseId = rs.getInt(COURSE_ID);
 				String courseName = rs.getString(COURSE_NAME);
-				List<Lecture> courseLectures = lectureDao.getByCourseId(courseId);
+				List<Lecture> lectures = lectureDao.getByCourseId(courseId);
 				
-				return new Course(courseId, courseName, courseLectures);
+				return new Course(courseId, courseName, lectures);
 			});
 			
 			logger.debug("Course with id = {} successfully retrieved", id);
@@ -132,6 +134,22 @@ public class CourseDaoImpl implements CourseDao {
 		}
 		
 		logger.debug("Successfully added Course {}", course);
+	}
+	
+	@Override
+	public void update(Course course) {
+		logger.debug("Updating Course: {}", course);
+		
+		checkForNull(course);
+		
+		try {
+			jdbcTemplate.update(UPDATE_SQL, course.getName(), course.getId());
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to update Course: %s", course);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Successfully updated Course {}", course);
 	}
 
 	@Override

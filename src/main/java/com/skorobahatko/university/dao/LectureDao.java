@@ -8,5 +8,6 @@ public interface LectureDao extends BaseDao<Lecture> {
 	
 	List<Lecture> getByCourseId(int courseId);
 	void addAll(List<Lecture> lectures);
+	void removeByCourseId(int courseId);
 
 }

@@ -73,7 +73,19 @@ public class LectureServiceImpl implements LectureService {
 		try {
 			lectureDao.add(lecture);
 		} catch (DaoException e) {
-			String message = String.format("Unable to add the Lecture: %s", lecture);
+			String message = String.format("Unable to add Lecture: %s", lecture);
+			throw new ServiceException(message, e);
+		}
+	}
+	
+	@Override
+	public void update(Lecture lecture) {
+		validateLecture(lecture);
+		
+		try {
+			lectureDao.update(lecture);
+		} catch (DaoException e) {
+			String message = String.format("Unable to update Lecture: %s", lecture);
 			throw new ServiceException(message, e);
 		}
 	}
@@ -86,6 +98,18 @@ public class LectureServiceImpl implements LectureService {
 			lectureDao.removeById(id);
 		} catch (DataAccessException e) {
 			String message = String.format("Unable to remove Lecture with id = %d", id);
+			throw new ServiceException(message, e);
+		}
+	}
+	
+	@Override
+	public void removeByCourseId(int courseId) {
+		validateId(courseId);
+		
+		try {
+			lectureDao.removeByCourseId(courseId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to remove Lecture with course id = %d", courseId);
 			throw new ServiceException(message, e);
 		}
 	}

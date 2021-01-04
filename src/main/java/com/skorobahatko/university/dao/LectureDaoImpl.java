@@ -35,8 +35,13 @@ public class LectureDaoImpl implements LectureDao {
 	private static final String ADD_SQL = "INSERT INTO lectures "
 			+ "(course_id, lecture_name, lecture_date, lecture_start_time, lecture_end_time, lecture_room_number) "
 			+ "VALUES (?, ?, ?, ?, ?, ?) RETURNING lecture_id;";
+	
+	private static final String UPDATE_SQL = "UPDATE lectures SET course_id = ?, lecture_name = ?, lecture_date = ?, "
+			+ "lecture_start_time = ?, lecture_end_time = ?, lecture_room_number = ? WHERE lecture_id = ?;";
 
 	private static final String REMOVE_BY_ID_SQL = "DELETE FROM lectures WHERE lecture_id = ?;";
+	
+	private static final String REMOVE_BY_COURSE_ID_SQL = "DELETE FROM lectures WHERE course_id = ?;";
 
 	private JdbcTemplate jdbcTemplate;
 
@@ -145,6 +150,21 @@ public class LectureDaoImpl implements LectureDao {
 		
 		logger.debug("Successfully added Lecture {}", lecture);
 	}
+	
+	@Override
+	public void update(Lecture lecture) {
+		logger.debug("Updating Lecture: {}", lecture);
+		
+		try {
+			jdbcTemplate.update(UPDATE_SQL, lecture.getCourseId(), lecture.getName(), lecture.getDate(), 
+					lecture.getStartTime(), lecture.getEndTime(), lecture.getRoomNumber(), lecture.getId());
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to update Lecture: %s", lecture);
+			throw new DaoException(message, e);
+		}
+		
+		logger.debug("Successfully updated Lecture {}", lecture);
+	}
 
 	@Override
 	public void removeById(int id) {
@@ -165,6 +185,22 @@ public class LectureDaoImpl implements LectureDao {
 		}
 		
 		logger.debug("Lecture with id = {} successfully removed", id);
+	}
+	
+	@Override
+	public void removeByCourseId(int courseId) {
+		logger.debug("Removing Lectures with course id = {}", courseId);
+		
+		int affectedRows = 0;
+		try {
+			affectedRows = jdbcTemplate.update(REMOVE_BY_COURSE_ID_SQL, courseId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to remove Lecture with id = %d", courseId);
+			throw new DaoException(message, e);
+		}
+		
+		
+		logger.debug("Removed {} lectures with course id = {}", affectedRows, courseId);
 	}
 
 }

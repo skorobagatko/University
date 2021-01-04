@@ -8,6 +8,8 @@ import com.skorobahatko.university.dao.ParticipantDao;
 import com.skorobahatko.university.dao.exception.DaoException;
 import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Participant;
+import com.skorobahatko.university.domain.Student;
+import com.skorobahatko.university.domain.Teacher;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
 import com.skorobahatko.university.service.exception.ServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
@@ -26,6 +28,24 @@ public class ParticipantServiceImpl implements ParticipantService {
 			return participantDao.getAll();
 		} catch (DaoException e) {
 			throw new ServiceException("Unable to get participants list", e);
+		}
+	}
+	
+	@Override
+	public List<Student> getAllStudents() {
+		try {
+			return participantDao.getAllStudents();
+		} catch (DaoException e) {
+			throw new ServiceException("Unable to get students list", e);
+		}
+	}
+
+	@Override
+	public List<Teacher> getAllTeachers() {
+		try {
+			return participantDao.getAllTeachers();
+		} catch (DaoException e) {
+			throw new ServiceException("Unable to get teachers list", e);
 		}
 	}
 
@@ -51,7 +71,19 @@ public class ParticipantServiceImpl implements ParticipantService {
 		try {
 			participantDao.add(participant);
 		} catch (DaoException e) {
-			String message = String.format("Unable to add the Participant: %s", participant);
+			String message = String.format("Unable to add Participant: %s", participant);
+			throw new ServiceException(message, e);
+		}
+	}
+	
+	@Override
+	public void update(Participant participant) {
+		validateParticipant(participant);
+		
+		try {
+			participantDao.update(participant);
+		} catch (DaoException e) {
+			String message = String.format("Unable to update Participant: %s", participant);
 			throw new ServiceException(message, e);
 		}
 	}
@@ -64,6 +96,34 @@ public class ParticipantServiceImpl implements ParticipantService {
 			participantDao.removeById(id);
 		} catch (DataAccessException e) {
 			String message = String.format("Unable to remove Participant with id = %d", id);
+			throw new ServiceException(message, e);
+		}
+	}
+	
+	@Override
+	public void addParticipantCourseById(int participantId, int courseId) {
+		validateId(participantId);
+		validateId(courseId);
+		
+		try {
+			participantDao.addParticipantCourseById(participantId, courseId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to add Course with id = %d to Participant with id = %d", 
+					courseId, participantId);
+			throw new ServiceException(message, e);
+		}
+	}
+
+	@Override
+	public void removeParticipantCourseById(int participantId, int courseId) {
+		validateId(participantId);
+		validateId(courseId);
+		
+		try {
+			participantDao.removeParticipantCourseById(participantId, courseId);
+		} catch (DataAccessException e) {
+			String message = String.format("Unable to remove Course with id = %d for Participant with id = %d", 
+					courseId, participantId);
 			throw new ServiceException(message, e);
 		}
 	}

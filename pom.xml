@@ -7,18 +7,25 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>university</name>
 	<description>The application provides functionality for students and teachers to get their class timetables</description>
+	<packaging>war</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaee.version>8.0.1</javaee.version>
-		<junit.jupiter.version>5.6.2</junit.jupiter.version>
+		<servlet.version>4.0.1</servlet.version>
+		<junit5.version>5.7.0</junit5.version>
+		<mockito.version>3.5.10</mockito.version>
+		<hamcrest.version>2.2</hamcrest.version>
+		<javax.json.bind.version>1.0</javax.json.bind.version>
+		<geronimo.version>1.0</geronimo.version>
+		<johnzon.jsonb.version>1.1.4</johnzon.jsonb.version>
 		<maven.compiler.source>1.9</maven.compiler.source>
 		<maven.compiler.target>1.9</maven.compiler.target>
 		<maven.compiler.version>3.8.1</maven.compiler.version>
 		<maven.surefire.version>2.22.2</maven.surefire.version>
 		<maven.failsafe.version>2.22.2</maven.failsafe.version>
 		<spring.version>5.2.9.RELEASE</spring.version>
-		<mockito.version>3.5.10</mockito.version>
+		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 		<jacoco.version>0.8.6</jacoco.version>
 		<postgresql.version>42.2.16</postgresql.version>
 		<logback.version>1.2.3</logback.version>
@@ -32,35 +39,35 @@
 			<version>${javaee.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.jupiter.version}</version>
+			<version>${junit5.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>${junit.jupiter.version}</version>
+			<version>${junit5.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
-			<version>${junit.jupiter.version}</version>
+			<version>${junit5.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-			<version>5.7.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit5.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -69,6 +76,43 @@
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.json.bind</groupId>
+			<artifactId>javax.json.bind-api</artifactId>
+			<version>${javax.json.bind.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-json_1.1_spec</artifactId>
+			<version>${geronimo.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.johnzon</groupId>
+			<artifactId>johnzon-jsonb</artifactId>
+			<version>${johnzon.jsonb.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.5.0</version>
 		</dependency>
 
 		<dependency>
@@ -79,6 +123,16 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
@@ -94,16 +148,28 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring5</artifactId>
+			<version>${thymeleaf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-java8time</artifactId>
+			<version>3.0.4.RELEASE</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
 
 	</dependencies>
 
@@ -187,6 +253,17 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.1.0</version>
 			</plugin>
 
 		</plugins>

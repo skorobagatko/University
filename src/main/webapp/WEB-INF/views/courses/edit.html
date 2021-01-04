@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Edit Course</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	
+	<link href="http://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">University</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/}">Home</a> 
+				<a class="nav-item nav-link active" th:href="@{/courses}">Courses</a>
+				<a class="nav-item nav-link" th:href="@{/students}">Students</a> 
+				<a class="nav-item nav-link" th:href="@{/teachers}">Teachers</a>
+				<a class="nav-item nav-link" th:href="@{/timetables}">Timetables</a>
+			</div>
+		</div>
+	</nav>
+
+	<br>
+
+	<form id="editForm" th:method="PATCH"
+		th:action="@{/courses/{id}(id=${course.getId()})}"
+		th:object="${course}">
+		<div class="container text-center w-50 p-3">
+			<div class="row justify-content-md-center">
+				<div class="col">
+					<div class="form-group row">
+						<label for="name" class="col-sm-4 col-form-label"> Course Name: </label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" th:field="*{name}"
+								id="name" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row item" th:each="lecture, stat : ${course.lectures}">
+				<div class="col-lg-6 form-group">
+					<input th:field="*{lectures[__${stat.index}__].id}" type="hidden"
+						class="form-control" /> <input
+						th:field="*{lectures[__${stat.index}__].courseId}" type="hidden"
+						class="form-control" /> <input
+						th:field="*{lectures[__${stat.index}__].name}" type="hidden"
+						class="form-control" /> <input
+						th:field="*{lectures[__${stat.index}__].date}" type="hidden"
+						class="form-control" /> <input
+						th:field="*{lectures[__${stat.index}__].startTime}" type="hidden"
+						class="form-control" /> <input
+						th:field="*{lectures[__${stat.index}__].endTime}" type="hidden"
+						class="form-control" /> <input
+						th:field="*{lectures[__${stat.index}__].roomNumber}" type="hidden"
+						class="form-control" />
+				</div>
+			</div>
+
+		</div>
+	</form>
+
+	<div class="container text-center w-50 p-3">
+		<div class="card-body">
+			<h6 class="text-center">Lectures</h6>
+			<table class="table table-sm">
+				<tbody>
+					<tr th:each="lecture : ${course.getLectures()}">
+						<td class="font-weight-light text-left"
+							th:text="${lecture.getName()}">Lecture name</td>
+						<td class="text-right">
+							<form th:method="DELETE"
+								th:action="@{/courses/{courseId}/lecture/{lectureId}(courseId=${course.getId()}, lectureId=${lecture.getId()})}">
+								<button type="submit" class="btn btn-danger">Delete</button>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left">
+							<button type="button" class="btn btn-info"
+								data-toggle="modal" data-target="#exampleModalCenter">
+								Add Lecture</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalCenterTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title " id="exampleModalLongTitle">Add
+						Lecture</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div th:with="lecture=${new com.skorobahatko.university.domain.Lecture()}">
+						<form th:method="PUT" th:action="@{/courses/{courseId}/lecture/new(courseId=${course.getId()})}">
+							
+							<div class="form-group row">
+								<label for="lectureName" class="col-sm-4 col-form-label">Lecture Name*</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control" name="lectureName" 
+										id="lectureName" placeholder="Lecture Name" required>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="lectureDate" class="col-sm-4 col-form-label">Lecture Date*</label>
+								<div class="col-sm-8">
+									<input type="date" class="form-control" name="lectureDate" id="lectureDate" required>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="lectureStartTime" class="col-sm-4 col-form-label">Lecture Start Time*</label>
+								<div class="col-sm-8">
+									<input type="time" class="form-control" name="lectureStartTime" 
+										id="lectureStartTime" min="07:30" max="18:00" required>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="lectureEndTime" class="col-sm-4 col-form-label">Lecture End Time*</label>
+								<div class="col-sm-8">
+									<input type="time" class="form-control" name="lectureEndTime" 
+										id="lectureEndTime" min="07:30" max="18:00" required>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="roomNumber" class="col-sm-4 col-form-label">Room Number*</label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" name="roomNumber" id="roomNumber" required>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-sm-8 text-left">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								</div>
+								<div class="col-sm-4 text-right">
+									<button type="submit" class="btn btn-info">Add Lecture</button>
+								</div>
+							</div>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row justify-content-md-center">
+		<input form="editForm" type="submit" class="btn btn-success" value="Save changes" />
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		
+	<script src="http://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.js"></script>
+	
+</body>
+</html>

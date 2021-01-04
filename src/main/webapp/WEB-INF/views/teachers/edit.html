@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Edit Teacher</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">University</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/}">Home</a> 
+				<a class="nav-item nav-link" th:href="@{/courses}">Courses</a> 
+				<a class="nav-item nav-link" th:href="@{/students}">Students</a>
+				<a class="nav-item nav-link active" th:href="@{/teachers}">Teachers</a>
+				<a class="nav-item nav-link" th:href="@{/timetables}">Timetables</a>
+			</div>
+		</div>
+	</nav>
+
+	<br>
+
+	<form id="editForm" th:method="PATCH"
+		th:action="@{/teachers/{id}(id=${teacher.getId()})}"
+		th:object="${teacher}">
+		<div class="container text-center w-50 p-3">
+			<div class="row justify-content-md-center">
+				<div class="col">
+					<div class="form-group row">
+						<label for="firstName" class="col-sm-4 col-form-label">
+							First Name: </label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" th:field="*{firstName}"
+								id="firstName" />
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label for="lastName" class="col-sm-4 col-form-label">
+							Last Name: </label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" th:field="*{lastName}"
+								id="lastName" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- <div class="row item" th:each="course, stat : ${student.courses}">
+				<div class="col-lg-6 form-group">
+					<input th:field="*{courses[__${stat.index}__].id}" type="hidden" class="form-control" /> 
+					<input th:field="*{courses[__${stat.index}__].name}" type="hidden" class="form-control" />
+					<input th:field="*{courses[__${stat.index}__].lectures}" type="hidden" class="form-control" />
+				</div>
+			</div> -->
+
+		</div>
+	</form>
+
+	<div class="container text-center w-50 p-3">
+		<div class="card-body">
+			<h6 class="text-center">Courses</h6>
+			<table class="table table-sm">
+				<tbody>
+					<tr th:each="course : ${teacher.getCourses()}">
+						<td class="font-weight-light text-left"
+							th:text="${course.getName()}">Course name</td>
+						<td class="text-right">
+							<form th:method="DELETE"
+								th:action="@{/teachers/{teacherId}/course/{courseId}(teacherId=${teacher.getId()}, courseId=${course.getId()})}">
+								<button type="submit" class="btn btn-danger">Delete</button>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left">
+							<button type="button" class="btn btn-info" data-toggle="modal"
+								data-target="#addCourseModal">Add Course</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title " id="exampleModalLongTitle">Add Course</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+					<form method="POST"
+						th:action="@{/teachers/{id}/course/add(id=${teacher.getId()})}">
+						
+						<div class="form-group">
+							<label for="courseId">Choose the Course: </label> 
+							<select class="form-control" id="courseId" name="courseId">
+								<option th:each="course : ${notAttendedCourses}" 
+									th:value="${course.getId()}" th:text="${course.getName()}"></option>
+							</select>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-8 text-left">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+							<div class="col-sm-4 text-right">
+								<button type="submit" class="btn btn-info">Add Course</button>
+							</div>
+						</div>
+
+					</form>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row justify-content-md-center">
+		<input form="editForm" type="submit" class="btn btn-success"
+			value="Save changes" />
+	</div>
+	
+	
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
