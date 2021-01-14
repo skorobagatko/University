@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Timetable;
 import com.skorobahatko.university.service.ParticipantService;
-import com.skorobahatko.university.service.TimetableService;
 
 @Controller
 @RequestMapping("/timetables")
@@ -20,9 +19,6 @@ public class TimetableController {
 	
 	@Autowired
 	private ParticipantService participantService;
-	
-	@Autowired
-	private TimetableService timetableService;
 	
 	@GetMapping()
 	public String index(Model model) {
@@ -37,7 +33,9 @@ public class TimetableController {
 			@RequestParam int participantId,
 			Model model) {
 		
-		Timetable timetable = timetableService.getByParticipantId(participantId);
+		Participant participant = participantService.getById(participantId);
+		Timetable timetable = Timetable.getMonthTimetable(participant);
+		
 		model.addAttribute("timetable", timetable);
 		
 		return "timetables/timetable";

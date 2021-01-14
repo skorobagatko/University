@@ -13,8 +13,16 @@ public class Timetable {
 	private LocalDate endDate;
 	private List<Lecture> lectures;
 	
+	public static Timetable getDayTimetable(Participant participant) {
+		return getDayTimetable(participant, LocalDate.now());
+	}
+	
 	public static Timetable getDayTimetable(Participant participant, LocalDate date) {
 		return getTimetable(participant, date, date);
+	}
+	
+	public static Timetable getMonthTimetable(Participant participant) {
+		return getMonthTimetable(participant, LocalDate.now());
 	}
 	
 	public static Timetable getMonthTimetable(Participant participant, LocalDate date) {
@@ -137,6 +145,8 @@ public class Timetable {
 							lectureDate.isEqual(endDate) || 
 							(lectureDate.isAfter(startDate) && lectureDate.isBefore(endDate));
 				})
+				.sorted((l1, l2) -> l1.getStartTime().compareTo(l2.getStartTime()))
+				.sorted((l1, l2) -> l1.getDate().compareTo(l2.getDate()))
 				.collect(Collectors.toList());
 	}
 	

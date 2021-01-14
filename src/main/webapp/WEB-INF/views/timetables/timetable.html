@@ -28,29 +28,43 @@
 		</div>
 	</nav>
 
-	<br />
+	<div class="container text-center w-75 p-3">
 
-	<table class="table table-hover">
-		<thead>
-			<tr>
-				<th scope="col">Lecture Name</th>
-				<th scope="col">Lecture Date</th>
-				<th scope="col">Lecture Start Time</th>
-				<th scope="col">Lecture End Time</th>
-				<th scope="col">Lecture Room Number</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="lecture : ${timetable.getLectures()}">
-				<!-- <th scope="row">1</th> -->
-				<td th:text="${lecture.getName()}">Lecture Name</td>
-				<td th:text="${lecture.getDate()}">Lecture Date</td>
-				<td th:text="${lecture.getStartTime()}">Lecture Start Time</td>
-				<td th:text="${lecture.getEndTime()}">Lecture End Time</td>
-				<td th:text="${lecture.getRoomNumber()}">Lecture Room Number</td>
-			</tr>
-		</tbody>
-	</table>
+		<div class="justify-content-end text-right">
+			<div class="btn-group" role="group" aria-label="Basic example">
+				<button type="button" class="btn btn-secondary">Month</button>
+				<button type="button" class="btn btn-secondary">Day</button>
+			</div>
+		</div>
+		
+		<br>
+
+		<div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Lecture Name</th>
+						<th scope="col">Lecture Date</th>
+						<th scope="col">Lecture Start Time</th>
+						<th scope="col">Lecture End Time</th>
+						<th scope="col">Lecture Room Number</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="lecture, stat : ${timetable.getLectures()}">
+						<td th:text="${stat.count}">1</td>
+						<td th:text="${lecture.getName()}">Lecture Name</td>
+						<td th:text="${lecture.getDate()}">Lecture Date</td>
+						<td th:text="${lecture.getStartTime()}">Lecture Start Time</td>
+						<td th:text="${lecture.getEndTime()}">Lecture End Time</td>
+						<td th:text="${lecture.getRoomNumber()}">Lecture Room Number</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script
