@@ -24,7 +24,6 @@ import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.domain.Timetable;
 import com.skorobahatko.university.service.ParticipantService;
-import com.skorobahatko.university.service.TimetableService;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:springTestContext.xml", "file:src/main/webapp/WEB-INF/servletContext.xml"})
@@ -37,14 +36,10 @@ class TimetableControllerTest {
     private WebApplicationContext webApplicationContext;
 	
 	@Autowired
-	private TimetableService timetableService;
-	
-	@Autowired
 	private ParticipantService participantService;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		reset(timetableService);
 		reset(participantService);
 		
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -68,18 +63,18 @@ class TimetableControllerTest {
 	@Test
 	void testGetTimetableForParticipant() throws Exception {
 		Student student = new Student(1, "John", "Johnson");
-		Timetable timetable = getTestTimetableForParticipant(student);
+		Timetable timetable = Timetable.getMonthTimetable(student);
 		
-		when(timetableService.getByParticipantId(1)).thenReturn(timetable);
+		when(participantService.getById(1)).thenReturn(student);
 		
 		mockMvc.perform(get("/timetables/participant")
-				.param("participantIdSelect", "1"))
+				.param("participantId", "1"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("timetables/timetable"))
 				.andExpect(model().attribute("timetable", equalTo(timetable)));
 		
-		verify(timetableService, times(1)).getByParticipantId(1);
-		verifyNoMoreInteractions(timetableService);
+		verify(participantService, times(1)).getById(1);
+		verifyNoMoreInteractions(participantService);
 	}
 
 }

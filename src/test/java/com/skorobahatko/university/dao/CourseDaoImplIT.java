@@ -94,6 +94,22 @@ class CourseDaoImplIT {
 		
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	void testUpdate() {
+		Course course = getTestCourse();
+		courseDao.add(course);
+		int courseId = course.getId();
+		
+		String newCourseName = "New Course Name";
+		course.setName(newCourseName);
+		
+		courseDao.update(course);
+		
+		String actualCourseName = courseDao.getById(courseId).getName();
+		
+		assertEquals(actualCourseName, newCourseName);
+	}
 
 	@Test
 	void testRemoveById() throws SQLException {

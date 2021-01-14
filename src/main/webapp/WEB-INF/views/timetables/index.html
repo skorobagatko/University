@@ -31,17 +31,21 @@
 	<br />
 
 	<div class="container text-center w-50 p-2">
-		<form class="form-inline" method="GET" th:action="@{/timetables/participant}">
-			<div class="form-group mx-sm-3 mb-2">
-				<label for="participantId">Choose the Participant: </label> 
+		<form method="GET" th:action="@{/timetables/participant}">
+			<div class="form-group row">
+				<label for="participantId" class="col-sm-6 col-form-label">Choose the Participant: </label> 
+				<div class="col-sm-6">
 				<select class="form-control" id="participantId" name="participantId">
 					<option th:each="participant : ${participants}"
 						th:value="${participant.getId()}"
-						th:text="${participant.getFirstName()} + ' ' + ${participant.getFirstName()}">
+						th:text="${participant.getFirstName()} + ' ' + ${participant.getLastName()}">
 					</option>
 				</select>
+				</div>
 			</div>
-			<button type="submit" class="btn btn-primary mb-2">Get Timetable</button>
+			
+				<button type="submit" class="btn btn-primary mb-2">Get Timetable</button>
+			
 		</form>
 	</div>
 

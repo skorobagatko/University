@@ -1,11 +1,8 @@
 package com.skorobahatko.university.controller;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,14 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.skorobahatko.university.domain.Course;
-import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.service.CourseService;
-import com.skorobahatko.university.service.LectureService;
 
 @Controller
 @RequestMapping("/courses")
@@ -33,9 +27,6 @@ public class CourseController {
 	
 	@Autowired
 	private CourseService courseService;
-	
-	@Autowired
-	private LectureService lectureService;
 	
 	@GetMapping()
 	public String getAllCourses(Model model) {
@@ -76,38 +67,6 @@ public class CourseController {
 		courseService.update(course);
 		
 		return REDIRECT_TO_COURSES_LIST_PAGE;
-	}
-	
-	@PutMapping("/{courseId}/lecture/new")
-	public String addNewLecture(
-			@PathVariable("courseId") int courseId, 
-			@RequestParam String lectureName,
-			@RequestParam("lectureDate") 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate lectureDate,
-			@RequestParam("lectureStartTime") 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime lectureStartTime,
-			@RequestParam("lectureEndTime")
-			@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime lectureEndTime,
-			@RequestParam int roomNumber,
-			Model model) {
-		
-		Lecture lecture = new Lecture(lectureName, courseId, lectureDate, lectureStartTime, lectureEndTime, roomNumber);
-		lectureService.add(lecture);
-		
-		Course course = courseService.getById(courseId);
-		model.addAttribute("course", course);
-		
-		return COURSE_EDIT_PAGE;
-	}
-	
-	@DeleteMapping("/{courseId}/lecture/{lectureId}")
-	public String deleteLectureById(@PathVariable("courseId") int courseId, @PathVariable("lectureId") int lectureId, Model model) {
-		lectureService.removeById(lectureId);
-		
-		Course course = courseService.getById(courseId);
-		model.addAttribute("course", course);
-		
-		return COURSE_EDIT_PAGE;
 	}
 	
 	@DeleteMapping("/{id}")

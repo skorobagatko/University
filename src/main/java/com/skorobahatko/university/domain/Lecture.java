@@ -4,13 +4,21 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class Lecture {
 	
 	private int id;
 	private int courseId;
 	private String name;
+	
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate date;
+	
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime startTime;
+	
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 	private int roomNumber;
 	
