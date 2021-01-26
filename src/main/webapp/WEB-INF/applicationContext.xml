@@ -15,8 +15,12 @@
 		base-package="com.skorobahatko.university" />
 
 	<bean id="dataSource"
-		class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="jndiName" value="java:comp/env/jdbc/UniversityDatabase" />
+		class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://127.0.0.1:5432/university" />
+		<property name="username" value="university_admin" />
+		<property name="password" value="admin" />
 	</bean>
 
 	<bean id="jdbcTemplate"
