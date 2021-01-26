@@ -33,16 +33,12 @@ public abstract class Participant {
 	public Participant() {
 		courses = new ArrayList<>();
 	}
-	
-	public Participant(String firstName, String lastName) {
-		this(0, firstName, lastName, new ArrayList<>());
-	}
-	
+
 	public Participant(int id, String firstName, String lastName, List<Course> courses) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.courses = courses;
+		this.courses = new ArrayList<>(courses);
 	}
 	
 	public int getId() {
