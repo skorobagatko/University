@@ -66,10 +66,6 @@ public class CourseDaoImpl implements CourseDao {
 		}
 	}
 
-	@Override
-	public List<Course> getAllByParticipantId(int participantId) {
-		logger.debug("Retrieving Course list for participant with id = {}", participantId);
-		
 		try {
 			List<Course> result = jdbcTemplate.query(GET_ALL_BY_PARTICIPANT_ID_SQL, ps -> ps.setInt(1, participantId),
 					(rs, rowNum) -> {
