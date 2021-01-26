@@ -111,9 +111,22 @@ public class Course {
 
 		Course other = (Course) obj;
 		
-		return id == other.id &&
-				Objects.equals(name, other.name) &&
-				Objects.equals(lectures, other.lectures);
+		// We use this type of comparison to work 
+		// around the PersistentBag.equals() problem
+		if (this.getLectures().size() != other.getLectures().size()) {
+			return false;
+		}
+		
+		List<Lecture> thisLectures = getLectures();
+		List<Lecture> otherLectures = other.getLectures();
+		for (int i = 0; i < thisLectures.size(); i++) {
+			if (!thisLectures.get(i).equals(otherLectures.get(i))) {
+				return false;
+			}
+		}
+
+		return id == other.id 
+				&& Objects.equals(name, other.name);
 	}
 
 	@Override
