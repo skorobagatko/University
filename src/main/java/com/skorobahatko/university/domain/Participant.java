@@ -4,11 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "participants")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role")
 public abstract class Participant {
-	
+
+	@Id
+	@Column(name = "participant_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+
+	@Column(name = "first_name")
 	private String firstName;
+
+	@Column(name = "last_name")
 	private String lastName;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "participants_courses", 
+			joinColumns = @JoinColumn(name = "participant_id"), 
+			inverseJoinColumns = @JoinColumn(name = "course_id"))
 	private List<Course> courses;
 	
 	public Participant() {
