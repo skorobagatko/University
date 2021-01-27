@@ -17,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +30,13 @@ import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.service.CourseService;
 import com.skorobahatko.university.service.ParticipantService;
 
+@SqlGroup({ 
+	@Sql("/delete_tables.sql"), 
+	@Sql("/create_tables.sql"), 
+	@Sql("/populate_courses.sql"),
+	@Sql("/populate_participants.sql")
+})
+@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"file:src/test/resources/springTestContext.xml", 

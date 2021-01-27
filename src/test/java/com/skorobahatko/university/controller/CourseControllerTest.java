@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static com.skorobahatko.university.util.TestUtils.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -23,11 +24,17 @@ import org.springframework.web.context.WebApplicationContext;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.service.CourseService;
-import com.skorobahatko.university.service.LectureService;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+@SqlGroup({ 
+	@Sql("/delete_tables.sql"), 
+	@Sql("/create_tables.sql"), 
+	@Sql("/populate_courses.sql"),
+	@Sql("/populate_participants.sql")
+})
+@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"file:src/test/resources/springTestContext.xml", 
