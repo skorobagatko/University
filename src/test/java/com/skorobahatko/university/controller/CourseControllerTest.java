@@ -50,14 +50,10 @@ class CourseControllerTest {
 	
 	@Autowired
 	private CourseService courseService;
-	
-	@Autowired
-	private LectureService lectureService;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		reset(courseService);
-		reset(lectureService);
 		
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
@@ -143,6 +139,7 @@ class CourseControllerTest {
 			
 		mockMvc.perform(patch("/courses/{id}", 1)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.requestAttr("course", course)
 				.param("name", "Test Course")
 				.param("lectures[0].id", "0")
 				.param("lectures[0].courseId", "1")
@@ -156,54 +153,6 @@ class CourseControllerTest {
 				.andExpect(model().attribute("course", equalTo(course)));
 		
 		verify(courseService, times(1)).update(course);
-		verifyNoMoreInteractions(courseService);
-	}
-
-	@Test
-	void testAddNewLecture() throws Exception {
-		Lecture lecture = getTestLectureWithCourseId(1);
-		Course course = new Course(1, "Test Course", List.of(lecture));
-
-		when(courseService.getById(1)).thenReturn(course);
-		
-		mockMvc.perform(put("/courses/{courseId}/lecture/new", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("lectureName", "Lecture 1")
-				.param("lectureDate", "2020-12-01")
-				.param("lectureStartTime", "07:30")
-				.param("lectureEndTime", "09:00")
-				.param("roomNumber", "100"))
-				.andExpect(status().isOk())
-				.andExpect(view().name("courses/edit"))
-				.andExpect(model().attribute("course", equalTo(course)));
-
-		verify(lectureService, times(1)).add(lecture);
-		verifyNoMoreInteractions(lectureService);
-		
-		verify(courseService, times(1)).getById(1);
-		verifyNoMoreInteractions(courseService);
-	}
-
-	@Test
-	void testDeleteLectureById() throws Exception {
-		Lecture lecture = getTestLectureWithCourseId(1);
-		List<Lecture> lectures = new ArrayList<>();
-		lectures.add(lecture);
-		Course course = new Course(1, "Test Course", lectures);
-
-		when(courseService.getById(1)).thenReturn(course);
-		
-		mockMvc.perform(delete("/courses/{courseId}/lecture/{lectureId}", 1, 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().isOk())
-				.andExpect(view().name("courses/edit"))
-				.andDo(result -> course.removeLecture(lecture))
-				.andExpect(model().attribute("course", equalTo(course)));
-		
-		verify(lectureService, times(1)).removeById(1);
-		verifyNoMoreInteractions(lectureService);
-		
-		verify(courseService, times(1)).getById(1);
 		verifyNoMoreInteractions(courseService);
 	}
 
