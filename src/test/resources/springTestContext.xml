@@ -24,9 +24,5 @@
     <bean id="participantService" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="com.skorobahatko.university.service.ParticipantService"/>
     </bean>
-    
-    <bean id="timetableService" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="com.skorobahatko.university.service.TimetableService"/>
-    </bean>
 
 </beans>
