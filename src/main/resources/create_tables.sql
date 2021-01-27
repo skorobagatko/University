@@ -25,9 +25,7 @@ CREATE TABLE participants
 	participant_id SERiAL PRIMARY KEY,
 	first_name CHARACTER VARYING(100) NOT NULL,
 	last_name CHARACTER VARYING(100) NOT NULL,
-	role_id INTEGER DEFAULT NULL,
-	FOREIGN KEY (role_id)
-		REFERENCES participant_roles (role_id) ON DELETE SET DEFAULT
+	role CHARACTER VARYING(30) NOT NULL
 );
 
 DROP TABLE IF EXISTS participants_courses CASCADE;
