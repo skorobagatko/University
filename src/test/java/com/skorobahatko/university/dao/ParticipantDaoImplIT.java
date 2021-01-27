@@ -36,7 +36,7 @@ class ParticipantDaoImplIT {
 	private JdbcTemplate jdbcTemplate;
 	
 	@Autowired
-	ParticipantDaoImpl participantDao;
+	ParticipantDao participantDao;
 
 	@Test
 	void testGetAll() {
@@ -54,6 +54,8 @@ class ParticipantDaoImplIT {
 				.collect(Collectors.toList());
 		
 		List<Student> actual = participantDao.getAllStudents();
+		
+		assertEquals(expected.size(), actual.size());
 		
 		assertEquals(expected, actual);
 	}
