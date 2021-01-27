@@ -33,12 +33,16 @@ public class TimetableController {
 			@RequestParam int participantId,
 			Model model) {
 		
-		Participant participant = participantService.getById(participantId);
-		Timetable timetable = Timetable.getMonthTimetable(participant);
+		Timetable timetable = getTimetableByParticipantId(participantId);
 		
 		model.addAttribute("timetable", timetable);
 		
 		return "timetables/timetable";
+	}
+	
+	private Timetable getTimetableByParticipantId(int participantId) {
+		Participant participant = participantService.getById(participantId);
+		return Timetable.getMonthTimetable(participant);
 	}
 
 }
