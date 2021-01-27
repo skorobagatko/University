@@ -87,7 +87,7 @@ class StudentControllerTest {
 		mockMvc.perform(post("/students/new")
 				.param("firstName", student.getFirstName())
 				.param("lastName", student.getLastName())
-				.param("courseIdSelect", String.valueOf(course.getId())))
+				.param("courseId", String.valueOf(course.getId())))
 				.andExpect(status().is(302))
 				.andExpect(view().name("redirect:/students"))
 				.andExpect(redirectedUrl("/students"));
@@ -138,7 +138,7 @@ class StudentControllerTest {
 		
 		mockMvc.perform(post("/students/{id}/course/add", 1)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("courseIdSelect", "1"))
+				.param("courseId", "1"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("students/edit"));
 		
