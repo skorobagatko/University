@@ -42,7 +42,7 @@ class CourseTest {
 	void testEqualsMethodReturnsTrueForEqualCourses() {
 		Course other = getTestCourse();
 		
-		assertTrue(course.equals(other));
+		assertEquals(course, other);
 	}
 	
 	@Test
@@ -51,28 +51,28 @@ class CourseTest {
 		String courseName = "Qwerty course";
 		Course other = new Course(courseId, courseName);
 		
-		assertTrue(!course.equals(other));
+		assertNotEquals(course, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForSameInstanceCourse() {
 		Course other = course;
 		
-		assertTrue(course.equals(other));
+		assertEquals(course, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNullArgument() {
 		Course other = null;
 		
-		assertTrue(!course.equals(other));
+		assertNotEquals(course, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseWithObjectArgument() {
 		Object other = new Object();
 		
-		assertTrue(!course.equals(other));
+		assertNotEquals(course, other);
 	}
 	
 	private Course getTestCourse() {
