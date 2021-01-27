@@ -87,7 +87,7 @@ class TeacherControllerTest {
 		mockMvc.perform(post("/teachers/new")
 				.param("firstName", teacher.getFirstName())
 				.param("lastName", teacher.getLastName())
-				.param("courseIdSelect", String.valueOf(course.getId())))
+				.param("courseId", String.valueOf(course.getId())))
 				.andExpect(status().is(302))
 				.andExpect(view().name("redirect:/teachers"))
 				.andExpect(redirectedUrl("/teachers"));
