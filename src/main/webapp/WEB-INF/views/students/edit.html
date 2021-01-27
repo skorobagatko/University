@@ -22,7 +22,7 @@
 				<a class="nav-item nav-link" th:href="@{/}">Home</a> 
 				<a class="nav-item nav-link" th:href="@{/courses}">Courses</a> 
 				<a class="nav-item nav-link active" th:href="@{/students}">Students</a>
-				<a class="nav-item nav-link" th:href="@{/teachers}">Teachers</a>
+				<a class="nav-item nav-link" th:href="@{/teachers}">Teachers</a> 
 				<a class="nav-item nav-link" th:href="@{/timetables}">Timetables</a>
 			</div>
 		</div>
@@ -36,6 +36,7 @@
 		<div class="container text-center w-50 p-3">
 			<div class="row justify-content-md-center">
 				<div class="col">
+				
 					<div class="form-group row">
 						<label for="firstName" class="col-sm-4 col-form-label">
 							First Name: </label>
@@ -53,32 +54,56 @@
 								id="lastName" />
 						</div>
 					</div>
+					
 				</div>
 			</div>
 
-			<!-- <div class="row item" th:each="course, courseStat : ${student.courses}">
+			<div class="row item"
+				th:each="course, courseStat : ${student.courses}">
 				<div class="col-lg-6 form-group">
-					<input th:field="*{courses[__${courseStat.index}__].id}" type="hidden" class="form-control" /> 
-					<input th:field="*{courses[__${courseStat.index}__].name}" type="hidden" class="form-control" />
-					
-					<div class="row item" th:each="lecture, lectureStat : ${course.getLectures()}" >
-						<input th:value="${lecture.getId()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].id}" type="hidden" class="form-control" />
-						<input th:value="${lecture.getCourseId()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].courseId}" type="hidden" class="form-control" />
-						<input th:value="${lecture.getName()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].name}" type="hidden" class="form-control" />
-						<input th:value="${lecture.getDate()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].date}" type="hidden" class="form-control" />
-						<input th:value="${lecture.getStartTime()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].startTime}" type="hidden" class="form-control" />
-						<input th:value="${lecture.getEndTime()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].endTime}" type="hidden" class="form-control" />
-						<input th:value="${lecture.getRoomNumber()}" 
-							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].roomNumber}" type="hidden" class="form-control" />
+					<input th:field="*{courses[__${courseStat.index}__].id}"
+						type="hidden" class="form-control" /> 
+					<input th:field="*{courses[__${courseStat.index}__].name}" 
+						type="hidden" class="form-control" />
+					<div class="row item" th:each="lecture, lectureStat : ${course.lectures}" >
+						<input 
+							th:value="${lecture.getId()}"
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].id}" 
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].id}"
+							type="hidden" class="form-control" />
+						<input 
+							th:value="${lecture.getCourseId()}" 
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].courseId}" 
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].courseId}" 
+							type="hidden" class="form-control" />
+						<input 
+							th:value="${lecture.getName()}" 
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].name}" 
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].name}" 
+							type="hidden" class="form-control" />
+						<input 
+							th:value="${lecture.getDate()}" 
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].date}" 
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].date}" 
+							type="hidden" class="form-control" />
+						<input 
+							th:value="${lecture.getStartTime()}" 
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].startTime}"
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].startTime}"
+							type="hidden" class="form-control" />
+						<input 
+							th:value="${lecture.getEndTime()}" 
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].endTime}"
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].endTime}"
+							type="hidden" class="form-control" />
+						<input 
+							th:value="${lecture.getRoomNumber()}" 
+							th:name="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].roomNumber}"
+							th:field="*{courses[__${courseStat.index}__].lectures[__${lectureStat.index}__].roomNumber}"
+							type="hidden" class="form-control" />
 					</div>
 				</div>
-			</div> -->
+			</div>
 
 		</div>
 	</form>
@@ -124,11 +149,11 @@
 
 					<form method="POST"
 						th:action="@{/students/{id}/course/add(id=${student.getId()})}">
-						
+
 						<div class="form-group">
-							<label for="courseId">Choose the Course: </label> 
-							<select class="form-control" id="courseId" name="courseId">
-								<option th:each="course : ${notAttendedCourses}" 
+							<label for="courseId">Choose the Course: </label> <select
+								class="form-control" id="courseId" name="courseId">
+								<option th:each="course : ${notAttendedCourses}"
 									th:value="${course.getId()}" th:text="${course.getName()}"></option>
 							</select>
 						</div>
@@ -145,7 +170,6 @@
 
 					</form>
 
-
 				</div>
 			</div>
 		</div>
@@ -155,13 +179,10 @@
 		<input form="editForm" type="submit" class="btn btn-success"
 			value="Save changes" />
 	</div>
-	
-	
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	
 </body>
 </html>
