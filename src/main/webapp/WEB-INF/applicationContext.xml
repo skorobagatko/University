@@ -70,9 +70,4 @@
 		<property name="participantDao" ref="participantDao" />
 	</bean>
 
-	<bean id="timetableService"
-		class="com.skorobahatko.university.service.TimetableServiceImpl">
-		<property name="timetableDao" ref="timetableDao" />
-	</bean>
-
 </beans>
