@@ -25,7 +25,7 @@ import com.skorobahatko.university.service.exception.ValidationException;
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/main/webapp/WEB-INF/applicationContext.xml")
+@ContextConfiguration("file:src/test/resources/springTestContext.xml")
 class ParticipantServiceImplIT {
 	
 	@Autowired

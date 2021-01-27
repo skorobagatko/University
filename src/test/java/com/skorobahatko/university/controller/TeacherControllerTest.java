@@ -29,7 +29,10 @@ import com.skorobahatko.university.service.CourseService;
 import com.skorobahatko.university.service.ParticipantService;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:springTestContext.xml", "file:src/main/webapp/WEB-INF/servletContext.xml"})
+@ContextConfiguration(locations = {
+		"file:src/test/resources/springTestContext.xml", 
+		"file:src/main/webapp/WEB-INF/servletContext.xml"
+		})
 @WebAppConfiguration
 class TeacherControllerTest {
 	

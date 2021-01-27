@@ -29,7 +29,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:springTestContext.xml", "file:src/main/webapp/WEB-INF/servletContext.xml"})
+@ContextConfiguration(locations = {
+		"file:src/test/resources/springTestContext.xml", 
+		"file:src/main/webapp/WEB-INF/servletContext.xml"
+		})
 @WebAppConfiguration
 class CourseControllerTest {
 
