@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -16,7 +17,6 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
-import com.skorobahatko.university.dao.CourseDao;
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
@@ -37,9 +37,11 @@ class LectureServiceImplIT {
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private CourseDao courseDao;
+	@Qualifier("courseServiceImpl")
+	private CourseService courseService;
 	
 	@Autowired
+	@Qualifier("lectureServiceImpl")
 	private LectureService lectureService;
 
 	@Test
@@ -53,7 +55,7 @@ class LectureServiceImplIT {
 	@Test
 	void testGetById() throws SQLException {
 		Course course = getTestCourse();
-		courseDao.add(course);
+		courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
 		lectureService.add(lecture);
 		
@@ -101,7 +103,7 @@ class LectureServiceImplIT {
 		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
 
 		Course course = getTestCourse();
-		courseDao.add(course);
+		courseService.add(course);
 		List<Lecture> lectures = getTestLecturesWithCourseId(course.getId());
 
 		lectureService.addAll(lectures);
@@ -117,7 +119,7 @@ class LectureServiceImplIT {
 		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
 		
 		Course course = getTestCourse();
-		courseDao.add(course);
+		courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
 		
 		lectureService.add(lecture);
@@ -138,7 +140,7 @@ class LectureServiceImplIT {
 	@Test
 	void testRemoveById() throws SQLException {
 		Course course = getTestCourse();
-		courseDao.add(course);
+		courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
 		lectureService.add(lecture);
 		int lectureId = lecture.getId();
