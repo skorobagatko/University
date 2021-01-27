@@ -15,7 +15,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:springTestContext.xml", "file:src/main/webapp/WEB-INF/servletContext.xml"})
+@ContextConfiguration(locations = {
+		"file:src/test/resources/springTestContext.xml", 
+		"file:src/main/webapp/WEB-INF/servletContext.xml"
+		})
 @WebAppConfiguration
 class UniversityControllerTest {
 	
