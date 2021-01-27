@@ -95,7 +95,7 @@ class TimetableTest {
 	void testEqualsMethodReturnsTrueForEqualTimetables() {
 		Timetable other = getTestTimetable();
 		
-		assertTrue(timetable.equals(other));
+		assertEquals(timetable, other);
 	}
 	
 	@Test
@@ -109,28 +109,28 @@ class TimetableTest {
 		LocalDate startDate = LocalDate.of(2021, 12, 6);
 		Timetable other = Timetable.getDayTimetable(participant, startDate);
 		
-		assertTrue(!timetable.equals(other));
+		assertNotEquals(timetable, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForSameTimetables() {
 		Timetable other = timetable;
 		
-		assertTrue(timetable.equals(other));
+		assertEquals(timetable, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNullArgument() {
 		Timetable other = null;
 		
-		assertTrue(!timetable.equals(other));
+		assertNotEquals(timetable, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseWithObjectArgument() {
 		Object other = new Object();
 		
-		assertTrue(!timetable.equals(other));
+		assertNotEquals(timetable, other);
 	}
 	
 	private Participant getTestParticipant() {
