@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -25,13 +26,14 @@ import com.skorobahatko.university.service.exception.ValidationException;
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/main/webapp/WEB-INF/applicationContext.xml")
+@ContextConfiguration("file:src/test/resources/springTestContext.xml")
 class ParticipantServiceImplIT {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
 	@Autowired
+	@Qualifier("participantServiceImpl")
 	private ParticipantService participantService;
 
 	@Test

@@ -22,7 +22,7 @@ public class Timetable {
 	}
 	
 	public static Timetable getMonthTimetable(Participant participant) {
-		return getMonthTimetable(participant, LocalDate.now());
+		return getMonthTimetable(participant, getFirstDayOfCurrentMonthDate());
 	}
 	
 	public static Timetable getMonthTimetable(Participant participant, LocalDate date) {
@@ -132,6 +132,14 @@ public class Timetable {
 	public String toString() {
 		return "Timetable [id=" + id + ", participant=" + participant + ", startDate=" + startDate + ", endDate="
 				+ endDate + ", lectures=" + lectures + "]";
+	}
+	
+	private static LocalDate getFirstDayOfCurrentMonthDate() {
+		LocalDate now = LocalDate.now();
+		int currentMonth = now.getMonthValue();
+		int currentYear = now.getYear();
+		
+		return LocalDate.of(currentYear, currentMonth, 1);
 	}
 
 	private List<Lecture> getFilteredLecturesFromCourses(List<Course> courses) {

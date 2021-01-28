@@ -17,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,8 +30,18 @@ import com.skorobahatko.university.domain.Teacher;
 import com.skorobahatko.university.service.CourseService;
 import com.skorobahatko.university.service.ParticipantService;
 
+@SqlGroup({ 
+	@Sql("/delete_tables.sql"), 
+	@Sql("/create_tables.sql"), 
+	@Sql("/populate_courses.sql"),
+	@Sql("/populate_participants.sql")
+})
+@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:springTestContext.xml", "file:src/main/webapp/WEB-INF/servletContext.xml"})
+@ContextConfiguration(locations = {
+		"file:src/test/resources/springTestContext.xml", 
+		"file:src/main/webapp/WEB-INF/servletContext.xml"
+		})
 @WebAppConfiguration
 class TeacherControllerTest {
 	
@@ -75,7 +87,7 @@ class TeacherControllerTest {
 		mockMvc.perform(post("/teachers/new")
 				.param("firstName", teacher.getFirstName())
 				.param("lastName", teacher.getLastName())
-				.param("courseIdSelect", String.valueOf(course.getId())))
+				.param("courseId", String.valueOf(course.getId())))
 				.andExpect(status().is(302))
 				.andExpect(view().name("redirect:/teachers"))
 				.andExpect(redirectedUrl("/teachers"));

@@ -4,22 +4,43 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+@Entity
+@Table(name = "lectures")
 public class Lecture {
 	
+	@Id
+	@Column(name = "lecture_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Column(name = "course_id")
 	private int courseId;
+	
+	@Column(name = "lecture_name")
 	private String name;
 	
+	@Column(name = "lecture_date")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate date;
 	
+	@Column(name = "lecture_start_time")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime startTime;
 	
+	@Column(name = "lecture_end_time")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
+	
+	@Column(name = "lecture_room_number")
 	private int roomNumber;
 	
 	public Lecture() {}

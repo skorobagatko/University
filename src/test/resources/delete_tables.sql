@@ -1,10 +1,6 @@
-DROP TABLE IF EXISTS timetables CASCADE;
-
 DROP TABLE IF EXISTS participants_courses CASCADE;
 
 DROP TABLE IF EXISTS participants CASCADE;
-
-DROP TABLE IF EXISTS participant_roles CASCADE;
 
 DROP TABLE IF EXISTS lectures CASCADE;
 

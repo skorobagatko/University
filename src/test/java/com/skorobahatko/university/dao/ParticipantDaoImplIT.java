@@ -29,14 +29,14 @@ import com.skorobahatko.university.domain.Teacher;
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/main/webapp/WEB-INF/applicationContext.xml")
+@ContextConfiguration("file:src/test/resources/springTestContext.xml")
 class ParticipantDaoImplIT {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
 	@Autowired
-	ParticipantDaoImpl participantDao;
+	ParticipantDao participantDao;
 
 	@Test
 	void testGetAll() {
@@ -54,6 +54,8 @@ class ParticipantDaoImplIT {
 				.collect(Collectors.toList());
 		
 		List<Student> actual = participantDao.getAllStudents();
+		
+		assertEquals(expected.size(), actual.size());
 		
 		assertEquals(expected, actual);
 	}

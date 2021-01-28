@@ -4,12 +4,6 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
 	version="4.0">
 	<display-name>University</display-name>
-	
-	<resource-ref>
-		<res-ref-name>jdbc/UniversityDatabase</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

@@ -44,7 +44,7 @@ class TeacherTest {
 	void testEqualsMethodReturnsTrueForEqualTeachers() {
 		Teacher other = getTestTeacher();
 		
-		assertTrue(teacher.equals(other));
+		assertEquals(teacher, other);
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ class TeacherTest {
 		List<Course> courses = getTestCourses();
 		Teacher other = new Teacher(id, firstName, lastName, courses);
 		
-		assertTrue(!teacher.equals(other));
+		assertNotEquals(teacher, other);
 	}
 	
 	private List<Course> getTestCourses() {

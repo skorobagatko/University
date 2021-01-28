@@ -44,7 +44,7 @@ class StudentTest {
 	void testEqualsMethodReturnsTrueForEqualStudents() {
 		Student other = getTestStudent();
 		
-		assertTrue(student.equals(other));
+		assertEquals(student, other);
 	}
 	
 	@Test
@@ -55,28 +55,28 @@ class StudentTest {
 		List<Course> courses = getTestCourses();
 		Student other = new Student(id, firstName, lastName, courses);
 		
-		assertTrue(!student.equals(other));
+		assertNotEquals(student, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForSameStudents() {
 		Student other = student;
 		
-		assertTrue(student.equals(other));
+		assertEquals(student, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNullArgument() {
 		Student other = null;
 		
-		assertTrue(!student.equals(other));
+		assertNotEquals(student, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseWithObjectArgument() {
 		Object other = new Object();
 		
-		assertTrue(!student.equals(other));
+		assertNotEquals(student, other);
 	}
 	
 	private List<Course> getTestCourses() {

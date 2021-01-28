@@ -117,17 +117,7 @@
 								<tr th:each="lecture : ${course.getLectures()}">
 									<td class="font-weight-light text-left"
 										th:text="${lecture.getName()}">Lecture name</td>
-									<!-- <td class="text-right">
-										<a class="btn btn-outline-danger btn-sm" href="#" role="button"> Delete </a>
-									</td> -->
 								</tr>
-								<!-- <tr>
-									<td class="text-left">
-										<a class="btn btn-outline-info btn-sm" th:href="@{/courses/{id}/edit(id=${course.getId()})}" role="button"> 
-											Add Lecture 
-										</a> 
-									</td>
-								</tr> -->
 							</tbody>
 						</table>
 

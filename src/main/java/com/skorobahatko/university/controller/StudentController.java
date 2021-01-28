@@ -26,6 +26,8 @@ public class StudentController {
 	private static final String REDIRECT_TO_STUDENTS_LIST_PAGE = "redirect:/students";
 	private static final String STUDENT_EDIT_PAGE = "students/edit";
 	
+	private static final String STUDENT = "student";
+	
 	@Autowired
 	private ParticipantService participantService;
 	
@@ -57,7 +59,7 @@ public class StudentController {
 	@GetMapping("/{id}")
 	public String getStudentById(@PathVariable("id") int id, Model model) {
 		Student student = (Student) participantService.getById(id);
-		model.addAttribute("student", student);
+		model.addAttribute(STUDENT, student);
 	
 		return "students/student";
 	}
@@ -65,11 +67,9 @@ public class StudentController {
 	@GetMapping("/{id}/edit")
 	public String editStudentById(@PathVariable("id") int id, Model model) {
 		Student student = (Student) participantService.getById(id);
-		model.addAttribute("student", student);
+		model.addAttribute(STUDENT, student);
 		
-		List<Course> studentCourses = student.getCourses();
-		List<Course> notAttendedCourses = courseService.getAll();
-		notAttendedCourses.removeAll(studentCourses);
+		List<Course> notAttendedCourses = getNotAttendedCoursesFor(student);
 		model.addAttribute("notAttendedCourses", notAttendedCourses);
 		
 		return STUDENT_EDIT_PAGE;
@@ -84,7 +84,7 @@ public class StudentController {
 		participantService.addParticipantCourseById(studentId, courseId);
 		
 		Student student = (Student) participantService.getById(studentId);
-		model.addAttribute("student", student);
+		model.addAttribute(STUDENT, student);
 		
 		return STUDENT_EDIT_PAGE;
 	}
@@ -98,7 +98,7 @@ public class StudentController {
 		participantService.removeParticipantCourseById(studentId, courseId);
 		
 		Student student = (Student) participantService.getById(studentId);
-		model.addAttribute("student", student);
+		model.addAttribute(STUDENT, student);
 		
 		return STUDENT_EDIT_PAGE;
 	}
@@ -115,6 +115,14 @@ public class StudentController {
 		participantService.removeById(id);
 		
 		return REDIRECT_TO_STUDENTS_LIST_PAGE;
+	}
+	
+	private List<Course> getNotAttendedCoursesFor(Student student) {
+		List<Course> studentCourses = student.getCourses();
+		List<Course> result = courseService.getAll();
+		result.removeAll(studentCourses);
+		
+		return result;
 	}
 
 }

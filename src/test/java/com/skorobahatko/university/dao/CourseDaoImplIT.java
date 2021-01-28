@@ -4,7 +4,6 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
-import com.skorobahatko.university.domain.Participant;
 
 @SqlGroup({ 
 	@Sql("/delete_tables.sql"), 
@@ -28,7 +26,7 @@ import com.skorobahatko.university.domain.Participant;
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/main/webapp/WEB-INF/applicationContext.xml")
+@ContextConfiguration("file:src/test/resources/springTestContext.xml")
 class CourseDaoImplIT {
 	
 	@Autowired
@@ -36,30 +34,12 @@ class CourseDaoImplIT {
 	
 	@Autowired
 	private CourseDao courseDao;
-	
-	@Autowired
-	private ParticipantDao participantDao;
 
 	@Test
 	void testGetAll() throws SQLException {
 		int expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "courses");
 		int actual = courseDao.getAll().size();
 
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testGetAllByParticipantId() throws SQLException {
-		Course course = getTestCourse();
-		courseDao.add(course);
-		
-		Participant participant = getTestParticipant();
-		participant.addCourse(course);
-		participantDao.add(participant);
-		
-		List<Course> expected = List.of(course);
-		List<Course> actual = courseDao.getAllByParticipantId(participant.getId());
-		
 		assertEquals(expected, actual);
 	}
 

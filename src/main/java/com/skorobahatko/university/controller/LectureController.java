@@ -26,6 +26,8 @@ import com.skorobahatko.university.service.LectureService;
 public class LectureController {
 
 	private static final String REDIRECT_TO_COURSE_EDIT_PAGE = "redirect:/courses/{id}/edit";
+	
+	private static final String COURSE = "course";
 
 	@Autowired
 	private CourseService courseService;
@@ -47,7 +49,7 @@ public class LectureController {
 		lectureService.add(lecture);
 
 		Course course = courseService.getById(courseId);
-		model.addAttribute("course", course);
+		model.addAttribute(COURSE, course);
 		model.addAttribute("id", courseId);
 
 		return REDIRECT_TO_COURSE_EDIT_PAGE;
@@ -71,7 +73,7 @@ public class LectureController {
 		
 		int courseId = lecture.getCourseId();
 		Course course = courseService.getById(courseId);
-		model.addAttribute("course", course);
+		model.addAttribute(COURSE, course);
 		model.addAttribute("id", courseId);
 		
 		return REDIRECT_TO_COURSE_EDIT_PAGE;
@@ -86,7 +88,7 @@ public class LectureController {
 		lectureService.removeById(lectureId);
 
 		Course course = courseService.getById(courseId);
-		model.addAttribute("course", course);
+		model.addAttribute(COURSE, course);
 		model.addAttribute("id", courseId);
 
 		return REDIRECT_TO_COURSE_EDIT_PAGE;

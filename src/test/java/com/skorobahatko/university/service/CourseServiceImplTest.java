@@ -38,20 +38,6 @@ class CourseServiceImplTest {
 	}
 
 	@Test
-	void testGetAllByParticipantId() {
-		Course course = getTestCourse();
-		List<Course> expected = List.of(course);
-		
-		CourseDao courseDao = Mockito.mock(CourseDao.class);
-		Mockito.when(courseDao.getAllByParticipantId(1)).thenReturn(expected);
-		courseService.setCourseDao(courseDao);
-		
-		List<Course> actual = courseService.getAllByParticipantId(1);
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
 	void testGetById() {
 		Course expected = getTestCourse();
 		int courseId = 1;

@@ -3,6 +3,10 @@ package com.skorobahatko.university.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.*;
+
+@Entity
+@DiscriminatorValue("Student")
 public class Student extends Participant {
 	
 	public Student() {}

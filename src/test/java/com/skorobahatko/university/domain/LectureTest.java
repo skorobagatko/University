@@ -21,7 +21,7 @@ class LectureTest {
 	void testEqualsMethodReturnsTrueForEqualLectures() {
 		Lecture other = getTestLecture();
 		
-		assertTrue(lecture.equals(other));
+		assertEquals(lecture, other);
 	}
 	
 	@Test
@@ -35,28 +35,28 @@ class LectureTest {
 		int roomNumber = 201;
 		Lecture other = new Lecture(id, name, courseId, date, startTime, endTime, roomNumber);
 		
-		assertTrue(!lecture.equals(other));
+		assertNotEquals(lecture,other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForSameLectures() {
 		Lecture other = lecture;
 		
-		assertTrue(lecture.equals(other));
+		assertEquals(lecture,other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNullArgument() {
 		Lecture other = null;
 		
-		assertTrue(!lecture.equals(other));
+		assertNotEquals(lecture,other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseWithObjectArgument() {
 		Object other = new Object();
 		
-		assertTrue(!lecture.equals(other));
+		assertNotEquals(lecture,other);
 	}
 	
 	private Lecture getTestLecture() {

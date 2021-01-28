@@ -1,16 +1,12 @@
-INSERT INTO participant_roles (role_id, role_name) VALUES
-	(1, 'Teacher'),
-	(2, 'Student');
-
-INSERT INTO participants (first_name, last_name, role_id) VALUES
-	('John', 'Johnson', 1),
-	('Harry', 'Harrison', 1),
-	('Gary', 'Morgan', 1),
-	('Jack', 'Jackson', 2),
-	('Tom', 'Tompson', 2),
-	('Andrew', 'Anderson', 2),
-	('Dave', 'Daveson', 2),
-	('Steven', 'Stevenson', 2);
+INSERT INTO participants (first_name, last_name, role) VALUES
+	('John', 'Johnson', 'Teacher'),
+	('Harry', 'Harrison', 'Teacher'),
+	('Gary', 'Morgan', 'Teacher'),
+	('Jack', 'Jackson', 'Student'),
+	('Tom', 'Tompson', 'Student'),
+	('Andrew', 'Anderson', 'Student'),
+	('Dave', 'Daveson', 'Student'),
+	('Steven', 'Stevenson', 'Student');
 
 INSERT INTO participants_courses (participant_id, course_id) VALUES 
 	(1, 1),

@@ -20,17 +20,17 @@ public class TestUtils {
 	}
 	
 	public static Lecture getTestLectureWithCourseId(int courseId) {
-		return new Lecture("Lecture 1", courseId, LocalDate.of(2020, 12, 1), LocalTime.of(7, 30),
+		return new Lecture("Lecture 1", courseId, LocalDate.of(2020, 12, 1), LocalTime.of(8, 00),
 				LocalTime.of(9, 00), 100);
 	}
 
 	public static List<Lecture> getTestLecturesWithCourseId(int courseId) {
 		List<Lecture> lectures = new ArrayList<>();
-		lectures.add(new Lecture("Lecture 1", courseId, LocalDate.of(2020, 12, 1), LocalTime.of(7, 30),
+		lectures.add(new Lecture("Lecture 1", courseId, LocalDate.of(2020, 12, 1), LocalTime.of(8, 00),
 				LocalTime.of(9, 00), 100));
-		lectures.add(new Lecture("Lecture 2", courseId, LocalDate.of(2020, 12, 3), LocalTime.of(9, 30),
+		lectures.add(new Lecture("Lecture 2", courseId, LocalDate.of(2020, 12, 3), LocalTime.of(10, 00),
 				LocalTime.of(11, 00), 100));
-		lectures.add(new Lecture("Lecture 3", courseId, LocalDate.of(2020, 12, 7), LocalTime.of(7, 30),
+		lectures.add(new Lecture("Lecture 3", courseId, LocalDate.of(2020, 12, 7), LocalTime.of(8, 00),
 				LocalTime.of(9, 00), 100));
 		return lectures;
 	}

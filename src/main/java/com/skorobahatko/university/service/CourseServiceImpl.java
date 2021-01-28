@@ -30,16 +30,6 @@ public class CourseServiceImpl implements CourseService {
 	}
 	
 	@Override
-	public List<Course> getAllByParticipantId(int participantId) {
-		try {
-			return courseDao.getAllByParticipantId(participantId);
-		} catch (DaoException e) {
-			String message = String.format("Unable to get courses for participant with id = %d", participantId);
-			throw new ServiceException(message, e);
-		}
-	}
-
-	@Override
 	public Course getById(int id) {
 		validateId(id);
 		
