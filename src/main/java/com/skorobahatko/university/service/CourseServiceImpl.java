@@ -2,7 +2,11 @@ package com.skorobahatko.university.service;
 
 import java.util.List;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.skorobahatko.university.dao.CourseDao;
 import com.skorobahatko.university.dao.exception.DaoException;
@@ -12,10 +16,13 @@ import com.skorobahatko.university.service.exception.EntityNotFoundServiceExcept
 import com.skorobahatko.university.service.exception.ServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
+@Service("courseService")
+@Transactional(readOnly = true)
 public class CourseServiceImpl implements CourseService {
 	
 	private CourseDao courseDao;
 	
+	@Autowired
 	public void setCourseDao(CourseDao courseDao) {
 		this.courseDao = courseDao;
 	}
@@ -45,6 +52,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void add(Course course) {
 		validateCourse(course);
 		
@@ -57,6 +65,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void update(Course course) {
 		validateCourse(course);
 		
@@ -69,6 +78,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void removeById(int id) {
 		validateId(id);
 		

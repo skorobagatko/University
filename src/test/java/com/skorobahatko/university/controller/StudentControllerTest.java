@@ -11,72 +11,52 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.service.CourseService;
 import com.skorobahatko.university.service.ParticipantService;
 
-@SqlGroup({ 
-	@Sql("/delete_tables.sql"), 
-	@Sql("/create_tables.sql"), 
-	@Sql("/populate_courses.sql"),
-	@Sql("/populate_participants.sql")
-})
-@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {
-		"file:src/test/resources/springTestContext.xml", 
-		"file:src/main/webapp/WEB-INF/servletContext.xml"
-		})
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@WebMvcTest(StudentController.class)
 class StudentControllerTest {
 	
-	MockMvc mockMvc;
-	
-	@Autowired
-    private WebApplicationContext webApplicationContext;
-	
-	@Autowired
+	@MockBean
 	private ParticipantService participantService;
 	
-	@Autowired
+	@MockBean
 	private CourseService courseService;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		reset(courseService);
-		reset(participantService);
-		
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	}
+	
+	@Autowired
+	MockMvc mockMvc;
 
 	@Test
 	void testGetAllStudents() throws Exception {
 		List<Student> students = getTestStudents();
+		List<Course> courses = List.of(getTestCourse());
 		
 		when(participantService.getAllStudents()).thenReturn(students);
+		when(courseService.getAll()).thenReturn(courses);
 		
 		mockMvc.perform(get("/students"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("students/all"))
-				.andExpect(model().attribute("students", equalTo(students)));
+				.andExpect(model().attribute("students", equalTo(students)))
+				.andExpect(model().attribute("courses", equalTo(courses)));
 		
 		verify(participantService, times(1)).getAllStudents();
 		verifyNoMoreInteractions(participantService);
+		
+		verify(courseService, times(1)).getAll();
+		verifyNoMoreInteractions(courseService);
 	}
 
 	@Test

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
@@ -43,14 +44,15 @@ public class LectureController {
 			@RequestParam @DateTimeFormat(pattern = "HH:mm") LocalTime lectureStartTime,
 			@RequestParam @DateTimeFormat(pattern = "HH:mm") LocalTime lectureEndTime,
 			@RequestParam int roomNumber, 
-			Model model) {
+			RedirectAttributes redirectAttributes) {
 		
 		Lecture lecture = new Lecture(lectureName, courseId, lectureDate, lectureStartTime, lectureEndTime, roomNumber);
 		lectureService.add(lecture);
 
 		Course course = courseService.getById(courseId);
-		model.addAttribute(COURSE, course);
-		model.addAttribute("id", courseId);
+		
+		redirectAttributes.addAttribute(COURSE, course);
+		redirectAttributes.addAttribute("id", courseId);
 
 		return REDIRECT_TO_COURSE_EDIT_PAGE;
 
@@ -67,14 +69,15 @@ public class LectureController {
 	@PatchMapping("/{id}")
 	public String updateLecture(
 			@ModelAttribute("lecture") Lecture lecture,
-			Model model) {
+			RedirectAttributes redirectAttributes) {
 		
 		lectureService.update(lecture);
 		
 		int courseId = lecture.getCourseId();
 		Course course = courseService.getById(courseId);
-		model.addAttribute(COURSE, course);
-		model.addAttribute("id", courseId);
+		
+		redirectAttributes.addAttribute(COURSE, course);
+		redirectAttributes.addAttribute("id", courseId);
 		
 		return REDIRECT_TO_COURSE_EDIT_PAGE;
 	}
@@ -83,13 +86,14 @@ public class LectureController {
 	public String deleteLectureById(
 			@PathVariable("lectureId") int lectureId, 
 			@RequestParam int courseId, 
-			Model model) {
+			RedirectAttributes redirectAttributes) {
 
 		lectureService.removeById(lectureId);
 
 		Course course = courseService.getById(courseId);
-		model.addAttribute(COURSE, course);
-		model.addAttribute("id", courseId);
+		
+		redirectAttributes.addAttribute(COURSE, course);
+		redirectAttributes.addAttribute("id", courseId);
 
 		return REDIRECT_TO_COURSE_EDIT_PAGE;
 	}

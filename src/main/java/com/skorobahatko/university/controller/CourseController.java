@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.service.CourseService;
@@ -37,11 +38,13 @@ public class CourseController {
 	}
 	
 	@PostMapping("/new")
-	public String addCourse(@RequestParam String courseName, Model model) {
+	public String addCourse(
+			@RequestParam String courseName, 
+			RedirectAttributes redirectAttributes) {
 		Course newCourse = new Course(courseName);
 		courseService.add(newCourse);
 		
-		model.addAttribute("id", newCourse.getId());
+		redirectAttributes.addAttribute("id", newCourse.getId());
 		
 		return REDIRECT_TO_COURSE_PAGE;
 	}

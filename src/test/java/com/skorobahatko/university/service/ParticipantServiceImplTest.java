@@ -5,32 +5,35 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.dao.ParticipantDao;
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class ParticipantServiceImplTest {
 	
-	private ParticipantServiceImpl participantService;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		participantService = new ParticipantServiceImpl();
-	}
+	@MockBean
+	private ParticipantDao participantDao;
+	
+	@Autowired
+	private ParticipantService participantService;
 
 	@Test
 	void testGetAll() {
 		Participant participant = getTestParticipant();
 		List<Participant> expected = List.of(participant);
 		
-		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
 		Mockito.when(participantDao.getAll()).thenReturn(expected);
-		participantService.setParticipantDao(participantDao);
 		
 		List<Participant> actual = participantService.getAll();
 		
@@ -43,9 +46,7 @@ class ParticipantServiceImplTest {
 		Participant expected = getTestParticipant();
 		expected.setId(participantId);
 		
-		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
 		Mockito.when(participantDao.getById(participantId)).thenReturn(expected);
-		participantService.setParticipantDao(participantDao);
 		
 		Participant actual = participantService.getById(participantId);
 		
@@ -56,9 +57,7 @@ class ParticipantServiceImplTest {
 	void testGetByIdThrowsExceptionForNonExistParticipant() {
 		int participantId = Integer.MAX_VALUE;
 		
-		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
 		Mockito.when(participantDao.getById(participantId)).thenThrow(EntityNotFoundServiceException.class);
-		participantService.setParticipantDao(participantDao);
 		
 		assertThrows(EntityNotFoundServiceException.class, () -> participantService.getById(participantId));
 	}
@@ -72,9 +71,6 @@ class ParticipantServiceImplTest {
 
 	@Test
 	void testAdd() {
-		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
-		participantService.setParticipantDao(participantDao);
-		
 		Participant participant = getTestParticipant();
 		
 		participantService.add(participant);
@@ -91,9 +87,6 @@ class ParticipantServiceImplTest {
 
 	@Test
 	void testRemoveById() {
-		ParticipantDao participantDao = Mockito.mock(ParticipantDao.class);
-		participantService.setParticipantDao(participantDao);
-		
 		int participantId = 1;
 		
 		participantService.removeById(participantId);
