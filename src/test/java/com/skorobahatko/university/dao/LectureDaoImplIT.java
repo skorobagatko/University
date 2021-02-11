@@ -9,14 +9,15 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
@@ -29,8 +30,10 @@ import com.skorobahatko.university.domain.Lecture;
 	@Sql("/populate_lectures.sql") 
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/test/resources/springTestContext.xml")
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@Transactional
 class LectureDaoImplIT {
 
 	@Autowired

@@ -7,15 +7,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
@@ -29,24 +26,20 @@ import com.skorobahatko.university.service.exception.ValidationException;
 	@Sql("/populate_lectures.sql") 
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/test/resources/springTestContext.xml")
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class LectureServiceImplIT {
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	@Qualifier("courseServiceImpl")
 	private CourseService courseService;
 	
 	@Autowired
-	@Qualifier("lectureServiceImpl")
 	private LectureService lectureService;
 
 	@Test
 	void testGetAll() throws SQLException {
-		int expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
+		int expected = 6;
 		int actual = lectureService.getAll().size();
 
 		assertEquals(expected, actual);
@@ -100,32 +93,28 @@ class LectureServiceImplIT {
 
 	@Test
 	void testAddAll() throws SQLException {
-		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
-
 		Course course = getTestCourse();
 		courseService.add(course);
 		List<Lecture> lectures = getTestLecturesWithCourseId(course.getId());
 
 		lectureService.addAll(lectures);
 
-		int expected = rowsCount + lectures.size();
-		int actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
+		int expected = 6 + lectures.size();
+		int actual = lectureService.getAll().size();
 
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	void testAdd() throws SQLException {
-		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
-		
 		Course course = getTestCourse();
 		courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
 		
 		lectureService.add(lecture);
 		
-		int expected = rowsCount + 1;
-		int actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
+		int expected = 7;
+		int actual = lectureService.getAll().size();
 		
 		assertEquals(expected, actual);
 	}

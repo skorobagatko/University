@@ -37,7 +37,10 @@ public class TeacherController {
 	@GetMapping()
 	public String getAllTeachers(Model model) {
 		List<Teacher> teachers = participantService.getAllTeachers();
+		List<Course> courses = courseService.getAll();
+		
 		model.addAttribute("teachers", teachers);
+		model.addAttribute("courses", courses);
 		
 		return "teachers/all";
 	}

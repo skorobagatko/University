@@ -2,7 +2,10 @@ package com.skorobahatko.university.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.skorobahatko.university.dao.ParticipantDao;
 import com.skorobahatko.university.dao.exception.DaoException;
@@ -14,10 +17,13 @@ import com.skorobahatko.university.service.exception.EntityNotFoundServiceExcept
 import com.skorobahatko.university.service.exception.ServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
+@Service("participantService")
+@Transactional(readOnly = true)
 public class ParticipantServiceImpl implements ParticipantService {
 	
 	private ParticipantDao participantDao;
 	
+	@Autowired
 	public void setParticipantDao(ParticipantDao participantDao) {
 		this.participantDao = participantDao;
 	}
@@ -65,6 +71,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void add(Participant participant) {
 		validateParticipant(participant);
 		
@@ -77,6 +84,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void update(Participant participant) {
 		validateParticipant(participant);
 		
@@ -89,6 +97,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void removeById(int id) {
 		validateId(id);
 		
@@ -101,6 +110,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void addParticipantCourseById(int participantId, int courseId) {
 		validateId(participantId);
 		validateId(courseId);
@@ -115,6 +125,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void removeParticipantCourseById(int participantId, int courseId) {
 		validateId(participantId);
 		validateId(courseId);

@@ -4,15 +4,12 @@ import static com.skorobahatko.university.util.TestUtils.getTestParticipant;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
@@ -25,21 +22,34 @@ import com.skorobahatko.university.service.exception.ValidationException;
 	@Sql("/populate_participants.sql")
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/test/resources/springTestContext.xml")
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class ParticipantServiceImplIT {
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
-	@Autowired
-	@Qualifier("participantServiceImpl")
 	private ParticipantService participantService;
 
 	@Test
 	void testGetAll() {
-		int expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "participants");
+		int expected = 8;
 		int actual = participantService.getAll().size();
+
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void testGetAllStudents() {
+		int expected = 5;
+		int actual = participantService.getAllStudents().size();
+
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void testGetAllTeachers() {
+		int expected = 3;
+		int actual = participantService.getAllTeachers().size();
 
 		assertEquals(expected, actual);
 	}
@@ -71,13 +81,12 @@ class ParticipantServiceImplIT {
 
 	@Test
 	void testAdd() {
-		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "participants");
 		Participant participant = getTestParticipant();
 		
 		participantService.add(participant);
 		
-		int expectedRowsCount = rowsCount + 1;
-		int actualRowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "participants");
+		int expectedRowsCount = 9;
+		int actualRowsCount = participantService.getAll().size();
 		
 		assertEquals(expectedRowsCount, actualRowsCount);
 	}

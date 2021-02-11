@@ -6,14 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
@@ -25,19 +24,18 @@ import com.skorobahatko.university.domain.Course;
 	@Sql("/populate_participants.sql")
 })
 @Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration("file:src/test/resources/springTestContext.xml")
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@Transactional
 class CourseDaoImplIT {
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
 	
 	@Autowired
 	private CourseDao courseDao;
 
 	@Test
 	void testGetAll() throws SQLException {
-		int expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "courses");
+		int expected = 3;
 		int actual = courseDao.getAll().size();
 
 		assertEquals(expected, actual);
@@ -63,14 +61,14 @@ class CourseDaoImplIT {
 
 	@Test
 	void testAdd() {
-		int rowsCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "courses");
+		int rowsCount = 3;
 		
 		Course course = getTestCourse();
 		
 		courseDao.add(course);
 		
 		int expected = rowsCount + 1;
-		int actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "courses");
+		int actual = courseDao.getAll().size();
 		
 		assertEquals(expected, actual);
 	}

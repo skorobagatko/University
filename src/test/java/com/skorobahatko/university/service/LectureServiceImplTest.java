@@ -5,31 +5,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.dao.LectureDao;
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class LectureServiceImplTest {
 	
-	private LectureServiceImpl lectureService;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		lectureService = new LectureServiceImpl();
-	}
+	@MockBean
+	private LectureDao lectureDao;
+	
+	@Autowired
+	private LectureService lectureService;
 
 	@Test
 	void testGetAll() {
 		List<Lecture> expected = getTestLecturesWithCourseId(1);
 		
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
 		Mockito.when(lectureDao.getAll()).thenReturn(expected);
-		lectureService.setLectureDao(lectureDao);
 		
 		List<Lecture> actual = lectureService.getAll();
 		
@@ -42,9 +45,7 @@ class LectureServiceImplTest {
 		int lectureId = 3;
 		expected.setId(lectureId);
 		
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
 		Mockito.when(lectureDao.getById(lectureId)).thenReturn(expected);
-		lectureService.setLectureDao(lectureDao);
 		
 		Lecture actual = lectureService.getById(lectureId);
 		
@@ -55,9 +56,7 @@ class LectureServiceImplTest {
 	void testGetByIdThrowsExceptionForNonExistCourse() {
 		int lectureId = Integer.MAX_VALUE;
 		
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
 		Mockito.when(lectureDao.getById(lectureId)).thenThrow(EntityNotFoundServiceException.class);
-		lectureService.setLectureDao(lectureDao);
 		
 		assertThrows(EntityNotFoundServiceException.class, () -> lectureService.getById(lectureId));
 	}
@@ -76,9 +75,7 @@ class LectureServiceImplTest {
 		
 		List<Lecture> expected = List.of(lecture);
 		
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
 		Mockito.when(lectureDao.getByCourseId(courseId)).thenReturn(expected);
-		lectureService.setLectureDao(lectureDao);
 		
 		List<Lecture> actual = lectureService.getByCourseId(courseId);
 		
@@ -89,9 +86,6 @@ class LectureServiceImplTest {
 	void testAddAll() {
 		List<Lecture> lectures = getTestLecturesWithCourseId(1);
 		
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
-		lectureService.setLectureDao(lectureDao);
-		
 		lectureService.addAll(lectures);
 		
 		Mockito.verify(lectureDao).addAll(lectures);
@@ -100,9 +94,6 @@ class LectureServiceImplTest {
 	@Test
 	void testAdd() {
 		Lecture lecture = getTestLectureWithCourseId(1);
-		
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
-		lectureService.setLectureDao(lectureDao);
 		
 		lectureService.add(lecture);
 		
@@ -118,9 +109,6 @@ class LectureServiceImplTest {
 
 	@Test
 	void testRemoveById() {
-		LectureDao lectureDao = Mockito.mock(LectureDao.class);
-		lectureService.setLectureDao(lectureDao);
-		
 		lectureService.removeById(1);
 		
 		Mockito.verify(lectureDao).removeById(1);

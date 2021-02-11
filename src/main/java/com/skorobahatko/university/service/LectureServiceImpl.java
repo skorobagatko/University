@@ -2,7 +2,11 @@ package com.skorobahatko.university.service;
 
 import java.util.List;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.skorobahatko.university.dao.LectureDao;
 import com.skorobahatko.university.dao.exception.DaoException;
@@ -12,10 +16,13 @@ import com.skorobahatko.university.service.exception.EntityNotFoundServiceExcept
 import com.skorobahatko.university.service.exception.ServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
+@Service("lectureService")
+@Transactional(readOnly = true)
 public class LectureServiceImpl implements LectureService {
 
 	private LectureDao lectureDao;
 	
+	@Autowired
 	public void setLectureDao(LectureDao lectureDao) {
 		this.lectureDao = lectureDao;
 	}
@@ -57,6 +64,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void addAll(List<Lecture> lectures) {
 		try {
 			lectureDao.addAll(lectures);
@@ -67,6 +75,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void add(Lecture lecture) {
 		validateLecture(lecture);
 		
@@ -79,6 +88,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void update(Lecture lecture) {
 		validateLecture(lecture);
 		
@@ -91,6 +101,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void removeById(int id) {
 		validateId(id);
 		
@@ -103,6 +114,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void removeByCourseId(int courseId) {
 		validateId(courseId);
 		

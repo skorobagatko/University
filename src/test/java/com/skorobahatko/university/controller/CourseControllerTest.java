@@ -9,54 +9,28 @@ import static com.skorobahatko.university.util.TestUtils.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Course;
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.service.CourseService;
 
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-
-@SqlGroup({ 
-	@Sql("/delete_tables.sql"), 
-	@Sql("/create_tables.sql"), 
-	@Sql("/populate_courses.sql"),
-	@Sql("/populate_participants.sql")
-})
-@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {
-		"file:src/test/resources/springTestContext.xml", 
-		"file:src/main/webapp/WEB-INF/servletContext.xml"
-		})
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@WebMvcTest(CourseController.class)
 class CourseControllerTest {
-
-	MockMvc mockMvc;
 	
-	@Autowired
-    private WebApplicationContext webApplicationContext;
-	
-	@Autowired
+	@MockBean
 	private CourseService courseService;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		reset(courseService);
-		
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	}
+	@Autowired
+	MockMvc mockMvc;
 
 	@Test
 	void testGetAllCourses() throws Exception {
@@ -90,7 +64,7 @@ class CourseControllerTest {
 				.andExpect(status().is(302))
 				.andExpect(view().name("redirect:/courses/{id}"))
 				.andExpect(redirectedUrl("/courses/0"))
-				.andExpect(model().attribute("id", is(0)));
+				.andExpect(model().attribute("id", is("0")));
 		
 		verify(courseService, times(1)).add(course);
 		verifyNoMoreInteractions(courseService);
@@ -149,8 +123,7 @@ class CourseControllerTest {
 				.param("lectures[0].endTime", "09:00")
 				.param("lectures[0].roomNumber", "100"))
 				.andExpect(status().is(302))
-				.andExpect(view().name("redirect:/courses"))
-				.andExpect(model().attribute("course", equalTo(course)));
+				.andExpect(view().name("redirect:/courses"));
 		
 		verify(courseService, times(1)).update(course);
 		verifyNoMoreInteractions(courseService);

@@ -2,15 +2,14 @@ package com.skorobahatko.university.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.skorobahatko.university.dao.exception.DaoException;
 import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
@@ -18,40 +17,36 @@ import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.domain.Teacher;
 
+@Repository("participantDao")
 public class ParticipantDaoImpl implements ParticipantDao {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ParticipantDaoImpl.class);
 
-	private static final String GET_ALL_HQL = "from Participant";
+	private static final String GET_ALL_JPQL = "select p from Participant p";
 	
-	private static final String GET_ALL_STUDENTS_HQL = "from Student";
+	private static final String GET_ALL_STUDENTS_JPQL = "select s from Student s";
 	
-	private static final String GET_ALL_TEACHERS_HQL = "from Teacher";
+	private static final String GET_ALL_TEACHERS_JPQL = "select t from Teacher t";
 
-	private static final String GET_BY_ID_HQL = "from Participant p where p.id = :pId";
+	private static final String GET_BY_ID_JPQL = "select p from Participant p where p.id = :pId";
 
+	private static final String REMOVE_BY_ID_JPQL = "delete from Participant p where p.id = :pId";
+	
 	private static final String ADD_PARTICIPANT_COURSE_PAIR_SQL = "INSERT INTO participants_courses "
 			+ "(participant_id, course_id) VALUES (?, ?);";
 	
 	private static final String DELETE_PARTICIPANT_COURSE_PAIR_SQL = "DELETE FROM participants_courses "
 			+ "WHERE participant_id = ? AND course_id = ?;";
 
-	private static final String REMOVE_BY_ID_HQL = "delete from Participant p where p.id = :id";
+	@PersistenceContext
+	private EntityManager entityManager;
 	
-	private SessionFactory sessionFactory;
-	
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
 	@Override
-	@Transactional
 	public List<Participant> getAll() {
 		logger.debug("Retrieving the participants list");
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			List<Participant> result = session.createQuery(GET_ALL_HQL, Participant.class).getResultList();
+			List<Participant> result = entityManager.createQuery(GET_ALL_JPQL, Participant.class).getResultList();
 
 			logger.debug("Retrieved {} participants", result.size());
 
@@ -62,13 +57,11 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 	
 	@Override
-	@Transactional
 	public List<Student> getAllStudents() {
 		logger.debug("Retrieving the Student list");
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			List<Student> result = session.createQuery(GET_ALL_STUDENTS_HQL, Student.class).getResultList();
+			List<Student> result = entityManager.createQuery(GET_ALL_STUDENTS_JPQL, Student.class).getResultList();
 
 			logger.debug("Retrieved {} students", result.size());
 
@@ -79,13 +72,13 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 	
 	@Override
-	@Transactional
 	public List<Teacher> getAllTeachers() {
 		logger.debug("Retrieving the Teacher list");
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			List<Teacher> result = session.createQuery(GET_ALL_TEACHERS_HQL, Teacher.class).getResultList();
+			List<Teacher> result = entityManager
+					.createQuery(GET_ALL_TEACHERS_JPQL, Teacher.class)
+					.getResultList();
 
 			logger.debug("Retrieved {} teachers", result.size());
 
@@ -96,15 +89,15 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 
 	@Override
-	@Transactional
 	public Participant getById(int id) {
 		logger.debug("Retrieving Participant with id = {}", id);
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			Query<Participant> query = session.createQuery(GET_BY_ID_HQL, Participant.class);
-			query.setParameter("pId", id);
-			Participant result = query.getSingleResult();
+			Participant result = entityManager
+					.createQuery(GET_BY_ID_JPQL, Participant.class)
+					.setParameter("pId", id)
+					.setHint("org.hibernate.cacheable", true)
+					.getSingleResult();
 
 			logger.debug("Participant with id = {} successfully retrieved", id);
 
@@ -119,16 +112,14 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 
 	@Override
-	@Transactional
 	public void add(Participant participant) {
 		logger.debug("Adding Participant: {}", participant);
 		
 		checkForNull(participant);
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			int participantId = (int) session.save(participant);
-			participant.setId(participantId);
+			entityManager.persist(participant);
+			entityManager.flush();
 		} catch (HibernateException e) {
 			String message = String.format("Unable to add Participant: %s", participant);
 			throw new DaoException(message, e);
@@ -138,15 +129,14 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 	
 	@Override
-	@Transactional
 	public void update(Participant participant) {
 		logger.debug("Updating Participant: {}", participant);
 		
 		checkForNull(participant);
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			session.merge(participant);
+			entityManager.merge(participant);
+			entityManager.flush();
 		} catch (HibernateException e) {
 			String message = String.format("Unable to update Participant: %s", participant);
 			throw new DaoException(message, e);
@@ -156,17 +146,17 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 
 	@Override
-	@Transactional
 	public void removeById(int id) {
 		logger.debug("Removing Participant with id = {}", id);
 		
 		int affectedRows = 0;
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			affectedRows = session.createQuery(REMOVE_BY_ID_HQL)
-					.setParameter("id", id)
+			affectedRows = entityManager.createQuery(REMOVE_BY_ID_JPQL)
+					.setParameter("pId", id)
 					.executeUpdate();
+			
+			entityManager.flush();
 
 			logger.debug("Participant with id = {} successfully removed", id);
 		} catch (HibernateException e) {
@@ -181,16 +171,16 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 	
 	@Override
-	@Transactional
 	public void addParticipantCourseById(int participantId, int courseId) {
 		logger.debug("Adding Course with id = {} to Participant with id = {}", courseId, participantId);
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			session.createSQLQuery(ADD_PARTICIPANT_COURSE_PAIR_SQL)
+			entityManager.createNativeQuery(ADD_PARTICIPANT_COURSE_PAIR_SQL)
 					.setParameter(1, participantId)
 					.setParameter(2, courseId)
 					.executeUpdate();
+			
+			entityManager.flush();
 		} catch (HibernateException e) {
 			String message = String.format("Unable to add Course with id = %d to Participant with id = %d", 
 					courseId, participantId);
@@ -201,16 +191,16 @@ public class ParticipantDaoImpl implements ParticipantDao {
 	}
 
 	@Override
-	@Transactional
 	public void removeParticipantCourseById(int participantId, int courseId) {
 		logger.debug("Removing Course with id = {} for Participant with id = {}", courseId, participantId);
 		
 		try {
-			Session session = sessionFactory.getCurrentSession();
-			session.createSQLQuery(DELETE_PARTICIPANT_COURSE_PAIR_SQL)
+			entityManager.createNativeQuery(DELETE_PARTICIPANT_COURSE_PAIR_SQL)
 					.setParameter(1, participantId)
 					.setParameter(2, courseId)
 					.executeUpdate();
+			
+			entityManager.flush();
 		} catch (HibernateException e) {
 			String message = String.format("Unable to remove Course with id = %d for Participant with id = %d", 
 					courseId, participantId);

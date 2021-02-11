@@ -3,35 +3,20 @@ package com.skorobahatko.university.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {
-		"file:src/test/resources/springTestContext.xml", 
-		"file:src/main/webapp/WEB-INF/servletContext.xml"
-		})
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@WebMvcTest(UniversityController.class)
 class UniversityControllerTest {
 	
+	@Autowired
 	MockMvc mockMvc;
 	
-	@Autowired
-    private WebApplicationContext webApplicationContext;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	}
-
 	@Test
 	void testIndex() throws Exception {
 		mockMvc.perform(get("/"))

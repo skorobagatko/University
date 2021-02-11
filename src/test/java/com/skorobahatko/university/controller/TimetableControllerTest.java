@@ -9,54 +9,28 @@ import java.util.List;
 
 import static com.skorobahatko.university.util.TestUtils.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.domain.Timetable;
 import com.skorobahatko.university.service.ParticipantService;
 
-@SqlGroup({ 
-	@Sql("/delete_tables.sql"), 
-	@Sql("/create_tables.sql"), 
-	@Sql("/populate_courses.sql"),
-	@Sql("/populate_lectures.sql"),
-	@Sql("/populate_participants.sql")
-})
-@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {
-		"file:src/test/resources/springTestContext.xml", 
-		"file:src/main/webapp/WEB-INF/servletContext.xml"
-		})
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@WebMvcTest(TimetableController.class)
 class TimetableControllerTest {
 	
-	MockMvc mockMvc;
-	
-	@Autowired
-    private WebApplicationContext webApplicationContext;
-	
-	@Autowired
+	@MockBean
 	private ParticipantService participantService;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		reset(participantService);
-		
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	}
+	
+	@Autowired
+	MockMvc mockMvc;
 
 	@Test
 	void testIndex() throws Exception {
