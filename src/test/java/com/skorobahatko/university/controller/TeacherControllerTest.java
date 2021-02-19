@@ -61,6 +61,8 @@ class TeacherControllerTest {
 		Course course = getTestCourse();
 		Teacher teacher = new Teacher("John", "Johnson");
 		
+		when(participantService.add(teacher)).thenReturn(teacher);
+		
 		mockMvc.perform(post("/teachers/new")
 				.param("firstName", teacher.getFirstName())
 				.param("lastName", teacher.getLastName())

@@ -15,7 +15,7 @@ public class Student extends Participant {
 		this(0, firstName, lastName);
 	}
 	
-	public Student(int id, String firstName, String lastName) {
+	public Student(Integer id, String firstName, String lastName) {
 		super(id, firstName, lastName, new ArrayList<>());
 	}
 	
@@ -23,7 +23,7 @@ public class Student extends Participant {
 		super(0, firstName, lastName, courses);
 	}
 	
-	public Student(int id, String firstName, String lastName, List<Course> courses) {
+	public Student(Integer id, String firstName, String lastName, List<Course> courses) {
 		super(id, firstName, lastName, courses);
 	}
 

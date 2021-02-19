@@ -26,6 +26,7 @@
 		<spring.boot.version>2.4.2</spring.boot.version>
 		<jacoco.version>0.8.6</jacoco.version>
 		<postgresql.version>42.2.16</postgresql.version>
+		<h2.version>1.4.200</h2.version>
 	</properties>
 
 	<dependencies>
@@ -119,6 +120,13 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

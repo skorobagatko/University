@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,13 +27,13 @@ public class Course {
 	@Id
 	@Column(name = "course_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Column(name = "course_name")
 	private String name;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "course_id")
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "course_id", updatable = false)
 	private List<Lecture> lectures;
 
 	public Course() {
@@ -45,7 +44,7 @@ public class Course {
 		this(0, name);
 	}
 
-	public Course(int id, String name) {
+	public Course(Integer id, String name) {
 		this(id, name, new ArrayList<>());
 	}
 
@@ -53,17 +52,17 @@ public class Course {
 		this(0, name, lectures);
 	}
 
-	public Course(int id, String name, List<Lecture> lectures) {
+	public Course(Integer id, String name, List<Lecture> lectures) {
 		this.id = id;
 		this.name = name;
 		this.lectures = new ArrayList<>(lectures);
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -117,22 +116,9 @@ public class Course {
 
 		Course other = (Course) obj;
 		
-		// We use this type of comparison to work 
-		// around the PersistentBag.equals() problem
-		if (this.getLectures().size() != other.getLectures().size()) {
-			return false;
-		}
-		
-		List<Lecture> thisLectures = getLectures();
-		List<Lecture> otherLectures = other.getLectures();
-		for (int i = 0; i < thisLectures.size(); i++) {
-			if (!thisLectures.get(i).equals(otherLectures.get(i))) {
-				return false;
-			}
-		}
-
 		return id == other.id 
-				&& Objects.equals(name, other.name);
+				&& Objects.equals(name, other.name)
+				&& Objects.equals(lectures, other.lectures);
 	}
 
 	@Override

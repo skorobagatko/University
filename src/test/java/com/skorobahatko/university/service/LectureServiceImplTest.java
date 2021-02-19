@@ -4,6 +4,8 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.skorobahatko.university.dao.LectureDao;
 import com.skorobahatko.university.domain.Lecture;
+import com.skorobahatko.university.repository.LectureRepository;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
@@ -23,7 +25,7 @@ import com.skorobahatko.university.service.exception.ValidationException;
 class LectureServiceImplTest {
 	
 	@MockBean
-	private LectureDao lectureDao;
+	private LectureRepository lectureRepository;
 	
 	@Autowired
 	private LectureService lectureService;
@@ -32,7 +34,7 @@ class LectureServiceImplTest {
 	void testGetAll() {
 		List<Lecture> expected = getTestLecturesWithCourseId(1);
 		
-		Mockito.when(lectureDao.getAll()).thenReturn(expected);
+		Mockito.when(lectureRepository.findAll()).thenReturn(expected);
 		
 		List<Lecture> actual = lectureService.getAll();
 		
@@ -45,7 +47,7 @@ class LectureServiceImplTest {
 		int lectureId = 3;
 		expected.setId(lectureId);
 		
-		Mockito.when(lectureDao.getById(lectureId)).thenReturn(expected);
+		Mockito.when(lectureRepository.findById(lectureId)).thenReturn(Optional.of(expected));
 		
 		Lecture actual = lectureService.getById(lectureId);
 		
@@ -56,7 +58,7 @@ class LectureServiceImplTest {
 	void testGetByIdThrowsExceptionForNonExistCourse() {
 		int lectureId = Integer.MAX_VALUE;
 		
-		Mockito.when(lectureDao.getById(lectureId)).thenThrow(EntityNotFoundServiceException.class);
+		Mockito.when(lectureRepository.findById(lectureId)).thenThrow(NoSuchElementException.class);
 		
 		assertThrows(EntityNotFoundServiceException.class, () -> lectureService.getById(lectureId));
 	}
@@ -75,7 +77,7 @@ class LectureServiceImplTest {
 		
 		List<Lecture> expected = List.of(lecture);
 		
-		Mockito.when(lectureDao.getByCourseId(courseId)).thenReturn(expected);
+		Mockito.when(lectureRepository.findByCourseId(courseId)).thenReturn(expected);
 		
 		List<Lecture> actual = lectureService.getByCourseId(courseId);
 		
@@ -88,7 +90,7 @@ class LectureServiceImplTest {
 		
 		lectureService.addAll(lectures);
 		
-		Mockito.verify(lectureDao).addAll(lectures);
+		Mockito.verify(lectureRepository).saveAll(lectures);
 	}
 
 	@Test
@@ -97,7 +99,7 @@ class LectureServiceImplTest {
 		
 		lectureService.add(lecture);
 		
-		Mockito.verify(lectureDao).add(lecture);
+		Mockito.verify(lectureRepository).save(lecture);
 	}
 	
 	@Test
@@ -111,7 +113,7 @@ class LectureServiceImplTest {
 	void testRemoveById() {
 		lectureService.removeById(1);
 		
-		Mockito.verify(lectureDao).removeById(1);
+		Mockito.verify(lectureRepository).deleteById(1);
 	}
 
 }

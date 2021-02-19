@@ -36,7 +36,7 @@ public class TeacherController {
 	
 	@GetMapping()
 	public String getAllTeachers(Model model) {
-		List<Teacher> teachers = participantService.getAllTeachers();
+		List<Teacher> teachers = participantService.getAllTeachers();	
 		List<Course> courses = courseService.getAll();
 		
 		model.addAttribute("teachers", teachers);
@@ -52,8 +52,8 @@ public class TeacherController {
 			@RequestParam int courseId) {
 		
 		Teacher newTeacher = new Teacher(firstName, lastName);
-		participantService.add(newTeacher);
 		
+		newTeacher = (Teacher) participantService.add(newTeacher);
 		participantService.addParticipantCourseById(newTeacher.getId(), courseId);
 		
 		return REDIRECT_TO_TEACHERS_LIST_PAGE;
@@ -62,6 +62,7 @@ public class TeacherController {
 	@GetMapping("/{id}")
 	public String getTeacherById(@PathVariable("id") int id, Model model) {
 		Teacher teacher = (Teacher) participantService.getById(id);
+		
 		model.addAttribute(TEACHER, teacher);
 	
 		return "teachers/teacher";
@@ -70,6 +71,7 @@ public class TeacherController {
 	@GetMapping("/{id}/edit")
 	public String editTeacherById(@PathVariable("id") int id, Model model) {
 		Teacher teacher = (Teacher) participantService.getById(id);
+		
 		model.addAttribute(TEACHER, teacher);
 		
 		List<Course> notAttendedCourses = getNotAttendedCoursesFor(teacher);
@@ -85,8 +87,8 @@ public class TeacherController {
 			Model model) {
 		
 		participantService.addParticipantCourseById(teacherId, courseId);
-		
 		Teacher teacher = (Teacher) participantService.getById(teacherId);
+		
 		model.addAttribute(TEACHER, teacher);
 		
 		return TEACHER_EDIT_PAGE;
@@ -99,8 +101,8 @@ public class TeacherController {
 			Model model) {
 		
 		participantService.removeParticipantCourseById(teacherId, courseId);
-		
 		Teacher teacher = (Teacher) participantService.getById(teacherId);
+		
 		model.addAttribute(TEACHER, teacher);
 		
 		return TEACHER_EDIT_PAGE;
