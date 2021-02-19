@@ -52,8 +52,8 @@ public class StudentController {
 			@RequestParam int courseId) {
 		
 		Student newStudent = new Student(firstName, lastName);
-		participantService.add(newStudent);
 		
+		newStudent = (Student) participantService.add(newStudent);
 		participantService.addParticipantCourseById(newStudent.getId(), courseId);
 		
 		return REDIRECT_TO_STUDENTS_LIST_PAGE;
@@ -62,6 +62,7 @@ public class StudentController {
 	@GetMapping("/{id}")
 	public String getStudentById(@PathVariable("id") int id, Model model) {
 		Student student = (Student) participantService.getById(id);
+		
 		model.addAttribute(STUDENT, student);
 	
 		return "students/student";
@@ -70,6 +71,7 @@ public class StudentController {
 	@GetMapping("/{id}/edit")
 	public String editStudentById(@PathVariable("id") int id, Model model) {
 		Student student = (Student) participantService.getById(id);
+		
 		model.addAttribute(STUDENT, student);
 		
 		List<Course> notAttendedCourses = getNotAttendedCoursesFor(student);
@@ -85,8 +87,8 @@ public class StudentController {
 			Model model) {
 		
 		participantService.addParticipantCourseById(studentId, courseId);
-		
 		Student student = (Student) participantService.getById(studentId);
+		
 		model.addAttribute(STUDENT, student);
 		
 		return STUDENT_EDIT_PAGE;
@@ -99,8 +101,8 @@ public class StudentController {
 			Model model) {
 		
 		participantService.removeParticipantCourseById(studentId, courseId);
-		
 		Student student = (Student) participantService.getById(studentId);
+		
 		model.addAttribute(STUDENT, student);
 		
 		return STUDENT_EDIT_PAGE;

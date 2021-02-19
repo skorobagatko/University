@@ -57,6 +57,8 @@ class CourseControllerTest {
 	@Test
 	void testAddCourse() throws Exception {
 		Course course = new Course("Test Course");
+		
+		when(courseService.add(course)).thenReturn(course);
 
 		mockMvc.perform(post("/courses/new")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)

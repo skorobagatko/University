@@ -57,7 +57,7 @@ class ParticipantServiceImplIT {
 	@Test
 	void testGetById() {
 		Participant participant = getTestParticipant();
-		participantService.add(participant);
+		participant = participantService.add(participant);
 		
 		int expectedId = participant.getId();
 		int actualId = participantService.getById(expectedId).getId();
@@ -101,7 +101,7 @@ class ParticipantServiceImplIT {
 	@Test
 	void testRemoveById() {
 		Participant participant = getTestParticipant();
-		participantService.add(participant);
+		participant = participantService.add(participant);
 		int participantId = participant.getId();
 		
 		participantService.removeById(participantId);

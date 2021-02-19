@@ -43,7 +43,7 @@ class CourseServiceImplIT {
 	@Test
 	void testGetById() throws SQLException {
 		Course course = getTestCourse();
-		courseService.add(course);
+		course = courseService.add(course);
 		
 		int expected = course.getId();
 		int actual = courseService.getById(expected).getId();
@@ -87,7 +87,7 @@ class CourseServiceImplIT {
 	@Test
 	void testRemoveById() throws SQLException {
 		Course course = getTestCourse();
-		courseService.add(course);
+		course = courseService.add(course);
 		int courseId = course.getId();
 		
 		courseService.removeById(courseId);

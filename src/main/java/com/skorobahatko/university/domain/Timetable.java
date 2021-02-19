@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class Timetable {
 	
-	private int id;
+	private Integer id;
 	private Participant participant;
 	private LocalDate startDate;
 	private LocalDate endDate;
@@ -37,7 +37,7 @@ public class Timetable {
 		this(0, participant, startDate, endDate);
 	}
 	
-	public Timetable(int id, Participant participant, LocalDate startDate, LocalDate endDate) {
+	public Timetable(Integer id, Participant participant, LocalDate startDate, LocalDate endDate) {
 		this.id = id;
 		this.participant = participant;
 		this.startDate = startDate;
@@ -45,11 +45,11 @@ public class Timetable {
 		this.lectures = getFilteredLecturesFromCourses(participant.getCourses());
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	

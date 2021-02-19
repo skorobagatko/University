@@ -4,6 +4,7 @@ import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.skorobahatko.university.dao.CourseDao;
 import com.skorobahatko.university.domain.Course;
+import com.skorobahatko.university.repository.CourseRepository;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
@@ -23,7 +24,7 @@ import com.skorobahatko.university.service.exception.ValidationException;
 class CourseServiceImplTest {
 	
 	@MockBean
-	private CourseDao courseDao;
+	private CourseRepository courseRepository;
 	
 	@Autowired
 	private CourseService courseService;
@@ -33,7 +34,7 @@ class CourseServiceImplTest {
 		Course course = getTestCourse();
 		List<Course> expected = List.of(course);
 		
-		Mockito.when(courseDao.getAll()).thenReturn(expected);
+		Mockito.when(courseRepository.findAll()).thenReturn(expected);
 		
 		List<Course> actual = courseService.getAll();
 		
@@ -46,7 +47,7 @@ class CourseServiceImplTest {
 		int courseId = 1;
 		expected.setId(courseId);
 		
-		Mockito.when(courseDao.getById(courseId)).thenReturn(expected);
+		Mockito.when(courseRepository.findById(courseId)).thenReturn(Optional.of(expected));
 		
 		Course actual = courseService.getById(courseId);
 		
@@ -57,7 +58,7 @@ class CourseServiceImplTest {
 	void testGetByIdThrowsExceptionForNonExistCourse() {
 		int courseId = Integer.MAX_VALUE;
 		
-		Mockito.when(courseDao.getById(courseId)).thenThrow(EntityNotFoundServiceException.class);
+		Mockito.when(courseRepository.findById(courseId)).thenThrow(EntityNotFoundServiceException.class);
 		
 		assertThrows(EntityNotFoundServiceException.class, () -> courseService.getById(courseId));
 	}
@@ -75,7 +76,7 @@ class CourseServiceImplTest {
 		
 		courseService.add(course);
 		
-		Mockito.verify(courseDao).add(course);
+		Mockito.verify(courseRepository).save(course);
 	}
 	
 	@Test
@@ -89,7 +90,7 @@ class CourseServiceImplTest {
 	void testRemoveById() {
 		courseService.removeById(1);
 		
-		Mockito.verify(courseDao).removeById(1);
+		Mockito.verify(courseRepository).deleteById(1);
 	}
 
 }

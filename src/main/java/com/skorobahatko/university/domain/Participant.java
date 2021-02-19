@@ -20,7 +20,7 @@ public abstract class Participant {
 	@Id
 	@Column(name = "participant_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -28,7 +28,7 @@ public abstract class Participant {
 	@Column(name = "last_name")
 	private String lastName;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "participants_courses", 
 			joinColumns = @JoinColumn(name = "participant_id"), 
@@ -39,18 +39,18 @@ public abstract class Participant {
 		courses = new ArrayList<>();
 	}
 
-	public Participant(int id, String firstName, String lastName, List<Course> courses) {
+	public Participant(Integer id, String firstName, String lastName, List<Course> courses) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.courses = new ArrayList<>(courses);
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -69,7 +69,7 @@ public abstract class Participant {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
+	
 	public List<Course> getCourses() {
 		return courses;
 	}
@@ -110,24 +110,11 @@ public abstract class Participant {
 		}
 
 		Participant other = (Participant) obj;
-		
-		// We use this type of comparison to work 
-		// around the PersistentBag.equals() problem
-		if (this.getCourses().size() != other.getCourses().size()) {
-			return false;
-		}
-		
-		List<Course> thisCourses = getCourses();
-		List<Course> otherCourses = other.getCourses();
-		for (int i = 0; i < thisCourses.size(); i++) {
-			if (!thisCourses.get(i).equals(otherCourses.get(i))) {
-				return false;
-			}
-		}
 
 		return id == other.id 
 				&& Objects.equals(firstName, other.firstName) 
-				&& Objects.equals(lastName, other.lastName);
+				&& Objects.equals(lastName, other.lastName)
+				&& Objects.equals(courses, other.courses);
 	}
 
 	@Override

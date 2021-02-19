@@ -15,7 +15,7 @@ public class Teacher extends Participant {
 		this(0, firstName, lastName);
 	}
 	
-	public Teacher(int id, String firstName, String lastName) {
+	public Teacher(Integer id, String firstName, String lastName) {
 		super(id, firstName, lastName, new ArrayList<>());
 	}
 	
@@ -23,7 +23,7 @@ public class Teacher extends Participant {
 		super(0, firstName, lastName, courses);
 	}
 	
-	public Teacher(int id, String firstName, String lastName, List<Course> courses) {
+	public Teacher(Integer id, String firstName, String lastName, List<Course> courses) {
 		super(id, firstName, lastName, courses);
 	}
 

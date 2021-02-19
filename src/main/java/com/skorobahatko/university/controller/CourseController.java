@@ -41,8 +41,8 @@ public class CourseController {
 	public String addCourse(
 			@RequestParam String courseName, 
 			RedirectAttributes redirectAttributes) {
-		Course newCourse = new Course(courseName);
-		courseService.add(newCourse);
+		
+		Course newCourse = courseService.add(new Course(courseName));
 		
 		redirectAttributes.addAttribute("id", newCourse.getId());
 		

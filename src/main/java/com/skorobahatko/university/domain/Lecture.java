@@ -24,10 +24,10 @@ public class Lecture {
 	@Id
 	@Column(name = "lecture_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	
 	@Column(name = "course_id")
-	private int courseId;
+	private Integer courseId;
 	
 	@Column(name = "lecture_name")
 	private String name;
@@ -57,7 +57,7 @@ public class Lecture {
 		this(0, name, courseId, date, startTime, endTime, roomNumber);
 	}
 	
-	public Lecture(int id, String name, int courseId, LocalDate date, LocalTime startTime, LocalTime endTime, int roomNumber) {
+	public Lecture(Integer id, String name, int courseId, LocalDate date, LocalTime startTime, LocalTime endTime, int roomNumber) {
 		this.id = id;
 		this.courseId = courseId;
 		this.name = name;
@@ -67,19 +67,19 @@ public class Lecture {
 		this.roomNumber = roomNumber;
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	public int getCourseId() {
+	public Integer getCourseId() {
 		return courseId;
 	}
 	
-	public void setCourseId(int courseId) {
+	public void setCourseId(Integer courseId) {
 		this.courseId = courseId;
 	}
 	

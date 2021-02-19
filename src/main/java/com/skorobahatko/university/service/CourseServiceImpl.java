@@ -1,17 +1,15 @@
 package com.skorobahatko.university.service;
 
 import java.util.List;
-
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.skorobahatko.university.dao.CourseDao;
-import com.skorobahatko.university.dao.exception.DaoException;
-import com.skorobahatko.university.dao.exception.EntityNotFoundDaoException;
 import com.skorobahatko.university.domain.Course;
+import com.skorobahatko.university.repository.CourseRepository;
 import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
 import com.skorobahatko.university.service.exception.ServiceException;
 import com.skorobahatko.university.service.exception.ValidationException;
@@ -20,18 +18,18 @@ import com.skorobahatko.university.service.exception.ValidationException;
 @Transactional(readOnly = true)
 public class CourseServiceImpl implements CourseService {
 	
-	private CourseDao courseDao;
+	private CourseRepository courseRepository;
 	
 	@Autowired
-	public void setCourseDao(CourseDao courseDao) {
-		this.courseDao = courseDao;
+	public void setCourseRepository(CourseRepository courseRepository) {
+		this.courseRepository = courseRepository;
 	}
 
 	@Override
 	public List<Course> getAll() {
 		try {
-			return courseDao.getAll();
-		} catch (DaoException e) {
+			return courseRepository.findAll();
+		} catch (DataAccessException e) {
 			throw new ServiceException("Unable to get courses list", e);
 		}
 	}
@@ -41,49 +39,49 @@ public class CourseServiceImpl implements CourseService {
 		validateId(id);
 		
 		try {
-			return courseDao.getById(id);
-		} catch (EntityNotFoundDaoException e) {
+			return courseRepository.findById(id).get();
+		} catch (NoSuchElementException e) {
 			String message = String.format("Course with id = %d not found", id);
 			throw new EntityNotFoundServiceException(message);
-		} catch (DaoException e) {
+		} catch (DataAccessException e) {
 			String message = String.format("Unable get Course with id = %d", id);
 			throw new ServiceException(message, e);
 		}
 	}
 
 	@Override
-	@Transactional(readOnly = false)
-	public void add(Course course) {
+	@Transactional
+	public Course add(Course course) {
 		validateCourse(course);
 		
 		try {
-			courseDao.add(course);
-		} catch (DaoException e) {
+			return courseRepository.save(course);
+		} catch (DataAccessException e) {
 			String message = String.format("Unable to add Course: %s", course);
 			throw new ServiceException(message, e);
 		}
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void update(Course course) {
 		validateCourse(course);
 		
 		try {
-			courseDao.update(course);
-		} catch (DaoException e) {
+			courseRepository.save(course);
+		} catch (DataAccessException e) {
 			String message = String.format("Unable to update Course: %s", course);
 			throw new ServiceException(message, e);
 		}		
 	}
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void removeById(int id) {
 		validateId(id);
 		
 		try {
-			courseDao.removeById(id);
+			courseRepository.deleteById(id);
 		} catch (DataAccessException e) {
 			String message = String.format("Unable to remove Course with id = %d", id);
 			throw new ServiceException(message, e);

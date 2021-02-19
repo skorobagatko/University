@@ -48,9 +48,9 @@ class LectureServiceImplIT {
 	@Test
 	void testGetById() throws SQLException {
 		Course course = getTestCourse();
-		courseService.add(course);
+		course = courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
-		lectureService.add(lecture);
+		lecture = lectureService.add(lecture);
 		
 		int expectedId = lecture.getId();
 		int actualId = lectureService.getById(expectedId).getId();
@@ -94,7 +94,7 @@ class LectureServiceImplIT {
 	@Test
 	void testAddAll() throws SQLException {
 		Course course = getTestCourse();
-		courseService.add(course);
+		course = courseService.add(course);
 		List<Lecture> lectures = getTestLecturesWithCourseId(course.getId());
 
 		lectureService.addAll(lectures);
@@ -108,10 +108,10 @@ class LectureServiceImplIT {
 	@Test
 	void testAdd() throws SQLException {
 		Course course = getTestCourse();
-		courseService.add(course);
+		course = courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
 		
-		lectureService.add(lecture);
+		lecture = lectureService.add(lecture);
 		
 		int expected = 7;
 		int actual = lectureService.getAll().size();
@@ -129,9 +129,9 @@ class LectureServiceImplIT {
 	@Test
 	void testRemoveById() throws SQLException {
 		Course course = getTestCourse();
-		courseService.add(course);
+		course = courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
-		lectureService.add(lecture);
+		lecture = lectureService.add(lecture);
 		int lectureId = lecture.getId();
 		
 		lectureService.removeById(lectureId);
