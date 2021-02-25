@@ -28,21 +28,32 @@ public class TimetableController {
 		return "timetables/index";
 	}
 	
-	@GetMapping("/participant")
-	public String getTimetableForParticipant(
+	@GetMapping("/month")
+	public String getMonthTimetableForParticipant(
 			@RequestParam int participantId,
 			Model model) {
 		
-		Timetable timetable = getTimetableByParticipantId(participantId);
+		Participant participant = participantService.getById(participantId);
+		Timetable timetable = Timetable.getMonthTimetable(participant);
 		
 		model.addAttribute("timetable", timetable);
+		model.addAttribute("participantId", participantId);
 		
 		return "timetables/timetable";
 	}
 	
-	private Timetable getTimetableByParticipantId(int participantId) {
+	@GetMapping("/day")
+	public String getDayTimetableForParticipant(
+			@RequestParam int participantId,
+			Model model) {
+		
 		Participant participant = participantService.getById(participantId);
-		return Timetable.getMonthTimetable(participant);
+		Timetable timetable = Timetable.getDayTimetable(participant);
+		
+		model.addAttribute("timetable", timetable);
+		model.addAttribute("participantId", participantId);
+		
+		return "timetables/timetable";
 	}
 
 }

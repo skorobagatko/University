@@ -3,10 +3,13 @@ package com.skorobahatko.university.controller;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -59,7 +62,9 @@ public class LectureController {
 	}
 
 	@GetMapping("/{id}/edit")
-	public String editLecture(@PathVariable("id") int id, Model model) {
+	public String editLecture(
+			@PathVariable("id") int id,
+			Model model) {
 		Lecture lecture = lectureService.getById(id);
 		model.addAttribute("lecture", lecture);
 		
@@ -68,8 +73,13 @@ public class LectureController {
 	
 	@PatchMapping("/{id}")
 	public String updateLecture(
-			@ModelAttribute("lecture") Lecture lecture,
+			@Valid @ModelAttribute("lecture") Lecture lecture,
+			BindingResult bindingResult,
 			RedirectAttributes redirectAttributes) {
+		
+		if (bindingResult.hasErrors()) {
+			return "lectures/edit";
+		}
 		
 		lectureService.update(lecture);
 		

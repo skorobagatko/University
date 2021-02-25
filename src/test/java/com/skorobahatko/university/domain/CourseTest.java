@@ -1,9 +1,8 @@
 package com.skorobahatko.university.domain;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.skorobahatko.university.util.TestUtils.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +18,9 @@ class CourseTest {
 
 	@Test
 	void testAddLecture() {
-		int courseId = 1;
-		String courseName = "Test course";
-		course = new Course(courseId, courseName);
-		Lecture lecture = getTestLecture();
+		Lecture lecture = getTestLectureWithCourseId(course.getId());
+		
+		assertFalse(course.getLectures().contains(lecture));
 		
 		course.addLecture(lecture);
 		
@@ -31,11 +29,12 @@ class CourseTest {
 
 	@Test
 	void testRemoveLecture() {
-		Lecture lecture = getTestLecture();
+		Lecture lecture = getTestLectureWithCourseId(course.getId());
+		course.addLecture(lecture);
 		
 		course.removeLecture(lecture);
 		
-		assertTrue(course.getLectures().isEmpty());
+		assertFalse(course.getLectures().contains(lecture));
 	}
 	
 	@Test
@@ -73,29 +72,6 @@ class CourseTest {
 		Object other = new Object();
 		
 		assertNotEquals(course, other);
-	}
-	
-	private Course getTestCourse() {
-		int courseId = 1;
-		String courseName = "Test course";
-		course = new Course(courseId, courseName);
-		
-		Lecture lecture = getTestLecture();
-		course.addLecture(lecture);
-		
-		return course;
-	}
-	
-	private Lecture getTestLecture() {
-		int id = 1;
-		String lectureName = "Test lecture";
-		LocalDate lectureDate = LocalDate.of(2020, 11, 5);
-		LocalTime lectureStartTime = LocalTime.of(7, 30);
-		LocalTime lectureEndTime = LocalTime.of(9, 0);
-		int roomNumber = 201;
-		Lecture lecture = new Lecture(id, lectureName, course.getId(), lectureDate, lectureStartTime, lectureEndTime, roomNumber);
-		
-		return lecture;
 	}
 
 }

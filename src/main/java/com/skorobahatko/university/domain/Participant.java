@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -22,9 +24,13 @@ public abstract class Participant {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "The first name must not be empty")
+	@Size(min=2, max=100, message = "The first name length must be between 2 and 100")
 	@Column(name = "first_name")
 	private String firstName;
 
+	@NotBlank(message = "The last name must not be empty")
+	@Size(min=2, max=100, message = "The last name length must be between 2 and 100")
 	@Column(name = "last_name")
 	private String lastName;
 
@@ -36,14 +42,14 @@ public abstract class Participant {
 	private List<Course> courses;
 
 	public Participant() {
-		courses = new ArrayList<>();
+		setCourses(new ArrayList<>());
 	}
 
 	public Participant(Integer id, String firstName, String lastName, List<Course> courses) {
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.courses = new ArrayList<>(courses);
+		setId(id);
+		setFirstName(firstName);
+		setLastName(lastName);
+		setCourses(new ArrayList<>(courses));
 	}
 
 	public Integer getId() {
@@ -119,8 +125,8 @@ public abstract class Participant {
 
 	@Override
 	public String toString() {
-		return "Participant [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", courses=" + courses
-				+ "]";
+		return "Participant [id=" + id + ", firstName=" + firstName + ", "
+				+ "lastName=" + lastName + ", courses=" + courses + "]";
 	}
 
 }

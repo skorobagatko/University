@@ -1,5 +1,7 @@
 package com.skorobahatko.university.domain;
 
+import static com.skorobahatko.university.util.TestUtils.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -14,12 +16,12 @@ class LectureTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		lecture = getTestLecture();
+		lecture = getTestLectureWithCourseId(1);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForEqualLectures() {
-		Lecture other = getTestLecture();
+		Lecture other = getTestLectureWithCourseId(1);
 		
 		assertEquals(lecture, other);
 	}
@@ -35,39 +37,28 @@ class LectureTest {
 		int roomNumber = 201;
 		Lecture other = new Lecture(id, name, courseId, date, startTime, endTime, roomNumber);
 		
-		assertNotEquals(lecture,other);
+		assertNotEquals(lecture, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForSameLectures() {
 		Lecture other = lecture;
 		
-		assertEquals(lecture,other);
+		assertEquals(lecture, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseForNullArgument() {
 		Lecture other = null;
 		
-		assertNotEquals(lecture,other);
+		assertNotEquals(lecture, other);
 	}
 	
 	@Test
 	void testEqualsMethodReturnsFalseWithObjectArgument() {
 		Object other = new Object();
 		
-		assertNotEquals(lecture,other);
+		assertNotEquals(lecture, other);
 	}
 	
-	private Lecture getTestLecture() {
-		int id = 1;
-		int courseId = 1;
-		String name = "Test lecture";
-		LocalDate date = LocalDate.of(2020, 11, 5);
-		LocalTime startTime = LocalTime.of(7, 30);
-		LocalTime endTime = LocalTime.of(9, 0);
-		int roomNumber = 201;
-		return new Lecture(id, name, courseId, date, startTime, endTime, roomNumber);
-	}
-
 }

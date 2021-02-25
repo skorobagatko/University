@@ -78,15 +78,82 @@ class LectureControllerTest {
 
 		when(courseService.getById(1)).thenReturn(course);
 
-		mockMvc.perform(patch("/lectures/{id}", 0).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.requestAttr("lecture", lecture).param("courseId", "1").param("name", "Lecture 1")
-				.param("date", "2020-12-01").param("startTime", "08:00").param("endTime", "09:00")
-				.param("roomNumber", "100")).andExpect(status().is(302))
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.requestAttr("lecture", lecture)
+				.param("courseId", "1")
+				.param("name", "Lecture 1")
+				.param("date", "2020-12-01")
+				.param("startTime", "08:00")
+				.param("endTime", "09:00")
+				.param("roomNumber", "100"))
+				.andExpect(status().is(302))
 				.andExpect(view().name("redirect:/courses/{id}/edit"))
-				.andExpect(model().attribute("course", course.toString())).andExpect(model().attribute("id", is("1")));
+				.andExpect(model().attribute("course", course.toString()))
+				.andExpect(model().attribute("id", is("1")));
 
 		verify(courseService, times(1)).getById(1);
 		verifyNoMoreInteractions(courseService);
+	}
+	
+	@Test
+	void testUpdateLectureValidationWithEmptyName() throws Exception {
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("lectures/edit"))
+				.andExpect(model().attributeHasFieldErrors("lecture", "name"));
+	}
+	
+	@Test
+	void testUpdateLectureValidationWithShortName() throws Exception {
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name", "L"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("lectures/edit"))
+				.andExpect(model().attributeHasFieldErrors("lecture", "name"));
+	}
+	
+	@Test
+	void testUpdateLectureValidationWithEmptyDate() throws Exception {
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("date", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("lectures/edit"))
+				.andExpect(model().attributeHasFieldErrors("lecture", "date"));
+	}
+	
+	@Test
+	void testUpdateLectureValidationWithEmptyStartTime() throws Exception {
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("startTime", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("lectures/edit"))
+				.andExpect(model().attributeHasFieldErrors("lecture", "startTime"));
+	}
+	
+	@Test
+	void testUpdateLectureValidationWithEmptyEndTime() throws Exception {
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("endTime", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("lectures/edit"))
+				.andExpect(model().attributeHasFieldErrors("lecture", "endTime"));
+	}
+	
+	@Test
+	void testUpdateLectureValidationWithEmptyRoomNumber() throws Exception {
+		mockMvc.perform(patch("/lectures/{id}", 0)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("roomNumber", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("lectures/edit"))
+				.andExpect(model().attributeHasFieldErrors("lecture", "roomNumber"));
 	}
 
 	@Test
