@@ -163,6 +163,46 @@ class StudentControllerTest {
 		verify(participantService, times(1)).update(student);
 		verifyNoMoreInteractions(participantService);
 	}
+	
+	@Test
+	void testUpdateStudentValidationWithEmptyFirstName() throws Exception {
+		mockMvc.perform(patch("/students/{id}", 1)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("firstName", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("students/edit"))
+				.andExpect(model().attributeHasFieldErrors("student", "firstName"));
+	}
+	
+	@Test
+	void testUpdateStudentValidationWithShortFirstName() throws Exception {
+		mockMvc.perform(patch("/students/{id}", 1)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("firstName", "S"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("students/edit"))
+				.andExpect(model().attributeHasFieldErrors("student", "firstName"));
+	}
+	
+	@Test
+	void testUpdateStudentValidationWithEmptyLastName() throws Exception {
+		mockMvc.perform(patch("/students/{id}", 1)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("lastName", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("students/edit"))
+				.andExpect(model().attributeHasFieldErrors("student", "lastName"));
+	}
+	
+	@Test
+	void testUpdateStudentValidationWithShortLastName() throws Exception {
+		mockMvc.perform(patch("/students/{id}", 1)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("lastName", "S"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("students/edit"))
+				.andExpect(model().attributeHasFieldErrors("student", "lastName"));
+	}
 
 	@Test
 	void testDeleteStudentById() throws Exception {

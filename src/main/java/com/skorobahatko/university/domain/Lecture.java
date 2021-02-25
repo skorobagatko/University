@@ -11,6 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,42 +33,44 @@ public class Lecture {
 	@Column(name = "course_id")
 	private Integer courseId;
 	
+	@NotBlank(message = "The lecture name must not be empty")
+	@Size(min=2, max=100, message = "The name length must be between 2 and 100")
 	@Column(name = "lecture_name")
 	private String name;
 	
+	@NotNull(message = "The lecture date must not be empty")
 	@Column(name = "lecture_date")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate date;
 	
+	@NotNull(message = "The lecture start time must not be empty")
 	@Column(name = "lecture_start_time")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime startTime;
 	
+	@NotNull(message = "The lecture end time must not be empty")
 	@Column(name = "lecture_end_time")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 	
+	@Positive(message = "The room number must be positive integer")
 	@Column(name = "lecture_room_number")
 	private int roomNumber;
 	
 	public Lecture() {}
-	
-	public Lecture(String name, LocalDate date, LocalTime startTime, LocalTime endTime, int roomNumber) {
-		this(0, name, 0, date, startTime, endTime, roomNumber);
-	}
 	
 	public Lecture(String name, int courseId, LocalDate date, LocalTime startTime, LocalTime endTime, int roomNumber) {
 		this(0, name, courseId, date, startTime, endTime, roomNumber);
 	}
 	
 	public Lecture(Integer id, String name, int courseId, LocalDate date, LocalTime startTime, LocalTime endTime, int roomNumber) {
-		this.id = id;
-		this.courseId = courseId;
-		this.name = name;
-		this.date = date;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.roomNumber = roomNumber;
+		setId(id);
+		setCourseId(courseId);
+		setName(name);
+		setDate(date);
+		setStartTime(startTime);
+		setEndTime(endTime);
+		setRoomNumber(roomNumber);
 	}
 	
 	public Integer getId() {

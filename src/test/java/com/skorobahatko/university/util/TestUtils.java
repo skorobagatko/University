@@ -34,12 +34,23 @@ public class TestUtils {
 				LocalTime.of(9, 00), 100));
 		return lectures;
 	}
-
-	public static Participant getTestParticipant() {
+	
+	public static Student getTestStudent() {
 		String firstName = "John";
 		String lastName = "Johnson";
 
 		return new Student(firstName, lastName);
+	}
+	
+	public static Teacher getTestTeacher() {
+		String firstName = "John";
+		String lastName = "Johnson";
+
+		return new Teacher(firstName, lastName);
+	}
+
+	public static Participant getTestParticipant() {
+		return getTestStudent();
 	}
 	
 	public static List<Student> getTestStudents() {
@@ -62,8 +73,7 @@ public class TestUtils {
 
 	public static Timetable getTestTimetableForParticipant(Participant participant) {
 		LocalDate startDate = LocalDate.of(2020, 12, 1);
-		LocalDate endDate = LocalDate.of(2020, 12, 3);
-		return new Timetable(participant, startDate, endDate);
+		return Timetable.getMonthTimetable(participant, startDate);
 	}
 
 }

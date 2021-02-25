@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 public class Timetable {
 	
-	private Integer id;
 	private Participant participant;
 	private LocalDate startDate;
 	private LocalDate endDate;
@@ -18,7 +17,7 @@ public class Timetable {
 	}
 	
 	public static Timetable getDayTimetable(Participant participant, LocalDate date) {
-		return getTimetable(participant, date, date);
+		return new Timetable(participant, date, date);
 	}
 	
 	public static Timetable getMonthTimetable(Participant participant) {
@@ -26,79 +25,37 @@ public class Timetable {
 	}
 	
 	public static Timetable getMonthTimetable(Participant participant, LocalDate date) {
-		return getTimetable(participant, date, date.plusMonths(1));
+		return new Timetable(participant, date, date.plusMonths(1));
 	}
 	
-	private static Timetable getTimetable(Participant participant, LocalDate startDate, LocalDate endDate) {
-		return new Timetable(0, participant, startDate, endDate);
-	}
-	
-	public Timetable(Participant participant, LocalDate startDate, LocalDate endDate) {
-		this(0, participant, startDate, endDate);
-	}
-	
-	public Timetable(Integer id, Participant participant, LocalDate startDate, LocalDate endDate) {
-		this.id = id;
-		this.participant = participant;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.lectures = getFilteredLecturesFromCourses(participant.getCourses());
-	}
-	
-	public Integer getId() {
-		return id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
+	private Timetable(Participant participant, LocalDate startDate, LocalDate endDate) {
+		setParticipant(participant);
+		setStartDate(startDate);
+		setEndDate(endDate);
+		setLectures(getFilteredLecturesFromCourses(participant.getCourses()));
 	}
 	
 	public Participant getParticipant() {
 		return participant;
 	}
 	
-	public void setParticipant(Participant participant) {
-		this.participant = participant;
-	}
-
 	public LocalDate getStartDate() {
 		return startDate;
 	}
 	
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
-
 	public LocalDate getEndDate() {
 		return endDate;
 	}
 	
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
 	public List<Lecture> getLectures() {
 		return lectures;
 	}
 	
-	public void setLectures(List<Lecture> lectures) {
-		this.lectures = lectures;
-	}
-	
-	public void addLecture(Lecture lecture) {
-		lectures.add(lecture);
-	}
-	
-	public void removeLecture(Lecture lecture) {
-		lectures.remove(lecture);
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		
-		result = prime * result + id;
 		result = prime * result + ((participant == null) ? 0 : participant.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
@@ -121,8 +78,7 @@ public class Timetable {
 		
 		Timetable other = (Timetable) obj;
 		
-		return id == other.id &&
-				Objects.equals(participant, other.participant) &&
+		return Objects.equals(participant, other.participant) &&
 				Objects.equals(startDate, other.startDate) &&
 				Objects.equals(endDate, other.endDate) &&
 				Objects.equals(lectures, other.lectures);
@@ -130,8 +86,30 @@ public class Timetable {
 
 	@Override
 	public String toString() {
-		return "Timetable [id=" + id + ", participant=" + participant + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", lectures=" + lectures + "]";
+		return "Timetable [participant=" + participant + ", startDate=" 
+				+ startDate + ", endDate=" + endDate + ", lectures=" + lectures + "]";
+	}
+	
+	private void setParticipant(Participant participant) {
+		validateParticipant(participant);
+		
+		this.participant = participant;
+	}
+	
+	private void setStartDate(LocalDate startDate) {
+		validateStartDate(startDate);
+		
+		this.startDate = startDate;
+	}
+	
+	private void setEndDate(LocalDate endDate) {
+		validateEndDate(endDate);
+		
+		this.endDate = endDate;
+	}
+	
+	private void setLectures(List<Lecture> lectures) {
+		this.lectures = lectures;
 	}
 	
 	private static LocalDate getFirstDayOfCurrentMonthDate() {
@@ -156,6 +134,44 @@ public class Timetable {
 				.sorted((l1, l2) -> l1.getStartTime().compareTo(l2.getStartTime()))
 				.sorted((l1, l2) -> l1.getDate().compareTo(l2.getDate()))
 				.collect(Collectors.toList());
+	}
+	
+	private void validateParticipant(Participant participant) {
+		if (participant == null) {
+			String message = String.format("The participant must not be null. "
+					+ "Actual participant was %s", participant);
+			throw new IllegalArgumentException(message);
+		}
+	}
+	
+	private void validateDate(LocalDate date) {
+		if (date == null) {
+			String message = String.format("The date must not be null. "
+					+ "Actual date was %s", date);
+			throw new IllegalArgumentException(message);
+		}
+	}
+	
+	private void validateStartDate(LocalDate startDate) {
+		validateDate(startDate);
+		
+		if (this.endDate != null && startDate.isAfter(this.endDate)) {
+			String message = String.format(
+					"The timetable start date must be less than its end date. "
+					+ "Actual start date was %s, end date was %s", startDate, this.endDate);
+			throw new IllegalArgumentException(message);
+		}
+	}
+	
+	private void validateEndDate(LocalDate endDate) {
+		validateDate(endDate);
+		
+		if (this.startDate != null && endDate.isBefore(this.startDate)) {
+			String message = String.format(
+					"The timetable end date must be greater than its start date. "
+					+ "Actual start date was %s, end date was %s", this.startDate, endDate);
+			throw new IllegalArgumentException(message);
+		}
 	}
 	
 }

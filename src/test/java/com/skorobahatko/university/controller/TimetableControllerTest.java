@@ -48,13 +48,30 @@ class TimetableControllerTest {
 	}
 
 	@Test
-	void testGetTimetableForParticipant() throws Exception {
+	void testGetMonthTimetableForParticipant() throws Exception {
 		Student student = new Student(1, "John", "Johnson");
 		Timetable timetable = Timetable.getMonthTimetable(student);
 		
 		when(participantService.getById(1)).thenReturn(student);
 		
-		mockMvc.perform(get("/timetables/participant")
+		mockMvc.perform(get("/timetables/month")
+				.param("participantId", "1"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("timetables/timetable"))
+				.andExpect(model().attribute("timetable", equalTo(timetable)));
+		
+		verify(participantService, times(1)).getById(1);
+		verifyNoMoreInteractions(participantService);
+	}
+	
+	@Test
+	void testGetDayTimetableForParticipant() throws Exception {
+		Student student = new Student(1, "John", "Johnson");
+		Timetable timetable = Timetable.getDayTimetable(student);
+		
+		when(participantService.getById(1)).thenReturn(student);
+		
+		mockMvc.perform(get("/timetables/day")
 				.param("participantId", "1"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("timetables/timetable"))

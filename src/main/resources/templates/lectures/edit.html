@@ -46,8 +46,9 @@
 						<label for="name" class="col-sm-4 col-form-label">Lecture
 							Name:*</label>
 						<div class="col-sm-8">
-							<input type="text" class="form-control" th:field="*{name}"
-								id="name" />
+							<input type="text" class="form-control" th:field="*{name}" id="name">
+							<div><pre class="alert alert-danger" th:if="${#fields.hasErrors('name')}" 
+								th:errors="*{name}"></pre></div>
 						</div>
 					</div>
 
@@ -55,8 +56,9 @@
 						<label for="date" class="col-sm-4 col-form-label">Lecture
 							Date:*</label>
 						<div class="col-sm-8">
-							<input type="date" class="form-control" th:field="*{{date}}"
-								id="date" />
+							<input type="date" class="form-control" th:field="*{{date}}" id="date">
+							<div><pre class="alert alert-danger" th:if="${#fields.hasErrors('date')}" 
+								th:errors="*{date}"></pre></div>
 						</div>
 					</div>
 
@@ -67,8 +69,7 @@
 							<select id="lectureStartTime" name="lectureStartTime"
 								th:field="*{{startTime}}" class="form-control"
 								onchange="validateTime();" required>
-								<option th:value="${lecture.getStartTime()}" selected disabled
-									hidden>Choose here</option>
+								<option th:value="${lecture.getStartTime()}" selected disabled hidden>Choose here</option>
 								<option value="08:00">08:00</option>
 								<option value="09:00">09:00</option>
 								<option value="10:00">10:00</option>
@@ -87,8 +88,7 @@
 							<select id="lectureEndTime" name="lectureEndTime"
 								th:field="*{{endTime}}" class="form-control"
 								onchange="validateTime();" required>
-								<option th:value="${lecture.getEndTime()}" selected disabled
-									hidden>Choose here</option>
+								<option th:value="${lecture.getEndTime()}" selected disabled hidden>Choose here</option>
 								<option value="09:00">09:00</option>
 								<option value="10:00">10:00</option>
 								<option value="11:00">11:00</option>
@@ -106,7 +106,7 @@
 					<div class="form-group row justify-content-end text-center">
 							<div class="col-sm-8">
 								<small id="wrongTimeWarning" class="text-danger" hidden="hidden">
-									Lecture start time must be less than end time </small>
+									Lecture start time must be less than its end time </small>
 							</div>
 						</div>
 
@@ -114,8 +114,9 @@
 						<label for="roomNumber" class="col-sm-4 col-form-label">Room
 							Number:*</label>
 						<div class="col-sm-8">
-							<input type="number" class="form-control"
-								th:field="*{roomNumber}" id="roomNumber">
+							<input type="number" class="form-control" th:field="*{roomNumber}" id="roomNumber">
+							<div><pre class="alert alert-danger" th:if="${#fields.hasErrors('roomNumber')}" 
+								th:errors="*{roomNumber}"></pre></div>
 						</div>
 					</div>
 
@@ -124,8 +125,6 @@
 
 				</div>
 			</div>
-
-
 
 		</div>
 	</form>

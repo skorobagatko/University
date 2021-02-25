@@ -130,6 +130,26 @@ class CourseControllerTest {
 		verify(courseService, times(1)).update(course);
 		verifyNoMoreInteractions(courseService);
 	}
+	
+	@Test
+	void testUpdateCourseValidationWithEmptyName() throws Exception {
+		mockMvc.perform(patch("/courses/{id}", 1)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("courses/edit"))
+				.andExpect(model().attributeHasFieldErrors("course", "name"));
+	}
+	
+	@Test
+	void testUpdateCourseValidationWithShortName() throws Exception {
+		mockMvc.perform(patch("/courses/{id}", 1)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name", "C"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("courses/edit"))
+				.andExpect(model().attributeHasFieldErrors("course", "name"));
+	}
 
 	@Test
 	void testDeleteCourseById() throws Exception {

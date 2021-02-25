@@ -41,8 +41,9 @@
 						<label for="firstName" class="col-sm-4 col-form-label">
 							First Name: </label>
 						<div class="col-sm-8">
-							<input type="text" class="form-control" th:field="*{firstName}"
-								id="firstName" />
+							<input type="text" class="form-control" th:field="*{firstName}" id="firstName">
+							<div><pre class="alert alert-danger" th:if="${#fields.hasErrors('firstName')}" 
+								th:errors="*{firstName}"></pre></div>
 						</div>
 					</div>
 
@@ -50,8 +51,9 @@
 						<label for="lastName" class="col-sm-4 col-form-label">
 							Last Name: </label>
 						<div class="col-sm-8">
-							<input type="text" class="form-control" th:field="*{lastName}"
-								id="lastName" />
+							<input type="text" class="form-control" th:field="*{lastName}" id="lastName">
+							<div><pre class="alert alert-danger" th:if="${#fields.hasErrors('lastName')}" 
+								th:errors="*{lastName}"></pre></div>
 						</div>
 					</div>
 					
@@ -151,8 +153,8 @@
 						th:action="@{/students/{id}/course/add(id=${student.getId()})}">
 
 						<div class="form-group">
-							<label for="courseId">Choose the Course: </label> <select
-								class="form-control" id="courseId" name="courseId">
+							<label for="courseId">Choose the Course: </label> 
+							<select class="form-control" id="courseId" name="courseId" required>
 								<option th:each="course : ${notAttendedCourses}"
 									th:value="${course.getId()}" th:text="${course.getName()}"></option>
 							</select>

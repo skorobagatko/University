@@ -2,9 +2,12 @@ package com.skorobahatko.university.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,7 +69,14 @@ public class CourseController {
 	}
 	
 	@PatchMapping("/{id}")
-	public String updateCourseById(@ModelAttribute("course") Course course) {
+	public String updateCourseById(
+			@Valid @ModelAttribute("course") Course course,
+			BindingResult bindingResult) {
+		
+		if (bindingResult.hasErrors()) {
+			return COURSE_EDIT_PAGE;
+		}
+		
 		courseService.update(course);
 		
 		return REDIRECT_TO_COURSES_LIST_PAGE;

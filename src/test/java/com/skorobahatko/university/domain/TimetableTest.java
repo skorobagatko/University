@@ -1,11 +1,10 @@
 package com.skorobahatko.university.domain;
 
+import static com.skorobahatko.university.util.TestUtils.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,84 +15,36 @@ class TimetableTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		timetable = getTestTimetable();
+		Participant participant = getTestParticipant();
+		timetable = getTestTimetableForParticipant(participant);
 	}
 	
 	@Test
 	void testGetDayTimetable() throws Exception {
 		Participant participant = getTestParticipant();
-		LocalDate startDate = LocalDate.of(2020, 11, 5);
-		LocalDate endDate = LocalDate.of(2020, 11, 5);
+		LocalDate date = LocalDate.of(2020, 11, 5);
 		
-		Constructor<Timetable> constructor = Timetable.class.getDeclaredConstructor(Participant.class, LocalDate.class, LocalDate.class);
-		constructor.setAccessible(true);
-		Timetable expected = constructor.newInstance(participant, startDate, endDate);
+		Timetable timetable = Timetable.getDayTimetable(participant, date);
 		
-		
-		Timetable actual = Timetable.getDayTimetable(participant, startDate);
-		
-		assertEquals(expected, actual);
+		assertEquals(date, timetable.getStartDate());
+		assertEquals(date, timetable.getEndDate());
 	}
 	
 	@Test
 	void testGetMonthTimetable() throws Exception {
 		Participant participant = getTestParticipant();
-		LocalDate startDate = LocalDate.of(2020, 11, 5);
-		LocalDate endDate = startDate.plusMonths(1);
+		LocalDate date = LocalDate.of(2020, 11, 5);
 		
-		Constructor<Timetable> constructor = Timetable.class.getDeclaredConstructor(Participant.class, LocalDate.class, LocalDate.class);
-		constructor.setAccessible(true);
-		Timetable expected = constructor.newInstance(participant, startDate, endDate);
+		Timetable timetable = Timetable.getMonthTimetable(participant, date);
 		
-		Timetable actual = Timetable.getMonthTimetable(participant, startDate);
-		
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	void testAddLecture() {
-		int lecturesNumber = timetable.getLectures().size();
-		int expected = lecturesNumber + 1;
-		
-		int lectureId = 123;
-		int courseId = 1;
-		String lectureName = "Test lecture";
-		LocalDate lectureDate = LocalDate.of(2020, 12, 5);
-		LocalTime lectureStartTime = LocalTime.of(9, 30);
-		LocalTime lectureEndTime = LocalTime.of(11, 0);
-		int lectureRoomNumber = 300;
-		Lecture lecture = new Lecture(lectureId, lectureName, courseId, lectureDate, lectureStartTime, lectureEndTime, lectureRoomNumber);
-		
-		timetable.addLecture(lecture);
-		
-		int actual = timetable.getLectures().size();
-		
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	void testRemoveLecture() {
-		int lecturesNumber = timetable.getLectures().size();
-		int expected = lecturesNumber - 1;
-		
-		int lectureId = 1;
-		int courseId = 1;
-		String lectureName = "Test lecture 1";
-		LocalDate lectureDate = LocalDate.of(2020, 11, 5);
-		LocalTime lectureStartTime = LocalTime.of(7, 30);
-		LocalTime lectureEndTime = LocalTime.of(9, 0);
-		int lectureRoomNumber = 101;
-		Lecture lecture = new Lecture(lectureId, lectureName, courseId, lectureDate, lectureStartTime, lectureEndTime, lectureRoomNumber);
-		
-		timetable.removeLecture(lecture);
-		int actual = timetable.getLectures().size();
-		
-		assertEquals(expected, actual);
+		assertEquals(date, timetable.getStartDate());
+		assertEquals(date.plusMonths(1), timetable.getEndDate());
 	}
 	
 	@Test
 	void testEqualsMethodReturnsTrueForEqualTimetables() {
-		Timetable other = getTestTimetable();
+		Participant participant = getTestParticipant();
+		Timetable other = getTestTimetableForParticipant(participant);
 		
 		assertEquals(timetable, other);
 	}
@@ -101,13 +52,11 @@ class TimetableTest {
 	@Test
 	void testEqualsMethodReturnsFalseForNonEqualTimetables() {
 		int studentId = 123;
-		String studentFirstName = "Test";
-		String studentLastName = "Test";
-		List<Course> studentCourses = getTestCourses();
-		Participant participant = new Student(studentId, studentFirstName, studentLastName, studentCourses);
+		String firstName = "Test";
+		String lastName = "Test";
+		Participant participant = new Student(studentId, firstName, lastName);
 
-		LocalDate startDate = LocalDate.of(2021, 12, 6);
-		Timetable other = Timetable.getDayTimetable(participant, startDate);
+		Timetable other = getTestTimetableForParticipant(participant);
 		
 		assertNotEquals(timetable, other);
 	}
@@ -133,56 +82,30 @@ class TimetableTest {
 		assertNotEquals(timetable, other);
 	}
 	
-	private Participant getTestParticipant() {
-		int studentId = 123;
-		String studentFirstName = "Test";
-		String studentLastName = "Test";
-		List<Course> studentCourses = getTestCourses();
-		return new Student(studentId, studentFirstName, studentLastName, studentCourses);
+	@Test
+	void testGetDayTimetableThrowsExceptionForNullParticipantArgument() {
+		assertThrows(IllegalArgumentException.class, 
+				() -> Timetable.getDayTimetable(null));
 	}
 	
-	private Timetable getTestTimetable() {
-		int studentId = 123;
-		String studentFirstName = "Test";
-		String studentLastName = "Test";
-		List<Course> studentCourses = getTestCourses();
-		Participant participant = new Student(studentId, studentFirstName, studentLastName, studentCourses);
-		
-		LocalDate startDate = LocalDate.of(2020, 11, 5);
-		return Timetable.getDayTimetable(participant, startDate);
+	@Test
+	void testGetDayTimetableThrowsExceptionForNullDateArgument() {
+		Participant participant = getTestParticipant();
+		assertThrows(IllegalArgumentException.class, 
+				() -> Timetable.getDayTimetable(participant, null));
 	}
 	
-	private List<Course> getTestCourses() {
-		Course course = new Course(1, "Test course 1");
-		
-		int lectureId = 1;
-		String lectureName = "Test lecture 1";
-		LocalDate lectureDate = LocalDate.of(2020, 11, 5);
-		LocalTime lectureStartTime = LocalTime.of(7, 30);
-		LocalTime lectureEndTime = LocalTime.of(9, 0);
-		int lectureRoomNumber = 101;
-		Lecture lecture = new Lecture(lectureId, lectureName, course.getId(), lectureDate, lectureStartTime, lectureEndTime, lectureRoomNumber);
-		course.addLecture(lecture);
-		
-		lectureId = 2;
-		lectureName = "Test lecture 2";
-		lectureDate = LocalDate.of(2020, 11, 6);
-		lectureStartTime = LocalTime.of(10, 30);
-		lectureEndTime = LocalTime.of(12, 0);
-		lectureRoomNumber = 201;
-		lecture = new Lecture(lectureId, lectureName, course.getId(), lectureDate, lectureStartTime, lectureEndTime, lectureRoomNumber);
-		course.addLecture(lecture);
-		
-		lectureId = 3;
-		lectureName = "Test lecture 3";
-		lectureDate = LocalDate.of(2020, 11, 7);
-		lectureStartTime = LocalTime.of(14, 30);
-		lectureEndTime = LocalTime.of(16, 0);
-		lectureRoomNumber = 301;
-		lecture = new Lecture(lectureId, lectureName, course.getId(), lectureDate, lectureStartTime, lectureEndTime, lectureRoomNumber);
-		course.addLecture(lecture);
-		
-		return List.of(course);
+	@Test
+	void testGetMonthTimetableThrowsExceptionForNullParticipantArgument() {
+		assertThrows(IllegalArgumentException.class, 
+				() -> Timetable.getMonthTimetable(null));
+	}
+	
+	@Test
+	void testGetMonthTimetableThrowsExceptionForNullDateArgument() {
+		Participant participant = getTestParticipant();
+		assertThrows(NullPointerException.class, 
+				() -> Timetable.getMonthTimetable(participant, null));
 	}
 
 }

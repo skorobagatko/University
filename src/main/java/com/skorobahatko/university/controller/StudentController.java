@@ -2,9 +2,12 @@ package com.skorobahatko.university.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -80,6 +83,20 @@ public class StudentController {
 		return STUDENT_EDIT_PAGE;
 	}
 	
+	@PatchMapping("/{id}")
+	public String updateStudentById(
+			@Valid @ModelAttribute("student") Student student,
+			BindingResult bindingResult) {
+		
+		if (bindingResult.hasErrors()) {
+			return STUDENT_EDIT_PAGE;
+		}
+		
+		participantService.update(student);
+		
+		return REDIRECT_TO_STUDENTS_LIST_PAGE;
+	}
+	
 	@PostMapping("/{id}/course/add")
 	public String addCourseToStudent(
 			@PathVariable("id") int studentId,
@@ -106,13 +123,6 @@ public class StudentController {
 		model.addAttribute(STUDENT, student);
 		
 		return STUDENT_EDIT_PAGE;
-	}
-	
-	@PatchMapping("/{id}")
-	public String updateStudentById(@ModelAttribute("student") Student student) {
-		participantService.update(student);
-		
-		return REDIRECT_TO_STUDENTS_LIST_PAGE;
 	}
 	
 	@DeleteMapping("/{id}")

@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -29,6 +31,8 @@ public class Course {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "The course name must not be empty")
+	@Size(min=2, max=100, message = "The name length must be between 2 and 100")
 	@Column(name = "course_name")
 	private String name;
 
@@ -37,7 +41,7 @@ public class Course {
 	private List<Lecture> lectures;
 
 	public Course() {
-		lectures = new ArrayList<>();
+		setLectures(new ArrayList<>());
 	}
 
 	public Course(String name) {
@@ -53,9 +57,9 @@ public class Course {
 	}
 
 	public Course(Integer id, String name, List<Lecture> lectures) {
-		this.id = id;
-		this.name = name;
-		this.lectures = new ArrayList<>(lectures);
+		setId(id);
+		setName(name);
+		setLectures(new ArrayList<>(lectures));
 	}
 
 	public Integer getId() {

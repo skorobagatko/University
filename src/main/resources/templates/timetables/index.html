@@ -31,11 +31,11 @@
 	<br />
 
 	<div class="container text-center w-50 p-2">
-		<form method="GET" th:action="@{/timetables/participant}">
+		<form method="GET" th:action="@{/timetables/month}">
 			<div class="form-group row">
 				<label for="participantId" class="col-sm-6 col-form-label">Choose the Participant: </label> 
 				<div class="col-sm-6">
-				<select class="form-control" id="participantId" name="participantId">
+				<select class="form-control" id="participantId" name="participantId" required>
 					<option th:each="participant : ${participants}"
 						th:value="${participant.getId()}"
 						th:text="${participant.getFirstName()} + ' ' + ${participant.getLastName()}">

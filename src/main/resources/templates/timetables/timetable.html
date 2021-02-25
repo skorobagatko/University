@@ -32,8 +32,17 @@
 
 		<div class="justify-content-end text-right">
 			<div class="btn-group" role="group" aria-label="Basic example">
-				<button type="button" class="btn btn-secondary">Month</button>
-				<button type="button" class="btn btn-secondary">Day</button>
+				<form method="GET" th:action="@{/timetables/month}">
+					<input id="participantId" name="participantId" 
+						th:value="${participantId}" type="hidden" class="form-control" />
+					<button type="submit" class="btn btn-secondary">Month</button>
+				</form>
+				
+				<form method="GET" th:action="@{/timetables/day}">
+					<input id="participantId" name="participantId" 
+						th:value="${participantId}" type="hidden" class="form-control" />
+					<button type="submit" class="btn btn-secondary">Day</button>
+				</form>
 			</div>
 		</div>
 		
