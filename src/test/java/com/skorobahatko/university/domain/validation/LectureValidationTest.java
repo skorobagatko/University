@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import com.skorobahatko.university.domain.Lecture;
 
-public class LectureValidationTest {
+class LectureValidationTest {
 	
 	private Validator validator;
 

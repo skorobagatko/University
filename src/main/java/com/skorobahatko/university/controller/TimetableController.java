@@ -17,8 +17,12 @@ import com.skorobahatko.university.service.ParticipantService;
 @RequestMapping("/timetables")
 public class TimetableController {
 	
-	@Autowired
 	private ParticipantService participantService;
+
+	@Autowired
+	public TimetableController(ParticipantService participantService) {
+		this.participantService = participantService;
+	}
 	
 	@GetMapping()
 	public String index(Model model) {

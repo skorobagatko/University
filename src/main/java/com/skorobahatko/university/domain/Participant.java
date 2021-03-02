@@ -41,11 +41,11 @@ public abstract class Participant {
 			inverseJoinColumns = @JoinColumn(name = "course_id"))
 	private List<Course> courses;
 
-	public Participant() {
+	Participant() {
 		setCourses(new ArrayList<>());
 	}
 
-	public Participant(Integer id, String firstName, String lastName, List<Course> courses) {
+	Participant(Integer id, String firstName, String lastName, List<Course> courses) {
 		setId(id);
 		setFirstName(firstName);
 		setLastName(lastName);

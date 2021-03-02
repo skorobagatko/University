@@ -1,18 +1,19 @@
 package com.skorobahatko.university.service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
+import com.skorobahatko.university.domain.Course;
+import com.skorobahatko.university.repository.CourseRepository;
+import com.skorobahatko.university.service.exception.EntityNotFoundException;
+import com.skorobahatko.university.service.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.skorobahatko.university.domain.Course;
-import com.skorobahatko.university.repository.CourseRepository;
-import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
-import com.skorobahatko.university.service.exception.ServiceException;
-import com.skorobahatko.university.service.exception.ValidationException;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static com.skorobahatko.university.service.util.Validator.validateCourse;
+import static com.skorobahatko.university.service.util.Validator.validateId;
 
 @Service("courseService")
 @Transactional(readOnly = true)
@@ -42,7 +43,7 @@ public class CourseServiceImpl implements CourseService {
 			return courseRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			String message = String.format("Course with id = %d not found", id);
-			throw new EntityNotFoundServiceException(message);
+			throw new EntityNotFoundException(message);
 		} catch (DataAccessException e) {
 			String message = String.format("Unable get Course with id = %d", id);
 			throw new ServiceException(message, e);
@@ -85,20 +86,6 @@ public class CourseServiceImpl implements CourseService {
 		} catch (DataAccessException e) {
 			String message = String.format("Unable to remove Course with id = %d", id);
 			throw new ServiceException(message, e);
-		}
-	}
-	
-	private void validateId(int id) {
-		if (id <= 0) {
-			String message = String.format("ID must be a positive integer value. Actually, ID was %d", id);
-			throw new ValidationException(message);
-		}
-	}
-	
-	private void validateCourse(Course course) {
-		if (course == null) {
-			String message = String.format("Course must not be null. Actually, Course was %s", course);
-			throw new ValidationException(message);
 		}
 	}
 

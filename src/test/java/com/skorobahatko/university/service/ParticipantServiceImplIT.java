@@ -12,7 +12,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Participant;
-import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
 @SqlGroup({ 
@@ -37,41 +37,25 @@ class ParticipantServiceImplIT {
 
 		assertEquals(expected, actual);
 	}
-	
-	@Test
-	void testGetAllStudents() {
-		int expected = 5;
-		int actual = participantService.getAllStudents().size();
-
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	void testGetAllTeachers() {
-		int expected = 3;
-		int actual = participantService.getAllTeachers().size();
-
-		assertEquals(expected, actual);
-	}
 
 	@Test
 	void testGetById() {
 		Participant participant = getTestParticipant();
 		participant = participantService.add(participant);
-		
+
 		int expectedId = participant.getId();
 		int actualId = participantService.getById(expectedId).getId();
-		
+
 		assertEquals(expectedId, actualId);
 	}
-	
+
 	@Test
 	void testGetByIdThrowsExceptionForNonExistParticipant() {
 		int participantId = Integer.MAX_VALUE;
-		
-		assertThrows(EntityNotFoundServiceException.class, () -> participantService.getById(participantId));
+
+		assertThrows(EntityNotFoundException.class, () -> participantService.getById(participantId));
 	}
-	
+
 	@Test
 	void testGetByIdThrowsExceptionForNonValidParticipantId() {
 		int participantId = -1;
@@ -82,19 +66,19 @@ class ParticipantServiceImplIT {
 	@Test
 	void testAdd() {
 		Participant participant = getTestParticipant();
-		
+
 		participantService.add(participant);
-		
+
 		int expectedRowsCount = 9;
 		int actualRowsCount = participantService.getAll().size();
-		
+
 		assertEquals(expectedRowsCount, actualRowsCount);
 	}
-	
+
 	@Test
 	void testAddThrowsExceptionForNullParticipantArgument() {
 		Participant participant = null;
-		
+
 		assertThrows(ValidationException.class, () -> participantService.add(participant));
 	}
 
@@ -103,10 +87,10 @@ class ParticipantServiceImplIT {
 		Participant participant = getTestParticipant();
 		participant = participantService.add(participant);
 		int participantId = participant.getId();
-		
+
 		participantService.removeById(participantId);
-		
-		assertThrows(EntityNotFoundServiceException.class, () -> participantService.getById(participantId));
+
+		assertThrows(EntityNotFoundException.class, () -> participantService.getById(participantId));
 	}
 
 }

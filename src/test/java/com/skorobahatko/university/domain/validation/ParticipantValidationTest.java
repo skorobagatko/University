@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.domain.Student;
 
-public class ParticipantValidationTest {
+class ParticipantValidationTest {
 	
 	private Validator validator;
 

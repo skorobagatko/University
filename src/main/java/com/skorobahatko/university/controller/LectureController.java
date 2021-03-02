@@ -30,14 +30,16 @@ import com.skorobahatko.university.service.LectureService;
 public class LectureController {
 
 	private static final String REDIRECT_TO_COURSE_EDIT_PAGE = "redirect:/courses/{id}/edit";
-	
 	private static final String COURSE = "course";
 
-	@Autowired
 	private CourseService courseService;
+	private LectureService lectureService;
 
 	@Autowired
-	private LectureService lectureService;
+	public LectureController(CourseService courseService, LectureService lectureService) {
+		this.courseService = courseService;
+		this.lectureService = lectureService;
+	}
 
 	@PostMapping("/new")
 	public String addLecture(

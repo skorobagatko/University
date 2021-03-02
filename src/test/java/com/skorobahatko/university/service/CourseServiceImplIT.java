@@ -14,7 +14,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Course;
-import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
 @SqlGroup({ 
@@ -55,7 +55,7 @@ class CourseServiceImplIT {
 	void testGetByIdThrowsExceptionForNonExistCourse() {
 		int courseId = Integer.MAX_VALUE;
 
-		assertThrows(EntityNotFoundServiceException.class, () -> courseService.getById(courseId));
+		assertThrows(EntityNotFoundException.class, () -> courseService.getById(courseId));
 	}
 	
 	@Test
@@ -92,7 +92,7 @@ class CourseServiceImplIT {
 		
 		courseService.removeById(courseId);
 		
-		assertThrows(EntityNotFoundServiceException.class, () -> courseService.getById(courseId));
+		assertThrows(EntityNotFoundException.class, () -> courseService.getById(courseId));
 	}
 
 }
