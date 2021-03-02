@@ -1,26 +1,17 @@
 package com.skorobahatko.university.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.skorobahatko.university.domain.Course;
+import com.skorobahatko.university.domain.Student;
+import com.skorobahatko.university.service.CourseService;
+import com.skorobahatko.university.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import com.skorobahatko.university.domain.Course;
-import com.skorobahatko.university.domain.Student;
-import com.skorobahatko.university.service.CourseService;
-import com.skorobahatko.university.service.ParticipantService;
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/students")
@@ -31,15 +22,18 @@ public class StudentController {
 	
 	private static final String STUDENT = "student";
 	
-	@Autowired
-	private ParticipantService participantService;
-	
-	@Autowired
+	private StudentService studentService;
 	private CourseService courseService;
+
+	@Autowired
+	public StudentController(StudentService studentService, CourseService courseService) {
+		this.studentService = studentService;
+		this.courseService = courseService;
+	}
 
 	@GetMapping()
 	public String getAllStudents(Model model) {
-		List<Student> students = participantService.getAllStudents();
+		List<Student> students = studentService.getAll();
 		List<Course> courses = courseService.getAll();
 		
 		model.addAttribute("students", students);
@@ -56,16 +50,16 @@ public class StudentController {
 		
 		Student newStudent = new Student(firstName, lastName);
 		
-		newStudent = (Student) participantService.add(newStudent);
-		participantService.addParticipantCourseById(newStudent.getId(), courseId);
+		newStudent = studentService.add(newStudent);
+		studentService.addCourseToStudentById(newStudent.getId(), courseId);
 		
 		return REDIRECT_TO_STUDENTS_LIST_PAGE;
 	}
 	
 	@GetMapping("/{id}")
 	public String getStudentById(@PathVariable("id") int id, Model model) {
-		Student student = (Student) participantService.getById(id);
-		
+		Student student = studentService.getById(id);
+
 		model.addAttribute(STUDENT, student);
 	
 		return "students/student";
@@ -73,8 +67,8 @@ public class StudentController {
 	
 	@GetMapping("/{id}/edit")
 	public String editStudentById(@PathVariable("id") int id, Model model) {
-		Student student = (Student) participantService.getById(id);
-		
+		Student student = studentService.getById(id);
+
 		model.addAttribute(STUDENT, student);
 		
 		List<Course> notAttendedCourses = getNotAttendedCoursesFor(student);
@@ -92,8 +86,8 @@ public class StudentController {
 			return STUDENT_EDIT_PAGE;
 		}
 		
-		participantService.update(student);
-		
+		studentService.update(student);
+
 		return REDIRECT_TO_STUDENTS_LIST_PAGE;
 	}
 	
@@ -103,8 +97,8 @@ public class StudentController {
 			@RequestParam int courseId,
 			Model model) {
 		
-		participantService.addParticipantCourseById(studentId, courseId);
-		Student student = (Student) participantService.getById(studentId);
+		studentService.addCourseToStudentById(studentId, courseId);
+		Student student = studentService.getById(studentId);
 		
 		model.addAttribute(STUDENT, student);
 		
@@ -117,8 +111,8 @@ public class StudentController {
 			@PathVariable("courseId") int courseId,
 			Model model) {
 		
-		participantService.removeParticipantCourseById(studentId, courseId);
-		Student student = (Student) participantService.getById(studentId);
+		studentService.deleteStudentsCourseById(studentId, courseId);
+		Student student = studentService.getById(studentId);
 		
 		model.addAttribute(STUDENT, student);
 		
@@ -127,8 +121,8 @@ public class StudentController {
 	
 	@DeleteMapping("/{id}")
 	public String deleteStudentById(@PathVariable("id") int id) {
-		participantService.removeById(id);
-		
+		studentService.removeById(id);
+
 		return REDIRECT_TO_STUDENTS_LIST_PAGE;
 	}
 	

@@ -13,10 +13,11 @@ import com.skorobahatko.university.domain.Teacher;
 import com.skorobahatko.university.domain.Timetable;
 
 public class TestUtils {
+	
+	private TestUtils() {}
 
 	public static Course getTestCourse() {
-		Course course = new Course("Test Course");
-		return course;
+		return new Course("Test Course");
 	}
 	
 	public static Lecture getTestLectureWithCourseId(int courseId) {

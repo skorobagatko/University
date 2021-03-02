@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Participant;
 import com.skorobahatko.university.repository.ParticipantRepository;
-import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
 @RunWith(SpringRunner.class)
@@ -60,9 +60,9 @@ class ParticipantServiceImplTest {
 		int participantId = Integer.MAX_VALUE;
 
 		Mockito.when(participantRepository.findById(participantId))
-				.thenThrow(EntityNotFoundServiceException.class);
+				.thenThrow(EntityNotFoundException.class);
 
-		assertThrows(EntityNotFoundServiceException.class, 
+		assertThrows(EntityNotFoundException.class, 
 				() -> participantService.getById(participantId));
 	}
 

@@ -29,8 +29,12 @@ public class CourseController {
 	private static final String REDIRECT_TO_COURSE_PAGE = "redirect:/courses/{id}";
 	private static final String COURSE_EDIT_PAGE = "courses/edit";
 	
-	@Autowired
 	private CourseService courseService;
+
+	@Autowired
+	public CourseController(CourseService courseService) {
+		this.courseService = courseService;
+	}
 	
 	@GetMapping()
 	public String getAllCourses(Model model) {

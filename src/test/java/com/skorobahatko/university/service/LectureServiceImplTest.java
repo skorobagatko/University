@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.repository.LectureRepository;
-import com.skorobahatko.university.service.exception.EntityNotFoundServiceException;
+import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
 @RunWith(SpringRunner.class)
@@ -60,7 +60,7 @@ class LectureServiceImplTest {
 		
 		Mockito.when(lectureRepository.findById(lectureId)).thenThrow(NoSuchElementException.class);
 		
-		assertThrows(EntityNotFoundServiceException.class, () -> lectureService.getById(lectureId));
+		assertThrows(EntityNotFoundException.class, () -> lectureService.getById(lectureId));
 	}
 	
 	@Test
