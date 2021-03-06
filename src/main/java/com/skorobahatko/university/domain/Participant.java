@@ -11,6 +11,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name = "participants")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -22,16 +24,19 @@ public abstract class Participant {
 	@Id
 	@Column(name = "participant_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty("The unique ID of the participant")
 	private Integer id;
 
 	@NotBlank(message = "The first name must not be empty")
 	@Size(min=2, max=100, message = "The first name length must be between 2 and 100")
 	@Column(name = "first_name")
+	@ApiModelProperty("The first name of the participant")
 	private String firstName;
 
 	@NotBlank(message = "The last name must not be empty")
 	@Size(min=2, max=100, message = "The last name length must be between 2 and 100")
 	@Column(name = "last_name")
+	@ApiModelProperty("The last name of the participant")
 	private String lastName;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -39,6 +44,7 @@ public abstract class Participant {
 			name = "participants_courses", 
 			joinColumns = @JoinColumn(name = "participant_id"), 
 			inverseJoinColumns = @JoinColumn(name = "course_id"))
+	@ApiModelProperty("The participant's course list")
 	private List<Course> courses;
 
 	Participant() {

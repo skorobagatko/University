@@ -19,42 +19,53 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name = "lectures")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@ApiModel(description = "University lecture")
 public class Lecture {
 	
 	@Id
 	@Column(name = "lecture_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty("The unique ID of the lecture")
 	private Integer id;
 	
 	@Column(name = "course_id")
+	@ApiModelProperty("The unique ID of the course")
 	private Integer courseId;
 	
 	@NotBlank(message = "The lecture name must not be empty")
 	@Size(min=2, max=100, message = "The name length must be between 2 and 100")
 	@Column(name = "lecture_name")
+	@ApiModelProperty("The name of the lecture")
 	private String name;
 	
 	@NotNull(message = "The lecture date must not be empty")
 	@Column(name = "lecture_date")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	@ApiModelProperty("The date of the lecture")
 	private LocalDate date;
 	
 	@NotNull(message = "The lecture start time must not be empty")
 	@Column(name = "lecture_start_time")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	@ApiModelProperty("The start time of the lecture")
 	private LocalTime startTime;
 	
 	@NotNull(message = "The lecture end time must not be empty")
 	@Column(name = "lecture_end_time")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	@ApiModelProperty("The end time of the lecture")
 	private LocalTime endTime;
 	
 	@Positive(message = "The room number must be positive integer")
 	@Column(name = "lecture_room_number")
+	@ApiModelProperty("The room number of the lecture")
 	private int roomNumber;
 	
 	public Lecture() {}

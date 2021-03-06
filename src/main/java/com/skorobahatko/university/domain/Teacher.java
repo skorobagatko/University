@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import io.swagger.annotations.ApiModel;
+
 @Entity
 @DiscriminatorValue("Teacher")
+@ApiModel(description = "University teacher")
 public class Teacher extends Participant {
 	
 	public Teacher() {}

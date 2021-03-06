@@ -5,11 +5,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Participant's timetable")
 public class Timetable {
 	
+	@ApiModelProperty("Participant for whom the schedule is created")
 	private Participant participant;
+	
+	@ApiModelProperty("Timetable's start date")
 	private LocalDate startDate;
+	
+	@ApiModelProperty("Timetable's end date")
 	private LocalDate endDate;
+	
+	@ApiModelProperty("Timetable's list of lectures")
 	private List<Lecture> lectures;
 	
 	public static Timetable getDayTimetable(Participant participant) {

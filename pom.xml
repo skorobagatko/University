@@ -24,6 +24,7 @@
 		<maven.failsafe.version>2.22.2</maven.failsafe.version>
 		<hibernate.version>5.4.27.Final</hibernate.version>
 		<spring.boot.version>2.4.2</spring.boot.version>
+		<swagger.version>3.0.0</swagger.version>
 		<jacoco.version>0.8.6</jacoco.version>
 		<postgresql.version>42.2.16</postgresql.version>
 		<h2.version>1.4.200</h2.version>
@@ -119,6 +120,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 			<version>${spring.boot.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>
