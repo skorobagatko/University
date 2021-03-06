@@ -20,24 +20,31 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name = "courses")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@ApiModel(description = "University course")
 public class Course {
 
 	@Id
 	@Column(name = "course_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty("The unique ID of the course")
 	private Integer id;
 
 	@NotBlank(message = "The course name must not be empty")
 	@Size(min=2, max=100, message = "The name length must be between 2 and 100")
 	@Column(name = "course_name")
+	@ApiModelProperty("The name of the course")
 	private String name;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id", updatable = false)
+	@ApiModelProperty("The course's list of lectures")
 	private List<Lecture> lectures;
 
 	public Course() {

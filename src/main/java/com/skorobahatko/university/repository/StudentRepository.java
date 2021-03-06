@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository("studentRepository")
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
@@ -18,8 +16,5 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Modifying
     @Query(value = "DELETE FROM participants_courses WHERE participant_id = ?1 AND course_id = ?2", nativeQuery = true)
     void deleteStudentsCourseById(int studentId, int courseId);
-
-    @Query(value = "SELECT course_id FROM participants_courses WHERE participant_id = ?1", nativeQuery = true)
-    List<Integer> getStudentCoursesById(int studentId);
 
 }
