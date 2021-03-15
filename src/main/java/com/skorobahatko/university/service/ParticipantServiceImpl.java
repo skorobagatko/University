@@ -21,7 +21,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	private ParticipantRepository participantRepository;
 	
 	@Autowired
-	public void setParticipantRepository(ParticipantRepository participantRepository) {
+	public ParticipantServiceImpl(ParticipantRepository participantRepository) {
 		this.participantRepository = participantRepository;
 	}
 

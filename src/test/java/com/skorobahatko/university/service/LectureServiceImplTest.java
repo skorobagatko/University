@@ -7,28 +7,28 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.skorobahatko.university.domain.Lecture;
 import com.skorobahatko.university.repository.LectureRepository;
 import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 class LectureServiceImplTest {
 	
-	@MockBean
 	private LectureRepository lectureRepository;
-	
-	@Autowired
 	private LectureService lectureService;
+	
+	@BeforeEach
+    public void init() {
+		lectureRepository = Mockito.mock(LectureRepository.class);
+		lectureService = new LectureServiceImpl(lectureRepository);
+	}
 
 	@Test
 	void testGetAll() {

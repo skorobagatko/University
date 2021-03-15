@@ -21,9 +21,9 @@ public class StudentServiceImpl implements StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
-    public void setStudentRepository(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
-    }
+	}
 
     @Override
     public List<Student> getAll() {

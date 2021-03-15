@@ -64,7 +64,7 @@ public class LectureController {
 	}
 
 	@GetMapping("/{id}/edit")
-	public String editLecture(
+	public String editLectureById(
 			@PathVariable("id") int id,
 			Model model) {
 		Lecture lecture = lectureService.getById(id);

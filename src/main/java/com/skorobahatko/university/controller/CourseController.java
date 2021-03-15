@@ -73,7 +73,7 @@ public class CourseController {
 	}
 	
 	@PatchMapping("/{id}")
-	public String updateCourseById(
+	public String updateCourse(
 			@Valid @ModelAttribute("course") Course course,
 			BindingResult bindingResult) {
 		

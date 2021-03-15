@@ -78,7 +78,7 @@ public class StudentController {
 	}
 	
 	@PatchMapping("/{id}")
-	public String updateStudentById(
+	public String updateStudent(
 			@Valid @ModelAttribute("student") Student student,
 			BindingResult bindingResult) {
 		
@@ -92,7 +92,7 @@ public class StudentController {
 	}
 	
 	@PostMapping("/{id}/course/add")
-	public String addCourseToStudent(
+	public String addStudentCourse(
 			@PathVariable("id") int studentId,
 			@RequestParam int courseId,
 			Model model) {
@@ -106,7 +106,7 @@ public class StudentController {
 	}
 	
 	@DeleteMapping("/{studentId}/course/{courseId}")
-	public String deleteCourseFromStudent(
+	public String deleteStudentCourse(
 			@PathVariable("studentId") int studentId,
 			@PathVariable("courseId") int courseId,
 			Model model) {

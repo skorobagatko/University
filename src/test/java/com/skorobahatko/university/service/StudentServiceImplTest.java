@@ -5,13 +5,12 @@ import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.repository.StudentRepository;
 import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,15 +18,17 @@ import java.util.Optional;
 import static com.skorobahatko.university.util.TestUtils.getTestStudent;
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 class StudentServiceImplTest {
 
-    @MockBean
     private StudentRepository studentRepository;
-
-    @Autowired
     private StudentService studentService;
+    
+    @BeforeEach
+    public void init() {
+    	studentRepository = Mockito.mock(StudentRepository.class);
+    	studentService = new StudentServiceImpl(studentRepository);
+	}
 
     @Test
     void testGetAll() {

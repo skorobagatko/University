@@ -3,7 +3,6 @@ package com.skorobahatko.university.service;
 import static com.skorobahatko.university.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ class LectureServiceImplIT {
 	private LectureService lectureService;
 
 	@Test
-	void testGetAll() throws SQLException {
+	void testGetAll() {
 		int expected = 6;
 		int actual = lectureService.getAll().size();
 
@@ -46,7 +45,7 @@ class LectureServiceImplIT {
 	}
 
 	@Test
-	void testGetById() throws SQLException {
+	void testGetById() {
 		Course course = getTestCourse();
 		course = courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
@@ -59,7 +58,7 @@ class LectureServiceImplIT {
 	}
 	
 	@Test
-	void testGetByIdThrowsExceptionForNonExistLecture() throws SQLException {
+	void testGetByIdThrowsExceptionForNonExistLecture() {
 		int lectureId = Integer.MAX_VALUE;
 
 		assertThrows(EntityNotFoundException.class, () -> lectureService.getById(lectureId));
@@ -73,7 +72,7 @@ class LectureServiceImplIT {
 	}
 
 	@Test
-	void testGetByCourseId() throws SQLException {
+	void testGetByCourseId() {
 		int expectedCourseId = 1;
 
 		List<Lecture> lectures = lectureService.getByCourseId(expectedCourseId);
@@ -84,7 +83,7 @@ class LectureServiceImplIT {
 	}
 
 	@Test
-	void testGetByCourseIdForNonExistCourseId() throws SQLException {
+	void testGetByCourseIdForNonExistCourseId() {
 		List<Lecture> expected = List.of();
 		List<Lecture> actual = lectureService.getByCourseId(Integer.MAX_VALUE);
 
@@ -92,7 +91,7 @@ class LectureServiceImplIT {
 	}
 
 	@Test
-	void testAddAll() throws SQLException {
+	void testAddAll() {
 		Course course = getTestCourse();
 		course = courseService.add(course);
 		List<Lecture> lectures = getTestLecturesWithCourseId(course.getId());
@@ -106,7 +105,7 @@ class LectureServiceImplIT {
 	}
 
 	@Test
-	void testAdd() throws SQLException {
+	void testAdd() {
 		Course course = getTestCourse();
 		course = courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());
@@ -127,7 +126,7 @@ class LectureServiceImplIT {
 	}
 
 	@Test
-	void testRemoveById() throws SQLException {
+	void testRemoveById() {
 		Course course = getTestCourse();
 		course = courseService.add(course);
 		Lecture lecture = getTestLectureWithCourseId(course.getId());

@@ -5,13 +5,12 @@ import com.skorobahatko.university.domain.Teacher;
 import com.skorobahatko.university.repository.TeacherRepository;
 import com.skorobahatko.university.service.exception.EntityNotFoundException;
 import com.skorobahatko.university.service.exception.ValidationException;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,15 +19,17 @@ import static com.skorobahatko.university.util.TestUtils.getTestTeacher;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 class TeacherServiceImplTest {
 
-    @MockBean
     private TeacherRepository teacherRepository;
-
-    @Autowired
     private TeacherService teacherService;
+    
+    @BeforeEach
+    public void init() {
+    	teacherRepository = Mockito.mock(TeacherRepository.class);
+    	teacherService = new TeacherServiceImpl(teacherRepository);
+	}
 
     @Test
     void testGetAll() {

@@ -22,7 +22,7 @@ public class LectureServiceImpl implements LectureService {
 	private LectureRepository lectureRepository;
 	
 	@Autowired
-	public void setLectureRepository(LectureRepository lectureRepository) {
+	public LectureServiceImpl(LectureRepository lectureRepository) {
 		this.lectureRepository = lectureRepository;
 	}
 	
