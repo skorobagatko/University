@@ -22,7 +22,7 @@ public class CourseServiceImpl implements CourseService {
 	private CourseRepository courseRepository;
 	
 	@Autowired
-	public void setCourseRepository(CourseRepository courseRepository) {
+	public CourseServiceImpl(CourseRepository courseRepository) {
 		this.courseRepository = courseRepository;
 	}
 

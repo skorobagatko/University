@@ -12,7 +12,7 @@ class TeacherTest {
 	private Teacher teacher;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		teacher = getTestTeacher();
 	}
 

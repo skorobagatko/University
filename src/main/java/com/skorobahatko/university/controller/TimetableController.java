@@ -25,7 +25,7 @@ public class TimetableController {
 	}
 	
 	@GetMapping()
-	public String index(Model model) {
+	public String getIndexView(Model model) {
 		List<Participant> participants = participantService.getAll();
 		model.addAttribute("participants", participants);
 		

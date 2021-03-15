@@ -78,7 +78,7 @@ public class StudentRestController {
 	@ApiOperation(value = "Adds course to the student's course list by their IDs", 
 			notes = "Provide an ID for both course and student", 
 			response = Student.class)
-	public ResponseEntity<Student> addCourseToStudent(
+	public ResponseEntity<Student> addStudentCourse(
 			@ApiParam(value = "The student's ID for whom you want to add a course", required = true)
 			@PathVariable("studentId") int studentId,
 			@ApiParam(value = "The course's ID to be added to the student's course list", required = true)
@@ -93,7 +93,7 @@ public class StudentRestController {
 	@ApiOperation(value = "Deletes course from the student's course list by their IDs", 
 			notes = "Provide an ID for both course and student", 
 			response = Student.class)
-	public ResponseEntity<Student> deleteCourseFromStudent(
+	public ResponseEntity<Student> deleteStudentCourse(
 			@ApiParam(value = "The student's ID for whom you want to delete a course", required = true)
 			@PathVariable("studentId") int studentId,
 			@ApiParam(value = "The course's ID to be deleted from the student's course list", required = true)

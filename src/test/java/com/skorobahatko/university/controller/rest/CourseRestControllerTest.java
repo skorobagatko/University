@@ -1,106 +1,107 @@
 package com.skorobahatko.university.controller.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skorobahatko.university.domain.Course;
-import com.skorobahatko.university.service.CourseService;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import static com.skorobahatko.university.util.TestUtils.getTestCourse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(CourseRestController.class)
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skorobahatko.university.domain.Course;
+import com.skorobahatko.university.service.CourseService;
+
+@RunWith(MockitoJUnitRunner.class)
 class CourseRestControllerTest {
 
-    @MockBean
-    private CourseService courseService;
+	private CourseRestController courseRestController;
+	private CourseService courseService;
+	private ObjectMapper objectMapper;
+	private MockMvc mockMvc;
 
-    @Autowired
-    MockMvc mockMvc;
+	@BeforeEach
+	public void init() {
+		courseService = Mockito.mock(CourseService.class);
+		courseRestController = new CourseRestController(courseService);
+		mockMvc = MockMvcBuilders.standaloneSetup(courseRestController).build();
+		objectMapper = new ObjectMapper();
+	}
 
-    @Autowired
-    ObjectMapper objectMapper;
+	@Test
+	void requestForCoursesListReturnsCorrectJsonResponse() throws Exception {
+		Course course = getTestCourse();
+		List<Course> courses = List.of(course);
+		when(courseService.getAll()).thenReturn(courses);
 
-    @Test
-    void testGetAllCourses() throws Exception {
-        Course course = new Course(1, "Test Course");
-        List<Course> courses = List.of(course);
+		MvcResult mvcResult = mockMvc.perform(get("/api/courses")).andReturn();
 
-        when(courseService.getAll()).thenReturn(courses);
-
-        mockMvc.perform(get("/api/courses")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is(course.getName())))
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        verify(courseService, times(1)).getAll();
-        verifyNoMoreInteractions(courseService);
-    }
-
-    @Test
-    void testAddCourse() throws Exception {
-        Course course = new Course("Test Course");
-
-        mockMvc.perform(post("/api/courses")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(course)))
-                .andExpect(status().isCreated());
-
-        verify(courseService, times(1)).add(course);
-        verifyNoMoreInteractions(courseService);
-    }
-
-    @Test
-    void testGetCourseById() throws Exception {
-        Course course = new Course(1, "Test Course");
-
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+		
+		String expected = objectMapper.writeValueAsString(courses);
+		String actual = mvcResult.getResponse().getContentAsString();
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void requestForAddingNewCourseReturnsCorrectStatusCode() throws Exception {
+		Course course = getTestCourse();
+		
+		MvcResult mvcResult = mockMvc.perform(post("/api/courses")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(course)))
+				.andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(201, status);
+	}
+	
+	@Test
+	void requestForGettingCourseByIdReturnsCorrectJsonResponse() throws Exception {
+		Course course = new Course(1, "Test Course");
         when(courseService.getById(1)).thenReturn(course);
 
-        mockMvc.perform(get("/api/courses/{id}", 1))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(course)))
-                .andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/api/courses/{id}", 1)).andReturn();
+        
+        int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+		
+		String expected = objectMapper.writeValueAsString(course);
+		String actual = mvcResult.getResponse().getContentAsString();
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void requestForUpdatingCourseReturnsCorrectStatusCode() throws Exception {
+		Course course = new Course(1, "Test Course");
+		
+		MvcResult mvcResult = mockMvc.perform(put("/api/courses/{id}", 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(course)))
+				.andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+	}
+	
+	@Test
+	void requestForDeletingCourseReturnsCorrectStatusCode() throws Exception {
+		MvcResult mvcResult = mockMvc.perform(delete("/api/courses/{id}", 1)).andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+	}
 
-        verify(courseService, times(1)).getById(1);
-        verifyNoMoreInteractions(courseService);
-    }
-
-    @Test
-    void testUpdateCourseById() throws Exception {
-        Course course = new Course(1,"Test Course");
-
-        mockMvc.perform(put("/api/courses/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(course)))
-                .andExpect(status().isOk());
-
-        verify(courseService, times(1)).update(course);
-        verifyNoMoreInteractions(courseService);
-    }
-
-    @Test
-    void testDeleteCourseById() throws Exception {
-        mockMvc.perform(delete("/api/courses/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        verify(courseService, times(1)).removeById(1);
-        verifyNoMoreInteractions(courseService);
-    }
 }

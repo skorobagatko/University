@@ -21,9 +21,9 @@ public class TeacherServiceImpl implements TeacherService {
     private TeacherRepository teacherRepository;
 
     @Autowired
-    public void setTeacherRepository(TeacherRepository teacherRepository) {
+    public TeacherServiceImpl(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
-    }
+	}
 
     @Override
     public List<Teacher> getAll() {

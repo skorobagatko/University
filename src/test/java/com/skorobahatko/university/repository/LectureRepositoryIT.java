@@ -22,7 +22,6 @@ import com.skorobahatko.university.domain.Lecture;
 	@Sql("/populate_courses.sql"),
 	@Sql("/populate_lectures.sql") 
 })
-@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @DataJpaTest
 class LectureRepositoryIT {
 	

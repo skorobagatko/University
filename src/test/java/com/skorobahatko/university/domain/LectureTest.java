@@ -15,7 +15,7 @@ class LectureTest {
 	private Lecture lecture;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		lecture = getTestLectureWithCourseId(1);
 	}
 	

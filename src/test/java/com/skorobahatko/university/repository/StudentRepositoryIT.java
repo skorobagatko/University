@@ -21,7 +21,6 @@ import java.util.Optional;
         @Sql("/populate_lectures.sql"),
         @Sql("/populate_participants.sql")
 })
-@Sql(scripts = "/delete_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @DataJpaTest
 class StudentRepositoryIT {
 

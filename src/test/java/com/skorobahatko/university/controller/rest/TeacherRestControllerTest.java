@@ -1,142 +1,147 @@
 package com.skorobahatko.university.controller.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skorobahatko.university.domain.Teacher;
-import com.skorobahatko.university.service.TeacherService;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import static com.skorobahatko.university.util.TestUtils.getTestTeacher;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(TeacherRestController.class)
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.skorobahatko.university.domain.Teacher;
+import com.skorobahatko.university.service.TeacherService;
+
+@RunWith(MockitoJUnitRunner.class)
 class TeacherRestControllerTest {
+	
+	private TeacherRestController teacherRestController;
+	private TeacherService teacherService;
+	private ObjectMapper objectMapper;
+	private MockMvc mockMvc;
+	
+	@BeforeEach
+	public void init() {
+		teacherService = Mockito.mock(TeacherService.class);
+		teacherRestController = new TeacherRestController(teacherService);
+		mockMvc = MockMvcBuilders.standaloneSetup(teacherRestController).build();
+		objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+	}
+	
+	@Test
+	void requestForTeachersListReturnsCorrectJsonResponse() throws Exception {
+		Teacher teacher = getTestTeacher();
+		List<Teacher> teachers = List.of(teacher);
+		when(teacherService.getAll()).thenReturn(teachers);
 
-    @MockBean
-    private TeacherService teacherService;
+		MvcResult mvcResult = mockMvc.perform(get("/api/teachers")).andReturn();
 
-    @Autowired
-    MockMvc mockMvc;
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+		
+		String expected = objectMapper.writeValueAsString(teachers);
+		String actual = mvcResult.getResponse().getContentAsString();
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void requestForAddingNewTeacherReturnsCorrectStatusCode() throws Exception {
+		Teacher teacher = getTestTeacher();
+		
+		MvcResult mvcResult = mockMvc.perform(post("/api/teachers")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(teacher)))
+				.andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(201, status);
+	}
+	
+	@Test
+	void requestForGettingCourseByIdReturnsCorrectJsonResponse() throws Exception {
+		Teacher teacher = getTestTeacher();
+        when(teacherService.getById(0)).thenReturn(teacher);
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Test
-    void testGetAllTeachers() throws Exception {
-        Teacher teacher = new Teacher("Test", "Teacher");
-        List<Teacher> teachers = List.of(teacher);
-
-        when(teacherService.getAll()).thenReturn(teachers);
-
-        mockMvc.perform(get("/api/teachers")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].firstName", is(teacher.getFirstName())))
-                .andExpect(jsonPath("$[0].lastName", is(teacher.getLastName())))
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        verify(teacherService, times(1)).getAll();
-        verifyNoMoreInteractions(teacherService);
-    }
-
-    @Test
-    void testAddTeacher() throws Exception {
-        Teacher teacher = new Teacher("Test", "Teacher");
-
-        mockMvc.perform(post("/api/teachers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(teacher)))
-                .andExpect(status().isCreated());
-
-        verify(teacherService, times(1)).add(teacher);
-        verifyNoMoreInteractions(teacherService);
-    }
-
-    @Test
-    void testGetTeacherById() throws Exception {
-        Teacher teacher = new Teacher(1, "Test", "Teacher");
-
-        when(teacherService.getById(1)).thenReturn(teacher);
-
-        mockMvc.perform(get("/api/teachers/{id}", 1))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(teacher)))
-                .andReturn();
-
-        verify(teacherService, times(1)).getById(1);
-        verifyNoMoreInteractions(teacherService);
-    }
-
-    @Test
-    void testUpdateTeacherById() throws Exception {
-        Teacher teacher = new Teacher(1, "Test", "Teacher");
-
-        mockMvc.perform(put("/api/teachers/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(teacher)))
-                .andExpect(status().isOk());
-
-        verify(teacherService, times(1)).update(teacher);
-        verifyNoMoreInteractions(teacherService);
-    }
-
-    @Test
-    void testDeleteTeacherById() throws Exception {
-        mockMvc.perform(delete("/api/teachers/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        verify(teacherService, times(1)).removeById(1);
-        verifyNoMoreInteractions(teacherService);
-    }
-
-    @Test
-    void testAddCourseToTeacher() throws Exception {
-        Teacher teacher = new Teacher(1, "Test", "Teacher");
+        MvcResult mvcResult = mockMvc.perform(get("/api/teachers/{id}", 0)).andReturn();
+        
+        int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+		
+		String expected = objectMapper.writeValueAsString(teacher);
+		String actual = mvcResult.getResponse().getContentAsString();
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void requestForUpdatingTeacherReturnsCorrectStatusCode() throws Exception {
+		Teacher teacher = getTestTeacher();
+		
+		MvcResult mvcResult = mockMvc.perform(put("/api/teachers/{id}", 0)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(teacher)))
+				.andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+	}
+	
+	@Test
+	void requestForDeletingTeacherReturnsCorrectStatusCode() throws Exception {
+		MvcResult mvcResult = mockMvc.perform(delete("/api/teachers/{id}", 1)).andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+	}
+	
+	@Test
+	void requestForAddingTeacherCourseReturnsCorrectJsonResponse() throws Exception {
+		Teacher teacher = new Teacher(1, "Test", "Teacher");
 
         when(teacherService.getById(1)).thenReturn(teacher);
-
-        mockMvc.perform(post("/api/teachers/{teacherId}/course/{courseId}", 1, 1)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(teacher)));
-
-        verify(teacherService, times(1)).addCourseToTeacherById(1, 1);
-        verify(teacherService, times(1)).getById(1);
-        verifyNoMoreInteractions(teacherService);
-    }
-
-    @Test
-    void testDeleteCourseFromTeacher() throws Exception {
-        Teacher teacher = new Teacher(1, "Test", "Teacher");
+        
+        MvcResult mvcResult = mockMvc.perform(post("/api/teachers/{teacherId}/course/{courseId}", 1, 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(teacher)))
+				.andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+		
+		String expected = objectMapper.writeValueAsString(teacher);
+		String actual = mvcResult.getResponse().getContentAsString();
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	void requestForDeletingTeacherCourseReturnsCorrectJsonResponse() throws Exception {
+		Teacher teacher = new Teacher(1, "Test", "Teacher");
 
         when(teacherService.getById(1)).thenReturn(teacher);
+        
+        MvcResult mvcResult = mockMvc.perform(delete("/api/teachers/{teacherId}/course/{courseId}", 1, 1)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(teacher)))
+				.andReturn();
+		
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(200, status);
+		
+		String expected = objectMapper.writeValueAsString(teacher);
+		String actual = mvcResult.getResponse().getContentAsString();
+		assertEquals(expected, actual);
+	}
 
-        mockMvc.perform(delete("/api/teachers/{teacherId}/course/{courseId}", 1, 1)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(teacher)));
-
-        verify(teacherService, times(1)).deleteTeachersCourseById(1, 1);
-        verify(teacherService, times(1)).getById(1);
-        verifyNoMoreInteractions(teacherService);
-    }
-    
 }

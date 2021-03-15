@@ -3,8 +3,6 @@ package com.skorobahatko.university.service;
 import static com.skorobahatko.university.util.TestUtils.getTestCourse;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ class CourseServiceImplIT {
 	private CourseService courseService;
 
 	@Test
-	void testGetAll() throws SQLException {
+	void testGetAll() {
 		int expected = 3;
 		int actual = courseService.getAll().size();
 
@@ -41,7 +39,7 @@ class CourseServiceImplIT {
 	}
 
 	@Test
-	void testGetById() throws SQLException {
+	void testGetById() {
 		Course course = getTestCourse();
 		course = courseService.add(course);
 		
@@ -85,7 +83,7 @@ class CourseServiceImplIT {
 	}
 
 	@Test
-	void testRemoveById() throws SQLException {
+	void testRemoveById() {
 		Course course = getTestCourse();
 		course = courseService.add(course);
 		int courseId = course.getId();

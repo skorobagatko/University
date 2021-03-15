@@ -14,7 +14,7 @@ class TimetableTest {
 	private Timetable timetable;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		Participant participant = getTestParticipant();
 		timetable = getTestTimetableForParticipant(participant);
 	}

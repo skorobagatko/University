@@ -1,218 +1,137 @@
 package com.skorobahatko.university.controller;
 
-import com.skorobahatko.university.domain.Course;
+import static com.skorobahatko.university.util.TestUtils.getTestStudent;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+
 import com.skorobahatko.university.domain.Student;
 import com.skorobahatko.university.service.CourseService;
 import com.skorobahatko.university.service.StudentService;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.skorobahatko.university.util.TestUtils.getTestCourse;
-import static com.skorobahatko.university.util.TestUtils.getTestStudents;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@RunWith(SpringRunner.class)
-@WebMvcTest(StudentController.class)
+@RunWith(MockitoJUnitRunner.class)
 class StudentControllerTest {
 	
-	@MockBean
+	private StudentController studentController;
 	private StudentService studentService;
-	
-	@MockBean
 	private CourseService courseService;
 	
-	@Autowired
-	MockMvc mockMvc;
-
+	@BeforeEach
+	public void init() {
+		studentService = Mockito.mock(StudentService.class);
+		courseService = Mockito.mock(CourseService.class);
+		studentController = new StudentController(studentService, courseService);
+	}
+	
 	@Test
-	void testGetAllStudents() throws Exception {
-		List<Student> students = getTestStudents();
-		List<Course> courses = List.of(getTestCourse());
-
+	void allStudentsAreAddedToModelForStudentsListView() throws Exception {
+		Model model = new ExtendedModelMap();
+		Student student = getTestStudent();
+		List<Student> students = List.of(student);
+		
 		when(studentService.getAll()).thenReturn(students);
-		when(courseService.getAll()).thenReturn(courses);
-
-		mockMvc.perform(get("/students"))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/all"))
-				.andExpect(model().attribute("students", equalTo(students)))
-				.andExpect(model().attribute("courses", equalTo(courses)));
-
-		verify(studentService, times(1)).getAll();
-		verifyNoMoreInteractions(studentService);
-
-		verify(courseService, times(1)).getAll();
-		verifyNoMoreInteractions(courseService);
+		
+		assertThat(studentController.getAllStudents(model), equalTo("students/all"));
+		assertThat(model.asMap(), hasEntry("students", students));
 	}
-
+	
 	@Test
-	void testAddStudent() throws Exception {
-		Course course = getTestCourse();
-		Student student = new Student("John", "Johnson");
-
-		when(studentService.add(student)).thenReturn(student);
-
-		mockMvc.perform(post("/students/new")
-				.param("firstName", student.getFirstName())
-				.param("lastName", student.getLastName())
-				.param("courseId", String.valueOf(course.getId())))
-				.andExpect(status().is(302))
-				.andExpect(view().name("redirect:/students"))
-				.andExpect(redirectedUrl("/students"));
-
-		verify(studentService, times(1)).add(student);
-		verify(studentService, times(1)).addCourseToStudentById(student.getId(), course.getId());
-		verifyNoMoreInteractions(studentService);
+	void redirectIsSuccessfulForNewAddedStudent() {
+		String firstName = "Test";
+		String lastName = "Student";
+		int courseId = 1;
+		
+		Student student = getTestStudent();
+		when(studentService.add(any())).thenReturn(student);
+		
+		assertThat(studentController.addStudent(
+				firstName,
+				lastName,
+				courseId), equalTo("redirect:/students"));
 	}
-
+	
 	@Test
-	void testGetStudentById() throws Exception {
-		Course course = new Course(1, "Test Course");
-		Student student = new Student(1, "John", "Johnson", List.of(course));
-
+	void studentWithRequestedIdIsAddedToModel() {
+		Model model = new ExtendedModelMap();
+		
+		Student student = getTestStudent();
+		when(studentService.getById(0)).thenReturn(student);
+		
+		assertThat(studentController.getStudentById(0, model), equalTo("students/student"));
+		assertThat(model.asMap(), hasEntry("student", student));
+	}
+	
+	@Test
+	void editStudentViewIsOpenedForStudentWithRequestedId() {
+		Model model = new ExtendedModelMap();
+		
+		Student student = getTestStudent();
+		when(studentService.getById(0)).thenReturn(student);
+		
+		assertThat(studentController.editStudentById(0, model), equalTo("students/edit"));
+		assertThat(model.asMap(), hasEntry("student", student));
+	}
+	
+	@Test
+	void redirectIsSuccessfulForUpdatedStudent() {
+		Student student = getTestStudent();
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		
+		assertThat(studentController.updateStudent(student, bindingResult), equalTo("redirect:/students"));
+	}
+	
+	@Test
+	void studentEditViewIsOpenedIfUserInputErrorsWasFoundWhileUpdatingStudent() {
+		Student student = getTestStudent();
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		when(bindingResult.hasErrors()).thenReturn(true);
+		
+		assertThat(studentController.updateStudent(student, bindingResult), equalTo("students/edit"));
+	}
+	
+	@Test
+	void studentEditViewIsOpenedAfterAddingCourseToStudent() {
+		int studentId = 1;
+		int courseId = 1;
+		Model model = new ExtendedModelMap();
+		
+		Student student = new Student(1, "Test", "Student");
 		when(studentService.getById(1)).thenReturn(student);
-
-		mockMvc.perform(get("/students/{id}", 1))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/student"))
-				.andExpect(model().attribute("student", equalTo(student)));
-
-		verify(studentService, times(1)).getById(1);
-		verifyNoMoreInteractions(studentService);
+		
+		assertThat(studentController.addStudentCourse(studentId, courseId, model), equalTo("students/edit"));
+		assertThat(model.asMap(), hasEntry("student", student));
 	}
-
+	
 	@Test
-	void testEditStudentById() throws Exception {
-		Course course = new Course(1, "Test Course");
-		Student student = new Student(1, "John", "Johnson", List.of(course));
-
+	void studentEditViewIsOpenedAfterDeletingStudentCourse() {
+		int studentId = 1;
+		int courseId = 1;
+		Model model = new ExtendedModelMap();
+		
+		Student student = new Student(1, "Test", "Student");
 		when(studentService.getById(1)).thenReturn(student);
-
-		mockMvc.perform(get("/students/{id}/edit", 1))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"))
-				.andExpect(model().attribute("student", equalTo(student)));
-
-		verify(studentService, times(1)).getById(1);
-		verifyNoMoreInteractions(studentService);
+		
+		assertThat(studentController.deleteStudentCourse(studentId, courseId, model), equalTo("students/edit"));
+		assertThat(model.asMap(), hasEntry("student", student));
 	}
-
+	
 	@Test
-	void testAddCourseToStudent() throws Exception {
-		Course course = new Course(1, "Test Course");
-		Student student = new Student(1, "John", "Johnson", List.of(course));
-
-		when(studentService.getById(1)).thenReturn(student);
-
-		mockMvc.perform(post("/students/{id}/course/add", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("courseId", "1"))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"));
-
-		verify(studentService, times(1)).addCourseToStudentById(student.getId(), course.getId());
-		verify(studentService, times(1)).getById(1);
-		verifyNoMoreInteractions(studentService);
-	}
-
-	@Test
-	void testDeleteCourseFromStudent() throws Exception {
-		Course course = new Course(1, "Test Course");
-		List<Course> courses = new ArrayList<>();
-		courses.add(course);
-		Student student = new Student(1, "John", "Johnson", courses);
-
-		when(studentService.getById(1)).thenReturn(student);
-
-		mockMvc.perform(delete("/students/{studentId}/course/{courseId}", 1, 1))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"))
-				.andDo(result -> student.removeCourse(course))
-				.andExpect(model().attribute("student", hasProperty("courses", hasSize(0))));
-
-		verify(studentService, times(1)).deleteStudentsCourseById(student.getId(), course.getId());
-		verify(studentService, times(1)).getById(1);
-		verifyNoMoreInteractions(studentService);
-	}
-
-	@Test
-	void testUpdateStudentById() throws Exception {
-		Student student = new Student(1, "John", "Johnson");
-
-		mockMvc.perform(patch("/students/{id}", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("firstName", student.getFirstName())
-				.param("lastName", student.getLastName()))
-				.andExpect(status().is(302))
-				.andExpect(view().name("redirect:/students"));
-
-		verify(studentService, times(1)).update(student);
-		verifyNoMoreInteractions(studentService);
-	}
-
-	@Test
-	void testUpdateStudentValidationWithEmptyFirstName() throws Exception {
-		mockMvc.perform(patch("/students/{id}", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("firstName", ""))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"))
-				.andExpect(model().attributeHasFieldErrors("student", "firstName"));
-	}
-
-	@Test
-	void testUpdateStudentValidationWithShortFirstName() throws Exception {
-		mockMvc.perform(patch("/students/{id}", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("firstName", "S"))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"))
-				.andExpect(model().attributeHasFieldErrors("student", "firstName"));
-	}
-
-	@Test
-	void testUpdateStudentValidationWithEmptyLastName() throws Exception {
-		mockMvc.perform(patch("/students/{id}", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("lastName", ""))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"))
-				.andExpect(model().attributeHasFieldErrors("student", "lastName"));
-	}
-
-	@Test
-	void testUpdateStudentValidationWithShortLastName() throws Exception {
-		mockMvc.perform(patch("/students/{id}", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("lastName", "S"))
-				.andExpect(status().isOk())
-				.andExpect(view().name("students/edit"))
-				.andExpect(model().attributeHasFieldErrors("student", "lastName"));
-	}
-
-	@Test
-	void testDeleteStudentById() throws Exception {
-		mockMvc.perform(delete("/students/{id}", 1)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().is(302))
-				.andExpect(view().name("redirect:/students"));
-
-		verify(studentService, times(1)).removeById(1);
-		verifyNoMoreInteractions(studentService);
+	void redirectIsSuccessfulAfterDeletingStudent() {
+		assertThat(studentController.deleteStudentById(1), equalTo("redirect:/students"));
 	}
 
 }
